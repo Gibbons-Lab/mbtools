@@ -1,4 +1,4 @@
-destination: ../docs
+destination: docs
 template:
   params:
     bootswatch: cosmo
