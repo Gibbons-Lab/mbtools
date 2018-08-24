@@ -40,7 +40,7 @@ inst/doc
 
 # mock files
 *.rds
-mock*/
+vignettes/mock*/
 filtered
 split
 gg*.fa.gz
