@@ -61,7 +61,7 @@ iter_voom <- function(variable, counts, meta, confounders) {
     }
 
     norm_counts <- t(normalize(counts[good, ]))
-    design <- model.matrix(reformulate(c(confounders, variable))
+    design <- model.matrix(reformulate(c(confounders, variable)))
     res <- topTable(fit, coef=ncol(design), sort="none", n=Inf)
 
     if (is_reg) {
