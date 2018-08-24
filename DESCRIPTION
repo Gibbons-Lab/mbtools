@@ -7,7 +7,7 @@ Authors@R: c(person("Christian", "Diener", email = "mail@cdiener.com", role = c(
 Description: Provides helper functions for microbiome preprocessing and
     analysis.
 Depends:
-    R (>= 3.3.0)
+    R (>= 3.4.0)
 Imports:
     Biostrings,
     GenomicAlignments,
@@ -24,8 +24,8 @@ Imports:
     yaml,
     magrittr
 License: Apache License (== 2.0)
-URL: https://github.com/resendislab/microbiome/mbtools
-BugReports: https://github.com/resendislab/microbiome/issues
+URL: https://github.com/Gibbons-Lab/mbtools
+BugReports: https://github.com/Gibbons-Lab/mbtools/issues
 Encoding: UTF-8
 LazyData: true
 Suggests:

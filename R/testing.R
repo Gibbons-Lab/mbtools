@@ -1,6 +1,98 @@
 # Functions for testing associations between the microbiome
 # and exogenous variables
 
+#' Run a single DESeq2 iteration
+iter_deseq2 <- function(variable, counts, meta, confounders) {
+    good <- !is.na(meta[[variable]])
+    is_reg = !is.factor(meta[[variable]])
+    if (is.null(confounders)) {
+        ref_model <- ~ 1
+    } else {
+        ref_model <- reformulate(confounders)
+    }
+    if (ncol(counts) < 50) {
+        fit_type <- "mean"
+    } else {
+        fit_type <- "local"
+    }
+    dds <- DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
+        design = reformulate(c(confounders, variable)))
+    dds <- estimateSizeFactors(dds, type = "poscount")
+    dds <- DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
+                    fitType = fit_type, reduced = ref_model)
+    if (is_reg) {
+        totals <- colSums(counts(dds))
+        mod <- glm(reformulate(c(confounders, variable), "totals"),
+                    data = meta[good, ])
+        infl <- influence(mod)
+        expected <- sum(infl$hat) / sum(good)
+        outliers <- any(infl$hat > (expected * 10))
+    } else {
+        outliers <- FALSE
+    }
+    res <- results(dds)
+    if (shrink) {
+        res <- lfcShrink(dds, coef = length(resultsNames(dds)),
+                            results = res)
+    }
+    res <- as.data.table(res)
+    set(res, j = tax, value = colnames(counts))
+    set(res, j = "variable", value = variable)
+    set(res, j = "robust", value = !outliers)
+    if (is_reg) {
+        n <- sum(good)
+    } else {
+        levs <- levels(meta[[variable]])
+        n <- min(sum(meta[[variable]] == levs[1]),
+                 sum(meta[[variable]] == levs[length(levs)]))
+    }
+    set(res, j = "n_eff", value = n)
+    return(res)
+}
+
+#' Run a single voom iteration
+iter_voom <- function(variable, counts, meta, confounders) {
+    good <- !is.na(meta[[variable]])
+    is_reg = !is.factor(meta[[variable]])
+    if (ncol(counts) < 50) {
+        fit_type <- "mean"
+    } else {
+        fit_type <- "local"
+    }
+
+    norm_counts <- t(normalize(counts[good, ]))
+    design <- model.matrix(reformulate(c(confounders, variable))
+    res <- topTable(fit, coef=ncol(design), sort="none", n=Inf)
+
+    if (is_reg) {
+        totals <- colSums(counts(dds))
+        mod <- glm(reformulate(c(confounders, variable), "totals"),
+                    data = meta[good, ])
+        infl <- influence(mod)
+        expected <- sum(infl$hat) / sum(good)
+        outliers <- any(infl$hat > (expected * 10))
+    } else {
+        outliers <- FALSE
+    }
+    if (shrink) {
+        fit <- eBayes(fit)
+    }
+    res <- topTable(fit, coef=ncol(design), sort="none", n=Inf)
+    res <- as.data.table(res)
+    set(res, j = tax, value = colnames(counts))
+    set(res, j = "variable", value = variable)
+    set(res, j = "robust", value = !outliers)
+    if (is_reg) {
+        n <- sum(good)
+    } else {
+        levs <- levels(meta[[variable]])
+        n <- min(sum(meta[[variable]] == levs[1]),
+                 sum(meta[[variable]] == levs[length(levs)]))
+    }
+    set(res, j = "n_eff", value = n)
+    return(res)
+}
+
 #' Run differential association tests between taxa counts and exogenous
 #' factors.
 #'
@@ -9,6 +101,8 @@
 #'  variables.
 #' @param tax The taxa level on which to run differential tests. Defaults to
 #'  genus.
+#' @param method What method to use for differential calling. Either "deseq2"
+#'  or "voom".
 #' @param confounders A character vector containing the confounders that should
 #'  be used.
 #' @param min_count Minimum required number of average counts for a taxa.
@@ -30,7 +124,7 @@
 #' @importFrom phyloseq sample_data
 #' @importFrom DESeq2 DESeqDataSetFromMatrix DESeq results lfcShrink
 #'  resultsNames estimateSizeFactors
-association <- function(ps, variables = NULL, tax = "genus",
+association <- function(ps, variables = NULL, tax = "genus", method="deseq2",
                         confounders = NULL, min_count = 10, in_samples = 0.1,
                         independent_weighting = TRUE, standardize = TRUE,
                         shrink = TRUE) {
@@ -56,53 +150,9 @@ association <- function(ps, variables = NULL, tax = "genus",
     cat(paste("Writing logs to", log_file))
     sink(file(log_file, open = "wt"), type = "message")
     on.exit(sink(type = "message"))
-    tests <- pblapply(variables, function(v) {
-        good <- !is.na(meta[[v]])
-        is_reg = !is.factor(meta[[v]])
-        if (is.null(confounders)) {
-            ref_model <- ~ 1
-        } else {
-            ref_model <- reformulate(confounders)
-        }
-        if (ncol(counts) < 50) {
-            fit_type <- "mean"
-        } else {
-            fit_type <- "local"
-        }
-        dds <- DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
-            design = reformulate(c(confounders, v)))
-        dds <- estimateSizeFactors(dds, type = "poscount")
-        dds <- DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
-                     fitType = fit_type, reduced = ref_model)
-        if (is_reg) {
-            totals <- colSums(counts(dds))
-            mod <- glm(reformulate(c(confounders, v), "totals"),
-                       data = meta[good, ])
-            infl <- influence(mod)
-            expected <- sum(infl$hat) / sum(good)
-            outliers <- any(infl$hat > (expected * 10))
-        } else {
-            outliers <- FALSE
-        }
-        res <- results(dds)
-        if (shrink) {
-            res <- lfcShrink(dds, coef = length(resultsNames(dds)),
-                             results = res)
-        }
-        res <- as.data.table(res)
-        set(res, j = tax, value = colnames(counts))
-        set(res, j = "variable", value = v)
-        set(res, j = "robust", value = !outliers)
-        if (is_reg) {
-            n <- sum(good)
-        } else {
-            levs <- levels(meta[[v]])
-            n <- min(sum(meta[[v]] == levs[1]),
-                     sum(meta[[v]] == levs[length(levs)]))
-        }
-        set(res, j = "n_eff", value = n)
-        return(res)
-    })
+    if (method == "deseq2") iter <- iter_deseq2 else iter <- iter_voom
+    tests <- pblapply(variables, iter_deseq2, counts=counts,
+                      meta=meta, confounders=confounders)
     tests <- rbindlist(tests)
 
     if (length(variables) > 1) {
