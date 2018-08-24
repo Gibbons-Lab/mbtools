@@ -5,5 +5,12 @@ sudo: false
 cache: packages
 r: bioc-release
 
+addons:
+  apt:
+    packages:
+      - libxml2-dev
+      - bowtie2
+      - samtools
+
 after_success:
 - Rscript -e 'covr::codecov()'
