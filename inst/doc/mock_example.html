@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Christian Diener" />
+
+
+<title>Mock community example</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mbtools</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Examples
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="mock_example.html">Mock community</a>
+    </li>
+    <li>
+      <a href="hitdb_example.html">Taxonmy assignment with HITdb</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/cdiener/microbiome">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://hub.docker.com/r/cdiener/microbiome/">
+    <span class="fa fa-cloud fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Mock community example</h1>
+<h4 class="author"><em>Christian Diener</em></h4>
+
+</div>
+
+
+<p>For installation instructions please see <a href="https://github.com/cdiener/microbiome" class="uri">https://github.com/cdiener/microbiome</a>. We recommend using the docker image in the cloud or locally as this ensures that all requirements are fulfilled in the correct version.</p>
+<div id="loading-dependencies" class="section level2">
+<h2>Loading dependencies</h2>
+<p>In order to facilitate use of the pipeline we provide the <code>mbtools</code> R package in this repository which serves two major purposes:</p>
+<ol style="list-style-type: decimal">
+<li>It implements additional helper functions for the analysis and benchmarking of microbial community data.</li>
+<li>It depends on all additional packages required for analysis and load them upon import.</li>
+</ol>
+<p>So loading <code>mbtools</code> should be the first step when running the analysis</p>
+<pre class="r"><code>library(mbtools)</code></pre>
+</div>
+<div id="getting-the-mock-community-data" class="section level2">
+<h2>Getting the mock community data</h2>
+<p><code>mbtools</code> includes helper functions to obtain benchmark mock data sets from the <a href="https://peerj.com/preprints/2065/">mockrobiota database</a>. For instance to download the mock-3 data set (relatively small) we can use</p>
+<pre class="r"><code>if (!file.exists(&quot;mock4.rds&quot;)) {
+    mock &lt;- mockrobiota(&quot;mock-4&quot;, &quot;mock4&quot;)
+    saveRDS(mock, &quot;mock4.rds&quot;)
+} else mock &lt;- readRDS(&quot;mock4.rds&quot;)</code></pre>
+<p>Here <code>mock</code> now includes annotations for the data set as a list.</p>
+<pre class="r"><code>names(mock)</code></pre>
+<pre><code>##  [1] &quot;description&quot; &quot;forward&quot;     &quot;reverse&quot;     &quot;index&quot;       &quot;citation&quot;   
+##  [6] &quot;fragment&quot;    &quot;equipment&quot;   &quot;samples&quot;     &quot;ps_gg&quot;       &quot;ps_silva&quot;</code></pre>
+<pre class="r"><code>mock$samples</code></pre>
+<pre><code>##                                      SampleID BarcodeSequence
+## HMPMockV1.1.Even1           HMPMockV1.1.Even1    TGTACGGATAAC
+## HMPMockV1.1.Even2           HMPMockV1.1.Even2    CAAATGGTCGTC
+## HMPMockV1.2.Staggered1 HMPMockV1.2.Staggered1    AATCAACTAGGC
+## HMPMockV1.2.Staggered2 HMPMockV1.2.Staggered2    ACACATAAGTCG
+##                        LinkerPrimerSequence        ReversePrimer
+## HMPMockV1.1.Even1       GTGCCAGCMGCCGCGGTAA GGACTACHVGGGTWTCTAAT
+## HMPMockV1.1.Even2       GTGCCAGCMGCCGCGGTAA GGACTACHVGGGTWTCTAAT
+## HMPMockV1.2.Staggered1  GTGCCAGCMGCCGCGGTAA GGACTACHVGGGTWTCTAAT
+## HMPMockV1.2.Staggered2  GTGCCAGCMGCCGCGGTAA GGACTACHVGGGTWTCTAAT
+##                        PrimerName Description
+## HMPMockV1.1.Even1       515f-806r    Nenehozi
+## HMPMockV1.1.Even2       515f-806r    Tofekoca
+## HMPMockV1.2.Staggered1  515f-806r    Kalofiyo
+## HMPMockV1.2.Staggered2  515f-806r    Pewizifo</code></pre>
+</div>
+<div id="preparing-the-reads" class="section level2">
+<h2>Preparing the reads</h2>
+<p>As we can see we have 3 read files, the forward and backward reads and one index file mapping the sample barcodes to the sequences. However, we have 4 samples: a uniform and staggered community in duplicates each. In order to map sequence variants to samples <code>dada2</code> expects read files to be separated by sample. <code>mbtools</code> includes helper functions to obtain this splitting.</p>
+<pre class="r"><code>reads &lt;- c(mock$forward, mock$reverse)
+barcodes &lt;- mock$samples$BarcodeSequence
+names(barcodes) &lt;- mock$samples[,1]
+bcs &lt;- split_barcodes(reads, mock$index, &quot;split&quot;, barcodes)
+fwd &lt;- list.files(&quot;split&quot;, pattern=&quot;forward&quot;, full.names=T)
+bwd &lt;- list.files(&quot;split&quot;, pattern=&quot;reverse&quot;, full.names=T)
+
+fwd</code></pre>
+<pre><code>## [1] &quot;split/HMPMockV1.1.Even1_mock-forward-read.fastq.gz&quot;     
+## [2] &quot;split/HMPMockV1.1.Even2_mock-forward-read.fastq.gz&quot;     
+## [3] &quot;split/HMPMockV1.2.Staggered1_mock-forward-read.fastq.gz&quot;
+## [4] &quot;split/HMPMockV1.2.Staggered2_mock-forward-read.fastq.gz&quot;</code></pre>
+<p>As we see that now gives us the reads separated by sample. The orginal read still include some valid information, particularly they include the read qualities across all samples.</p>
+<pre class="r"><code>plotQualityProfile(reads[1])</code></pre>
+<p><img src="mock_example_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>plotQualityProfile(reads[2])</code></pre>
+<p><img src="mock_example_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<p>As we can see both qualities detoriate extremely with read lengths. Thus, we will have to trim the reads. From the plots we can see that the forward reads have decent quality up to a length of 150 bp whereas the reverse reads are acceptable up to 100 bp.</p>
+<pre class="r"><code>dir.create(&quot;filtered&quot;)</code></pre>
+<pre><code>## Warning in dir.create(&quot;filtered&quot;): &#39;filtered&#39; already exists</code></pre>
+<pre class="r"><code>fwd_filt &lt;- file.path(&quot;filtered&quot;, basename(fwd))
+bwd_filt &lt;- file.path(&quot;filtered&quot;, basename(bwd))
+filt &lt;- filterAndTrim(fwd, fwd_filt, bwd, bwd_filt,
+                      trimLeft=10, truncLen=c(140, 100),
+                      compress=T, multithread=T)
+filt</code></pre>
+<pre><code>##                                                   reads.in reads.out
+## HMPMockV1.1.Even1_mock-forward-read.fastq.gz       1236898   1216195
+## HMPMockV1.1.Even2_mock-forward-read.fastq.gz        808308    797208
+## HMPMockV1.2.Staggered1_mock-forward-read.fastq.gz   838791    825665
+## HMPMockV1.2.Staggered2_mock-forward-read.fastq.gz   918465    905396</code></pre>
+<p>We will follow by dereplicating the reads which will yield the unique sequences in the samples.</p>
+<pre class="r"><code>derepFs &lt;- derepFastq(fwd_filt, verbose=TRUE)</code></pre>
+<pre><code>## Dereplicating sequence entries in Fastq file: filtered/HMPMockV1.1.Even1_mock-forward-read.fastq.gz</code></pre>
+<pre><code>## .Encountered 95580 unique sequences from 1216195 total sequences read.
+## Dereplicating sequence entries in Fastq file: filtered/HMPMockV1.1.Even2_mock-forward-read.fastq.gz
+## Encountered 72797 unique sequences from 797208 total sequences read.
+## Dereplicating sequence entries in Fastq file: filtered/HMPMockV1.2.Staggered1_mock-forward-read.fastq.gz
+## Encountered 76415 unique sequences from 825665 total sequences read.
+## Dereplicating sequence entries in Fastq file: filtered/HMPMockV1.2.Staggered2_mock-forward-read.fastq.gz
+## Encountered 72114 unique sequences from 905396 total sequences read.</code></pre>
+<pre class="r"><code>derepRs &lt;- derepFastq(bwd_filt, verbose=TRUE)</code></pre>
+<pre><code>## Dereplicating sequence entries in Fastq file: filtered/HMPMockV1.1.Even1_mock-reverse-read.fastq.gz
+## .Encountered 106375 unique sequences from 1216195 total sequences read.
+## Dereplicating sequence entries in Fastq file: filtered/HMPMockV1.1.Even2_mock-reverse-read.fastq.gz
+## Encountered 68054 unique sequences from 797208 total sequences read.
+## Dereplicating sequence entries in Fastq file: filtered/HMPMockV1.2.Staggered1_mock-reverse-read.fastq.gz
+## Encountered 80575 unique sequences from 825665 total sequences read.
+## Dereplicating sequence entries in Fastq file: filtered/HMPMockV1.2.Staggered2_mock-reverse-read.fastq.gz
+## Encountered 70459 unique sequences from 905396 total sequences read.</code></pre>
+<pre class="r"><code># Name the derep-class objects by the sample names
+names(derepFs) &lt;- names(derepRs) &lt;- names(barcodes)</code></pre>
+</div>
+<div id="obtaining-the-sequence-variants-sequence-otus" class="section level2">
+<h2>Obtaining the sequence variants (sequence OTUs)</h2>
+<p>With the trimmed and dereplicated reads we can now advance to running the dada2 algorithm to discover the unique sequence variants in our reads. We will do this separately for the forward and backward reads.</p>
+<pre class="r"><code>dadaFs &lt;- dada(derepFs, err=NULL, selfConsist = TRUE, multithread = TRUE)</code></pre>
+<pre><code>## Initializing error rates to maximum possible estimate.
+## Sample 1 - 1216195 reads in 95580 unique sequences.
+## Sample 2 - 797208 reads in 72797 unique sequences.
+## Sample 3 - 825665 reads in 76415 unique sequences.
+## Sample 4 - 905396 reads in 72114 unique sequences.
+##    selfConsist step 2 
+##    selfConsist step 3 
+##    selfConsist step 4 
+##    selfConsist step 5 
+## 
+## 
+## Convergence after  5  rounds.</code></pre>
+<pre class="r"><code>dadaRs &lt;- dada(derepRs, err=NULL, selfConsist = TRUE, multithread = TRUE)</code></pre>
+<pre><code>## Initializing error rates to maximum possible estimate.
+## Sample 1 - 1216195 reads in 106375 unique sequences.
+## Sample 2 - 797208 reads in 68054 unique sequences.
+## Sample 3 - 825665 reads in 80575 unique sequences.
+## Sample 4 - 905396 reads in 70459 unique sequences.
+##    selfConsist step 2 
+##    selfConsist step 3 
+##    selfConsist step 4 
+##    selfConsist step 5 
+## 
+## 
+## Convergence after  5  rounds.</code></pre>
+<p>This will fit an error model that deconvolutes the original sequence variants in the sample. We can investigate how well the error model reproduces our data as well.</p>
+<pre class="r"><code>plotErrors(dadaFs, nominalQ=TRUE)</code></pre>
+<pre><code>## Warning: Transformation introduced infinite values in continuous y-axis</code></pre>
+<p><img src="mock_example_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>plotErrors(dadaRs, nominalQ=TRUE)</code></pre>
+<pre><code>## Warning: Transformation introduced infinite values in continuous y-axis</code></pre>
+<p><img src="mock_example_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p>We will now quantify the sequence variants for both samples and combine them. Normally we would try to actually combine the forward and backwards reads into larger reads and quantify those, however our read qualities were so bad in this data set that there is no sufficient overlap. Thus, we will treat the forward and backward reads independently.</p>
+<pre class="r"><code>seqtab_fwd &lt;- makeSequenceTable(dadaFs)
+seqtab_bwd &lt;- makeSequenceTable(dadaRs)
+seqtab &lt;- cbind(seqtab_fwd, seqtab_bwd)</code></pre>
+<p>Finally, we will also remove bimeras (reads that are combinations of two other reads) from the data set. We will also save the sequence table for later use.</p>
+<pre class="r"><code>seqtab_nochim &lt;- removeBimeraDenovo(seqtab, verbose=TRUE)</code></pre>
+<pre><code>## As of the 1.4 release, the default method changed to consensus (from pooled).</code></pre>
+<pre><code>## Identified 270 bimeras out of 365 input sequences.</code></pre>
+<pre class="r"><code>saveRDS(seqtab_nochim, &quot;svs.rds&quot;)</code></pre>
+</div>
+<div id="taxonomy-assignment-and-validation" class="section level2">
+<h2>Taxonomy assignment and validation</h2>
+<p>In order to classify taxonomies for the individual sequence variants we will use the RDP algorithm with the green genes reference sequences. If you do not use the docker image this data set has to be downloaded first <a href="http://doi.org/10.5281/zenodo.158955">from here</a>.</p>
+<pre class="r"><code>if (!file.exists(&quot;gg_138.fa.gz&quot;))
+    download.file(&quot;https://zenodo.org/record/158955/files/gg_13_8_train_set_97.fa.gz&quot;,
+        &quot;gg_138.fa.gz&quot;)</code></pre>
+<p>Taxonomies can now be assigned by</p>
+<pre class="r"><code>taxa &lt;- assignTaxonomy(seqtab_nochim, &quot;gg_138.fa.gz&quot;, multithread=TRUE)
+colnames(taxa) &lt;- c(&quot;Kingdom&quot;, &quot;Phylum&quot;, &quot;Class&quot;, &quot;Order&quot;, &quot;Family&quot;, &quot;Genus&quot;, &quot;Species&quot;)
+head(unname(taxa))</code></pre>
+<pre><code>##      [,1]          [,2]                [,3]                    
+## [1,] &quot;k__Bacteria&quot; &quot;p__Firmicutes&quot;     &quot;c__Bacilli&quot;            
+## [2,] &quot;k__Bacteria&quot; &quot;p__Proteobacteria&quot; &quot;c__Gammaproteobacteria&quot;
+## [3,] &quot;k__Bacteria&quot; &quot;p__Firmicutes&quot;     &quot;c__Bacilli&quot;            
+## [4,] &quot;k__Bacteria&quot; &quot;p__Proteobacteria&quot; &quot;c__Alphaproteobacteria&quot;
+## [5,] &quot;k__Bacteria&quot; &quot;p__Proteobacteria&quot; &quot;c__Gammaproteobacteria&quot;
+## [6,] &quot;k__Bacteria&quot; &quot;p__[Thermi]&quot;       &quot;c__Deinococci&quot;         
+##      [,4]                   [,5]                    [,6]               
+## [1,] &quot;o__Bacillales&quot;        &quot;f__Staphylococcaceae&quot;  &quot;g__Staphylococcus&quot;
+## [2,] &quot;o__Pseudomonadales&quot;   &quot;f__Moraxellaceae&quot;      &quot;g__Acinetobacter&quot; 
+## [3,] &quot;o__Lactobacillales&quot;   &quot;f__Streptococcaceae&quot;   &quot;g__Streptococcus&quot; 
+## [4,] &quot;o__Rhodobacterales&quot;   &quot;f__Rhodobacteraceae&quot;   &quot;g__Rhodobacter&quot;   
+## [5,] &quot;o__Enterobacteriales&quot; &quot;f__Enterobacteriaceae&quot; &quot;g__Escherichia&quot;   
+## [6,] &quot;o__Deinococcales&quot;     &quot;f__Deinococcaceae&quot;     &quot;g__Deinococcus&quot;   
+##      [,7]            
+## [1,] &quot;s__&quot;           
+## [2,] &quot;s__guillouiae&quot; 
+## [3,] &quot;s__&quot;           
+## [4,] &quot;s__sphaeroides&quot;
+## [5,] &quot;s__coli&quot;       
+## [6,] &quot;s__&quot;</code></pre>
+<p>Since we used the green genes database there are some assignments which are actually empty such as the “s__&quot; species. We will convert them to their correct NA value.</p>
+<pre class="r"><code>taxa[grep(&quot;__$&quot;, taxa)] &lt;- NA</code></pre>
+<p>The taxa assignments can be combined with quantifications using the phyloseq package.</p>
+<pre class="r"><code>ps &lt;- phyloseq(otu_table(seqtab_nochim, taxa_are_rows=FALSE),
+               tax_table(taxa))</code></pre>
+<p>We can now compare this table to our reference table from mockrobiota. We will start by quantifying how many of the real taxa were found in our taxonomy assignment.</p>
+<pre class="r"><code>taxa_metrics(tax_table(ps), tax_table(mock$ps_gg))</code></pre>
+<pre><code>##     level precision recall        F1 n_exp n_ref
+## 1 Kingdom 1.0000000   1.00 1.0000000     2     2
+## 2  Phylum 0.8571429   1.00 0.9230769     7     6
+## 3   Class 0.8333333   1.00 0.9090909    12    10
+## 4   Order 0.7058824   1.00 0.8275862    17    12
+## 5  Family 0.6923077   1.00 0.8181818    26    18
+## 6   Genus 0.6923077   1.00 0.8181818    26    18
+## 7 Species 0.4666667   0.35 0.4000000    15    20</code></pre>
+<p>As we can see we are pretty good in identifying the taxa in our samples. However, how do we perform in terms of taxa quantities? We will start by stratifying across the samples:</p>
+<pre class="r"><code>tq &lt;- taxa_quants(ps, mock$ps_gg, normalize = TRUE)
+head(tq)</code></pre>
+<pre><code>##     level        name                 sample    measured  reference
+## 1 Kingdom k__Bacteria      HMPMockV1.1.Even1 0.952838345 0.95238095
+## 2 Kingdom  k__Archaea      HMPMockV1.1.Even1 0.018463343 0.04761905
+## 3 Kingdom k__Bacteria      HMPMockV1.1.Even2 0.982687224 0.95238095
+## 4 Kingdom  k__Archaea      HMPMockV1.1.Even2 0.001397180 0.04761905
+## 5 Kingdom k__Bacteria HMPMockV1.2.Staggered1 0.982101106 0.78563773
+## 6 Kingdom  k__Archaea HMPMockV1.2.Staggered1 0.001579063 0.21436227</code></pre>
+<p><code>taxa_quants</code> already quantifies across a possible levels of taxonomy. So we can plot the performance stratified by sample with</p>
+<pre class="r"><code>ggplot(tq, aes(x=reference, y=measured, col=level)) +
+    geom_abline(alpha=0.5) +
+    geom_smooth(aes(group=1), method=&quot;lm&quot;, lty=&quot;dashed&quot;) +
+    geom_point() +
+    facet_wrap(~ sample)</code></pre>
+<p><img src="mock_example_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>This plot is so common that it is also implemented in <code>mbtools</code> as <code>mock_plot</code>.</p>
+<p>Additionally, we can also combine all samples and rather stratify by taxonomy level.</p>
+<pre class="r"><code>ggplot(tq, aes(x=reference, y=measured, col=sample)) +
+    geom_abline(alpha=0.5) +
+    geom_smooth(aes(group=1), method=&quot;lm&quot;, lty=&quot;dashed&quot;) +
+    geom_point() +
+    theme(legend.position=&quot;bottom&quot;) +
+    facet_wrap(~ level, scale=&quot;free&quot;)</code></pre>
+<p><img src="mock_example_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>This looks pretty ok with larger variations on the species level, which is to be expected. We can quantify the performance by a correlation test.</p>
+<pre class="r"><code>cor.test(tq$measured, tq$reference)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  tq$measured and tq$reference
+## t = 27.112, df = 290, p-value &lt; 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.8108459 0.8764111
+## sample estimates:
+##      cor 
+## 0.846815</code></pre>
+<p>So we get a correlation of about 0.85 which is okay for the bad quality reads we used here.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
