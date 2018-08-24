@@ -1,0 +1,37 @@
+Package: mbtools
+Title: Provides helper functions for microbiome preprocessing and analysis
+Version: 0.9.1
+Authors@R: c(person("Christian", "Diener", email = "mail@cdiener.com", role = c("aut", "cre")),
+             person("Osbaldo", "Resendis-Antonio", email = "resendis@inmegen.gob.mx", role = "ldr"))
+Description: Provides helper functions for microbiome preprocessing and
+    analysis.
+Depends:
+    R (>= 3.3.0)
+Imports:
+    Biostrings,
+    GenomicAlignments,
+    DESeq2,
+    ShortRead,
+    pbapply,
+    phyloseq,
+    dada2,
+    ggplot2,
+    stringr,
+    R.utils,
+    Hmisc,
+    data.table,
+    yaml,
+    magrittr
+License: Apache License (== 2.0)
+URL: https://github.com/resendislab/microbiome/mbtools
+BugReports: https://github.com/resendislab/microbiome/issues
+Encoding: UTF-8
+LazyData: true
+Suggests:
+    testthat,
+    covr,
+    IHW,
+    knitr,
+    rmarkdown
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr
