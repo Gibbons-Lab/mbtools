@@ -62,7 +62,8 @@ iter_voom <- function(variable, counts, meta, confounders) {
 
     norm_counts <- t(normalize(counts[good, ]))
     design <- model.matrix(reformulate(c(confounders, variable)))
-    res <- topTable(fit, coef=ncol(design), sort="none", n=Inf)
+    model <- voom(norm_counts, design, plot=FALSE)
+    fit <- lmFit(model, design)
 
     if (is_reg) {
         totals <- colSums(counts(dds))
@@ -124,6 +125,7 @@ iter_voom <- function(variable, counts, meta, confounders) {
 #' @importFrom phyloseq sample_data
 #' @importFrom DESeq2 DESeqDataSetFromMatrix DESeq results lfcShrink
 #'  resultsNames estimateSizeFactors
+#' @importFrom DESeq2 voom eBayes
 association <- function(ps, variables = NULL, tax = "genus", method="deseq2",
                         confounders = NULL, min_count = 10, in_samples = 0.1,
                         independent_weighting = TRUE, standardize = TRUE,

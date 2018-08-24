@@ -5,7 +5,7 @@ sudo: false
 cache: packages
 r: bioc-release
 r_build_args:
-  - "no-build-vignettes"
+  - "--no-build-vignettes"
 addons:
   apt:
     packages:
