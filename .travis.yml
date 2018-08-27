@@ -4,7 +4,7 @@ language: R
 sudo: false
 cache: packages
 r: bioc-release
-r_build_args: "--no-build-vignettes"
+
 addons:
   apt:
     packages:
@@ -12,5 +12,9 @@ addons:
       - bowtie2
       - samtools
 
+# Don't build vignettes
+before_install:
+  - rm -rf vignettes
+
 after_success:
-- Rscript -e 'covr::codecov()'
+  - Rscript -e 'covr::codecov()'
