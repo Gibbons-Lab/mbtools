@@ -1,7 +1,6 @@
 # Functions for testing associations between the microbiome
 # and exogenous variables
 
-#' Run a single DESeq2 iteration
 iter_deseq2 <- function(variable, counts, meta, confounders) {
     good <- !is.na(meta[[variable]])
     is_reg = !is.factor(meta[[variable]])
@@ -50,7 +49,6 @@ iter_deseq2 <- function(variable, counts, meta, confounders) {
     return(res)
 }
 
-#' Run a single voom iteration
 iter_voom <- function(variable, counts, meta, confounders) {
     good <- !is.na(meta[[variable]])
     is_reg = !is.factor(meta[[variable]])
@@ -125,7 +123,8 @@ iter_voom <- function(variable, counts, meta, confounders) {
 #' @importFrom phyloseq sample_data
 #' @importFrom DESeq2 DESeqDataSetFromMatrix DESeq results lfcShrink
 #'  resultsNames estimateSizeFactors
-#' @importFrom DESeq2 voom eBayes
+#' @importFrom limma voom eBayes lmFit
+#' @importFrom stats model.matrix
 association <- function(ps, variables = NULL, tax = "genus", method="deseq2",
                         confounders = NULL, min_count = 10, in_samples = 0.1,
                         independent_weighting = TRUE, standardize = TRUE,

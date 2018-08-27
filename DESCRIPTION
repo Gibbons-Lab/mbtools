@@ -12,6 +12,7 @@ Imports:
     Biostrings,
     GenomicAlignments,
     DESeq2,
+    limma,
     ShortRead,
     pbapply,
     phyloseq,
