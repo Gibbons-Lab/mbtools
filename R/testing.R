@@ -236,7 +236,7 @@ combinatorial_association <- function(ps, variable, tax = "genus",
         design = reformulate(c(confounders, variable)))
     dds <- estimateSizeFactors(dds, type = "poscount")
     dds <- DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
-                 fitType = "local", reduce = ref_model)
+                 fitType = "local", reduced = ref_model)
     combinations <- combn(length(levs):1, 2)
     tests <- pbapply(combinations, 2, function(co) {
         name <- paste0(variable, levs[co[1]], "_vs_", levs[co[2]])

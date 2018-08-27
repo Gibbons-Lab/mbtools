@@ -5,9 +5,9 @@
 \title{Run differential association tests between taxa counts and exogenous
 factors.}
 \usage{
-association(ps, variables = NULL, tax = "genus", confounders = NULL,
-  min_count = 10, in_samples = 0.1, independent_weighting = TRUE,
-  standardize = TRUE, shrink = TRUE)
+association(ps, variables = NULL, tax = "genus", method = "deseq2",
+  confounders = NULL, min_count = 10, in_samples = 0.1,
+  independent_weighting = TRUE, standardize = TRUE, shrink = TRUE)
 }
 \arguments{
 \item{ps}{A phyloseq object containing the taxa counts.}
@@ -17,6 +17,9 @@ variables.}
 
 \item{tax}{The taxa level on which to run differential tests. Defaults to
 genus.}
+
+\item{method}{What method to use for differential calling. Either "deseq2"
+or "voom".}
 
 \item{confounders}{A character vector containing the confounders that should
 be used.}
