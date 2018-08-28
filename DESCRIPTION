@@ -3,11 +3,11 @@ Title: Provides helper functions for microbiome preprocessing and analysis
 Version: 0.9.2
 Authors@R: c(person("Christian", "Diener", email = "mail@cdiener.com", role = c("aut", "cre")),
              person("Osbaldo", "Resendis-Antonio", email = "resendis@inmegen.gob.mx", role = "ctb"),
-             person("Sean", "Gibbons", email = "sgibbons@systemsbiology.org", role = "ldr"))
+             person("Sean", "Gibbons", email = "sgibbons@systemsbiology.org", role = c("ldr", "cph")))
 Description: Provides helper functions for microbiome preprocessing and
     analysis.
 Depends:
-    R (>= 3.4.0)
+    R (>= 3.4.3)
 Imports:
     Biostrings,
     GenomicAlignments,
