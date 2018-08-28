@@ -3,7 +3,7 @@ title: "Microbiome pipeline"
 ---
 
 [![wercker status](https://app.wercker.com/status/ef9cd211a697b9ae558269dab4ee619e/s "wercker status")](https://app.wercker.com/project/bykey/ef9cd211a697b9ae558269dab4ee619e)
-[![codecov](https://codecov.io/gh/cdiener/microbiome/branch/master/graph/badge.svg)](https://codecov.io/gh/cdiener/microbiome)
+[![codecov](https://codecov.io/gh/gibbons-lab/mbtools/branch/master/graph/badge.svg)](https://codecov.io/gh/gibbons-lab/mbtools)
 
 
 ## Installation
@@ -13,7 +13,7 @@ the analyses. You will need to [install bioconductor first](https://www.biocondu
 
 ```R
 install.packages('devtools')
-devtools::install_github('cdiener/microbiome/mbtools')
+devtools::install_github('gibbons-lab/mbtools')
 ```
 
 in R.
@@ -26,13 +26,13 @@ you will require a [local installation](https://www.docker.com/products/docker-t
 First get the image with
 
 ```bash
-docker pull cdiener/microbiome
+docker pull cdiener/mbtools
 ```
 
 You can now start a Rstudio instance at port 8000 using
 
 ```bash
-docker run -d -p 8000:8787 cdiener/microbiome
+docker run -d -p 8000:8787 cdiener/mbtools
 ```
 
 Now navigate your browser to <your-ip>:8000 (for instance localhost:8000 if you run docker on your machine) and you will be prompted for user credentials (use "rstudio" for user and password). All packages and dependencies are already installed here.
@@ -44,7 +44,7 @@ Now navigate your browser to <your-ip>:8000 (for instance localhost:8000 if you 
 When starting the docker container you can pass an option setting the password.
 
 ```bash
-docker run -d -p 8000:8787 -e PASSWORD="password" cdiener/microbiome
+docker run -d -p 8000:8787 -e PASSWORD="password" cdiener/mbtools
 ```
 
 To change the password of an already running container login to the rstudio

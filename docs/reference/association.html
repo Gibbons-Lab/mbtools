@@ -95,7 +95,7 @@ factors." />
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/resendislab/microbiome/mbtools">
+  <a href="https://github.com/Gibbons-Lab/mbtools">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -114,7 +114,7 @@ factors." />
     <div class="page-header">
     <h1>Run differential association tests between taxa counts and exogenous
 factors.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/resendislab/microbiome/mbtools/blob/master/R/testing.R'><code>R/testing.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/testing.R'><code>R/testing.R</code></a></small>
     <div class="hidden name"><code>association.Rd</code></div>
     </div>
 
@@ -125,9 +125,9 @@ factors.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>association</span>(<span class='no'>ps</span>, <span class='kw'>variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>tax</span> <span class='kw'>=</span> <span class='st'>"genus"</span>, <span class='kw'>confounders</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>min_count</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>in_samples</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>independent_weighting</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>shrink</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>association</span>(<span class='no'>ps</span>, <span class='kw'>variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>tax</span> <span class='kw'>=</span> <span class='st'>"genus"</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"deseq2"</span>,
+  <span class='kw'>confounders</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_count</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>in_samples</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
+  <span class='kw'>independent_weighting</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>shrink</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -145,6 +145,11 @@ variables.</p></td>
       <th>tax</th>
       <td><p>The taxa level on which to run differential tests. Defaults to
 genus.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>What method to use for differential calling. Either "deseq2"
+or "voom".</p></td>
     </tr>
     <tr>
       <th>confounders</th>

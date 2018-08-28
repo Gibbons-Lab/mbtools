@@ -7,7 +7,7 @@ Authors@R: c(person("Christian", "Diener", email = "mail@cdiener.com", role = c(
 Description: Provides helper functions for microbiome preprocessing and
     analysis.
 Depends:
-    R (>= 3.4.3)
+    R (>= 3.4)
 Imports:
     Biostrings,
     GenomicAlignments,

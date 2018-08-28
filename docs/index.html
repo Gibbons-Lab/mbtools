@@ -60,7 +60,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/resendislab/microbiome/mbtools">
+  <a href="https://github.com/Gibbons-Lab/mbtools">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -86,7 +86,7 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>If you want to perform Human sequence removal you will need <a href="http://bowtie-bio.sourceforge.net/bowtie2/index.shtml">bowtie2</a> installed. The tools are bundled in the <code>mbtools</code> R package which also depends on all additional packages you need to run the analyses. You will need to <a href="https://www.bioconductor.org/install/">install bioconductor first</a> followed by running</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">'devtools'</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">'cdiener/microbiome/mbtools'</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">'gibbons-lab/mbtools'</span>)</a></code></pre></div>
 <p>in R.</p>
 <p>Alternatively you can use the Docker image which is built and kept up to date automatically by watching this repo. For this you will require a <a href="https://www.docker.com/products/docker-toolbox">local installation</a> with Docker or a cloud instance which can run docker (for instance CoreOS VMs on AWS or Google Cloud).</p>
 </div>
@@ -94,9 +94,9 @@
 <h2 class="hasAnchor">
 <a href="#using-the-docker-image" class="anchor"></a>Using the docker image</h2>
 <p>First get the image with</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">docker</span> pull cdiener/microbiome</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">docker</span> pull cdiener/mbtools</a></code></pre></div>
 <p>You can now start a Rstudio instance at port 8000 using</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ex">docker</span> run -d -p 8000:8787 cdiener/microbiome</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ex">docker</span> run -d -p 8000:8787 cdiener/mbtools</a></code></pre></div>
 <p>Now navigate your browser to <your-ip>:8000 (for instance localhost:8000 if you run docker on your machine) and you will be prompted for user credentials (use “rstudio” for user and password). All packages and dependencies are already installed here.</your-ip></p>
 <div id="faq" class="section level3">
 <h3 class="hasAnchor">
@@ -105,7 +105,7 @@
 <h4 class="hasAnchor">
 <a href="#how-do-i-change-the-password" class="anchor"></a>How do I change the password?</h4>
 <p>When starting the docker container you can pass an option setting the password.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">docker</span> run -d -p 8000:8787 -e PASSWORD=<span class="st">"password"</span> cdiener/microbiome</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">docker</span> run -d -p 8000:8787 -e PASSWORD=<span class="st">"password"</span> cdiener/mbtools</a></code></pre></div>
 <p>To change the password of an already running container login to the rstudio account with the default credentials (user and password are “rstudio”). Click on the “Tools” in the menu bar and choose “Shell”. Type “passwd” and Enter. You will be promted for the old and new password.</p>
 </div>
 </div>
@@ -116,9 +116,9 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/resendislab/microbiome/mbtools">https://​github.com/​resendislab/​microbiome/​mbtools</a>
+<li>Browse source code at <br><a href="https://github.com/Gibbons-Lab/mbtools">https://​github.com/​Gibbons-Lab/​mbtools</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/resendislab/microbiome/issues">https://​github.com/​resendislab/​microbiome/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/Gibbons-Lab/mbtools/issues">https://​github.com/​Gibbons-Lab/​mbtools/​issues</a>
 </li>
 </ul>
 </div>
@@ -140,7 +140,7 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://app.wercker.com/project/bykey/ef9cd211a697b9ae558269dab4ee619e"><img src="https://app.wercker.com/status/ef9cd211a697b9ae558269dab4ee619e/s" title="wercker status" alt="wercker status"></a></li>
-<li><a href="https://codecov.io/gh/cdiener/microbiome"><img src="https://codecov.io/gh/cdiener/microbiome/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://codecov.io/gh/gibbons-lab/mbtools"><img src="https://codecov.io/gh/gibbons-lab/mbtools/branch/master/graph/badge.svg" alt="codecov"></a></li>
 </ul>
 </div>
 </div>
