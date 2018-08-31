@@ -1,9 +1,12 @@
 # Functions for testing associations between the microbiome
 # and exogenous variables
 
-iter_deseq2 <- function(variable, counts, meta, confounders) {
+iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     good <- !is.na(meta[[variable]])
     is_reg = !is.factor(meta[[variable]])
+    if (sum(good) < 4) {
+        return(NULL)
+    }
     if (is.null(confounders)) {
         ref_model <- ~ 1
     } else {
@@ -14,11 +17,12 @@ iter_deseq2 <- function(variable, counts, meta, confounders) {
     } else {
         fit_type <- "local"
     }
-    dds <- DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
-        design = reformulate(c(confounders, variable)))
-    dds <- estimateSizeFactors(dds, type = "poscount")
-    dds <- DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
-                    fitType = fit_type, reduced = ref_model)
+    dds <- suppressMessages(
+        DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
+            design = reformulate(c(confounders, variable))))
+    dds <- suppressMessages(
+        DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
+              fitType = fit_type, reduced = ref_model))
     if (is_reg) {
         totals <- colSums(counts(dds))
         mod <- glm(reformulate(c(confounders, variable), "totals"),
@@ -49,22 +53,19 @@ iter_deseq2 <- function(variable, counts, meta, confounders) {
     return(res)
 }
 
-iter_voom <- function(variable, counts, meta, confounders) {
+iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
     good <- !is.na(meta[[variable]])
-    is_reg = !is.factor(meta[[variable]])
-    if (ncol(counts) < 50) {
-        fit_type <- "mean"
-    } else {
-        fit_type <- "local"
+    if (sum(good) < 4) {
+        return(NULL)
     }
-
-    norm_counts <- t(normalize(counts[good, ]))
-    design <- model.matrix(reformulate(c(confounders, variable)))
+    is_reg = !is.factor(meta[[variable]])
+    norm_counts <- t(suppressMessages(normalize(counts[good, ])))
+    design <- model.matrix(reformulate(c(confounders, variable)), data=meta)
     model <- voom(norm_counts, design, plot=FALSE)
     fit <- lmFit(model, design)
 
     if (is_reg) {
-        totals <- colSums(counts(dds))
+        totals <- colSums(norm_counts)
         mod <- glm(reformulate(c(confounders, variable), "totals"),
                     data = meta[good, ])
         infl <- influence(mod)
@@ -78,6 +79,7 @@ iter_voom <- function(variable, counts, meta, confounders) {
     }
     res <- topTable(fit, coef=ncol(design), sort="none", n=Inf)
     res <- as.data.table(res)
+    names(res) <- c("log2FoldChange", "baseMean", "t", "pvalue", "padj", "B")
     set(res, j = tax, value = colnames(counts))
     set(res, j = "variable", value = variable)
     set(res, j = "robust", value = !outliers)
@@ -123,7 +125,7 @@ iter_voom <- function(variable, counts, meta, confounders) {
 #' @importFrom phyloseq sample_data
 #' @importFrom DESeq2 DESeqDataSetFromMatrix DESeq results lfcShrink
 #'  resultsNames estimateSizeFactors
-#' @importFrom limma voom eBayes lmFit
+#' @importFrom limma voom eBayes lmFit topTable
 #' @importFrom stats model.matrix
 association <- function(ps, variables = NULL, tax = "genus", method="deseq2",
                         confounders = NULL, min_count = 10, in_samples = 0.1,
@@ -146,14 +148,9 @@ association <- function(ps, variables = NULL, tax = "genus", method="deseq2",
     too_rare <- (colSums(counts >= 1) / nrow(counts)) < in_samples
     too_few <- colMeans(counts) < min_count
     counts <- counts[, !(too_rare | too_few)]
-
-    log_file <- tempfile("mbtools", fileext = ".log")
-    cat(paste("Writing logs to", log_file))
-    sink(file(log_file, open = "wt"), type = "message")
-    on.exit(sink(type = "message"))
     if (method == "deseq2") iter <- iter_deseq2 else iter <- iter_voom
-    tests <- pblapply(variables, iter_deseq2, counts=counts,
-                      meta=meta, confounders=confounders)
+    tests <- pblapply(variables, iter, counts=counts, meta=meta,
+                      confounders=confounders, shrink=shrink, tax=tax)
     tests <- rbindlist(tests)
 
     if (length(variables) > 1) {
