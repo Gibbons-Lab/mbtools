@@ -71,6 +71,9 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
     if (success != 0) {
         stop("Index build failed.")
     }
+    if (!dir.exists(alignments_folder)) {
+        dir.create(alignments_folder)
+    }
     write("Aligning reads to 16S references...", file="")
     successes <- pbsapply(read_files, function(file) {
         base <- strsplit(basename(file), ".fa")[[1]][1]
