@@ -46,7 +46,7 @@ count_nanopore <- function(alignment_files) {
     counts <- pblapply(alignment_files, function(file) {
         bam <- read_bam(file, tags=c("AS", "dv"))
         cn <- count_hits(bam)
-        cn[, "sample" := strsplit(basename(file), ".fa")[[1]][1]]
+        cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
     })
 
@@ -65,12 +65,6 @@ count_nanopore <- function(alignment_files) {
 #' @export
 align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
                            log_file="minimap2.log", threads=4) {
-    write("Building index...", file="")
-    success <- system2("minimap2", args = c("-x", "map-ont", "-d",
-                                            "index.mmi", ref, "2>", log_file))
-    if (success != 0) {
-        stop("Index build failed.")
-    }
     if (!dir.exists(alignments_folder)) {
         dir.create(alignments_folder)
     }
