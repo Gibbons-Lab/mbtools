@@ -46,7 +46,7 @@ count_nanopore <- function(alignment_files) {
     counts <- pblapply(alignment_files, function(file) {
         bam <- read_bam(file, tags=c("AS", "dv"))
         cn <- count_hits(bam)
-        cn[, "sample" := basename(file)]
+        cn[, "sample" := strsplit(basename(file), ".fa")[[1]][1]]
         return(cn)
     })
 
@@ -73,6 +73,7 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
     }
     write("Aligning reads to 16S references...", file="")
     successes <- pbapply(read_files, function(file) {
+        base <- strsplit(basename(file), ".fa")[[1]][1]
         out_path <- file.path(alignments_folder,
                               paste0(basename(file), ".bam"))
         args <- c("-acx", "map-ont", "-t", threads, "index.mmi", file)
