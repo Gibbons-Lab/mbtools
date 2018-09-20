@@ -68,7 +68,7 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
     write("Building index...", file="")
     success <- system2("minimap2", args = c("-x", "map-ont", "-d",
                                             "index.mmi", ref, "2>", log_file))
-    if (!success) {
+    if (success != 0) {
         stop("Index build failed.")
     }
     write("Aligning reads to 16S references...", file="")
@@ -82,7 +82,7 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
         success <- system2("minimap2", args = args)
         return(success)
     })
-    if (!all(successes)) {
+    if (any(successes != 0)) {
         stop("At least one alignment failed!")
     }
 }
