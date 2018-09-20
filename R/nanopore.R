@@ -78,7 +78,7 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
     successes <- pbsapply(read_files, function(file) {
         base <- strsplit(basename(file), ".fa")[[1]][1]
         out_path <- file.path(alignments_folder,
-                              paste0(basename(file), ".bam"))
+                              paste0(base, ".bam"))
         args <- c("-acx", "map-ont", "-t", threads, "index.mmi", file)
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
