@@ -74,7 +74,7 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
     if (!dir.exists(alignments_folder)) {
         dir.create(alignments_folder)
     }
-    write("Aligning reads to 16S references...", file="")
+    cat("Aligning reads to 16S references")
     successes <- lapply(read_files, function(file) {
         cat(".")
         base <- strsplit(basename(file), ".fa")[[1]][1]
