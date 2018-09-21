@@ -8,6 +8,11 @@ filter_counts(counts, abundance = 10, presence = 0.1)
 }
 \arguments{
 \item{counts}{A count matrix with samples as rows and taxa as columns.}
+
+\item{abundance}{Smallest acceptable mean abundance for a taxon.}
+
+\item{presence}{A taxon has to be present in at least this percentage of
+samples to pass the filter.}
 }
 \value{
 Count matrix with some taxa removed.

@@ -2,17 +2,6 @@
 #
 # Apache license 2.0. See LICENSE for more information.
 
-types <- c(i = "as.integer", f = "as.double", A = "as.character",
-           Z = "as.character")
-
-parse_annotations <- function(vec) {
-    mapped <- list()
-    vec <- tstrsplit(as.character(vec), ":")
-    bad <- is.na(vec[[3]])
-    res <- as.list(vec[[3]][!bad])
-    names(res) <- vec[[1]][!bad]
-    return(res)
-}
 
 #' Read alignments from a BAM file.
 #'

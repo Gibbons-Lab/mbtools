@@ -182,6 +182,9 @@ standardize <- function(df) {
 #' Filter low presence taxa from a count matrix.
 #'
 #' @param counts A count matrix with samples as rows and taxa as columns.
+#' @param abundance Smallest acceptable mean abundance for a taxon.
+#' @param presence A taxon has to be present in at least this percentage of
+#'  samples to pass the filter.
 #' @return Count matrix with some taxa removed.
 #' @examples
 #'  NULL
