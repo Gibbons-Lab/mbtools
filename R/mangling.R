@@ -177,3 +177,19 @@ standardize <- function(df) {
 
     return(df)
 }
+
+
+#' Filter low presence taxa from a count matrix.
+#'
+#' @param counts A count matrix with samples as rows and taxa as columns.
+#' @return Count matrix with some taxa removed.
+#' @examples
+#'  NULL
+#'
+#' @export
+filter_counts <- function(counts, abundance=10, presence=0.1) {
+    ms <- colMeans(counts)
+    p <- colMeans(counts > 0)
+    counts <- counts[, ms > abundance & p > presence]
+    return(counts)
+}
