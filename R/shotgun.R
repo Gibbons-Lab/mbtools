@@ -95,7 +95,7 @@ align_bowtie2 <- function(reads, index_basename, threads=1,
         }
         success <- system2("bowtie2", args = args, env = env)
         rate <- NULL
-        if (success) {
+        if (success == 0) {
             rate <- alignment_rate(log_file)
         }
 
