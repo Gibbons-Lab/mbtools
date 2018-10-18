@@ -11,7 +11,7 @@ alignment_rate <- function(log_file) {
         if (nrow(match) > 0) {
             total <- as.numeric(match[, 2])
         }
-        match <- str_match(content, "(\\d+) (\\d+.\\d+%) aligned >1 times")
+        match <- str_match(content, "(\\d+) \\(\\d+.\\d+%\\) aligned >1 times")
         if (nrow(match) > 0) {
             multi <- as.numeric(match[, 2])
         }
