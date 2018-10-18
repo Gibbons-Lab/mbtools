@@ -141,7 +141,7 @@ count_hit <- function(alignments) {
 #' @return A data.table with sequence names, counts and sample name.
 #'
 #' @export
-count_hits <- function(alignment_files, tags=c()) {
+count_hits <- function(alignment_files, tags=character(0)) {
     counts <- pblapply(alignment_files, function(file) {
         bam <- read_bam(file, tags=tags)
         cn <- count_hit(bam)
