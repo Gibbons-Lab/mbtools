@@ -125,7 +125,11 @@ read_bam <- function(path, tags = character(0)) {
 
 count_hit <- function(alignments) {
     aln <- as.data.table(alignments)
-    aln <- aln[order(-mapq, -AS), .SD[1], by="qname"]
+    if ("AS" %in% names(aln)) {
+        aln <- aln[order(-mapq, -AS), .SD[1], by="qname"]
+    } else {
+        aln <- aln[order(-mapq), .SD[1], by="qname"]
+    }
     counts <- aln[, .(counts = .N), by="seqnames"]
     return(counts)
 }
@@ -137,9 +141,9 @@ count_hit <- function(alignments) {
 #' @return A data.table with sequence names, counts and sample name.
 #'
 #' @export
-count_hits <- function(alignment_files) {
+count_hits <- function(alignment_files, tags=c()) {
     counts <- pblapply(alignment_files, function(file) {
-        bam <- read_bam(file, tags=c("AS", "dv"))
+        bam <- read_bam(file, tags=tags)
         cn <- count_hit(bam)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
