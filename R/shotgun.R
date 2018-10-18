@@ -6,12 +6,22 @@
 alignment_rate <- function(log_file) {
     if (file.exists(log_file)) {
         content <- readChar(log_file, file.info(log_file)$size)
-        match <- str_match(content, "(\\d+\\.*\\d*)% overall alignment rate")
+        total <- single <- multi <- NA
+        match <- str_match(content, "(\\d+) reads; of")
         if (nrow(match) > 0) {
-            return(as.numeric(match[ ,2])/100)
+            total <- as.numeric(match[, 2])
+        }
+        match <- str_match(content, "(\\d+) (\\d+.\\d+%) aligned >1 times")
+        if (nrow(match) > 0) {
+            multi <- as.numeric(match[, 2])
+        }
+        match <- str_match(content,
+                           "(\\d+) \\(\\d+.\\d+%\\) aligned exactly 1 time")
+        if (nrow(match) > 0) {
+            single <- as.numeric(match[, 2])
         }
     }
-    return(NULL)
+    return(c(total=total, aligned=single + multi))
 }
 
 
@@ -100,7 +110,8 @@ align_bowtie2 <- function(reads, index_basename, threads=1,
         }
 
         return(data.table(id = read$id, success = success == 0, log = log_file,
-                          alignment = out_path, rate = rate))
+                          alignment = out_path, reads = rate[1],
+                          aligned = rate[2], rate = rate[2]/rate[1]))
     })
 
     return(rbindlist(alignments))
