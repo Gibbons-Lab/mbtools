@@ -48,5 +48,9 @@ find_illumina <- function(directory, dirs_are_runs=FALSE) {
     } else {
         files <- illumina(directory)
     }
+    fi[, forward := file.path(directory, forward)]
+    if ("reverse" %in% names(fi)) {
+        fi[, reverse := file.path(directory, reverse)]
+    }
     return(files)
 }
