@@ -3,45 +3,6 @@
 # Apache license 2.0. See LICENSE for more information.
 
 
-#' Read alignments from a BAM file.
-#'
-#' @param path The file path to the BAM.
-#' @param tags Additional tags to read from the BAM file.
-#' @return The alignments in a GAlignments object.
-#'
-#' @export
-#' @importFrom GenomicAlignments readGAlignments
-#' @importFrom Rsamtools ScanBamParam
-read_bam <- function(path, tags = character(0)) {
-    bam <- readGAlignments(path, param=ScanBamParam(
-        what=c("qname", "mapq"), tag=tags))
-    return(bam)
-}
-
-count_hits <- function(alignments) {
-    aln <- as.data.table(alignments)
-    aln <- aln[order(-mapq, -AS), .SD[1], by="qname"]
-    counts <- aln[, .(counts = .N), by="seqnames"]
-    return(counts)
-}
-
-#' Count nanopore hits to a 16S reference database.
-#'
-#' @param alignment_files Paths to BAM files.
-#' @return A data.table with sequence names, counts and sample name.
-#'
-#' @export
-count_nanopore <- function(alignment_files) {
-    counts <- pblapply(alignment_files, function(file) {
-        bam <- read_bam(file, tags=c("AS", "dv"))
-        cn <- count_hits(bam)
-        cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
-        return(cn)
-    })
-
-    return(rbindlist(counts))
-}
-
 #' Align nanopore reads to a 16S reference database.
 #'
 #' @param read_files Paths to fastq files (can be gzipped).

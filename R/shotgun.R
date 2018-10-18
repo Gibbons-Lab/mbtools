@@ -107,74 +107,43 @@ align_bowtie2 <- function(reads, index_basename, threads=1,
 }
 
 
-#' Quantifies abundances for the bacteria using SLIMM
+#' Read alignments from a BAM file.
 #'
-#' @param alignments A data frame as output by \code{\link{align_bowtie2}}
-#' @param slimm_db Path for the SLIMM data base.
-#' @param reports Path where to save the SLIMM reports. Uses a temporary
-#'  directory by default.
-#' @return Path to the slimm output.
-#' @examples
-#'  NULL
+#' @param path The file path to the BAM.
+#' @param tags Additional tags to read from the BAM file.
+#' @return The alignments in a GAlignments object.
 #'
 #' @export
-run_slimm <- function(alignments, slimm_db, reports = NULL) {
-    if (!all(alignments$success)) {
-        stop("some alignments were not successful!")
-    }
-    if (is.null(reports)) {
-        reports <- tempdir()
-    }
-
-    write("Running SLIMM...", file="")
-    ecodes <- pbsapply(as.character(alignments$alignment), function(al) {
-        ecode <- system2("slimm", args=c("-m", slimm_db, "-o",
-                         file.path(reports, ""), al),
-                         stdout=file.path(reports, "slimm.log"), stderr = NULL)
-        return(ecode)
-    })
-
-    if (any(ecodes != 0)) {
-        stop(paste0("slimm terminated with an error, logs can be found in",
-                    file.path(reports, "slimm.log")))
-    }
-
-    return(reports)
+#' @importFrom GenomicAlignments readGAlignments
+#' @importFrom Rsamtools ScanBamParam
+read_bam <- function(path, tags = character(0)) {
+    bam <- readGAlignments(path, param=ScanBamParam(
+        what=c("qname", "mapq"), tag=tags))
+    return(bam)
 }
 
 
-#' Reads SLIMM output to a data table.
+count_hit <- function(alignments) {
+    aln <- as.data.table(alignments)
+    aln <- aln[order(-mapq, -AS), .SD[1], by="qname"]
+    counts <- aln[, .(counts = .N), by="seqnames"]
+    return(counts)
+}
+
+
+#' Count alignment hits to a reference database.
 #'
-#' @param reports Where the slimm output is stored.
-#' @return A data table counting reads and relative abundances for all found
-#'  bacteria for several taxonomic ranks. It will contain the following columns:
-#'  \itemize{
-#'  \item{id}{id of the sample}
-#'  \item{rank}{the name of the taxonomic rank, for instance "genus"}
-#'  \item{name}{the value of the rank, for instance "Escherichia"}
-#'  \item{reads}{the number of reads in that rank}
-#'  \item{relative}{the relative abundance of the rank in [0,1]}
-#'  \item{coverage}{the coverage of the rank}
-#'  }
-#' @examples
-#'  NULL
+#' @param alignment_files Paths to BAM files.
+#' @return A data.table with sequence names, counts and sample name.
 #'
 #' @export
-#' @importFrom data.table fread rbindlist :=
-read_slimm <- function(reports) {
-    write("Summarizing results", file = "")
-    tsvs <- list.files(reports, pattern = "_reported.tsv", full.names = TRUE)
-    dts <- pblapply(tsvs, function(file) {
-        elements <- strsplit(basename(file), "_")[[1]]
-        id <- elements[1]
-        rank <- elements[2]
-        dt <- fread(file, drop = 1, col.names = c("name", "taxid", "reads",
-                    "relative", "contributors", "coverage"))
-        dt[, "rank" := rank]
-        dt[, "id" := id]
-        dt[, "relative" := reads / sum(reads)]
-        dt
+count_hits <- function(alignment_files) {
+    counts <- pblapply(alignment_files, function(file) {
+        bam <- read_bam(file, tags=c("AS", "dv"))
+        cn <- count_hit(bam)
+        cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
+        return(cn)
     })
 
-    return(rbindlist(dts))
+    return(rbindlist(counts))
 }

@@ -22,12 +22,19 @@ as.matrix.mbquant <- function(x, ...) {
 }
 
 
+#' @importFrom stringr str_replace str_trim
 species_names <- function(taxonomy) {
     ilev <- which(tolower(colnames(taxonomy)) == "species")
     species <- taxonomy[, ilev]
-    genus <- taxonomy[, ilev - 1]
-    species[!is.na(genus)] <- paste(genus[!is.na(genus)],
-                                    species[!is.na(genus)])
+    glev <- which(tolower(colnames(taxonomy)) == "genus")
+    if (length(glev) == 1) {
+        genus <- taxonomy[, glev]
+        # candidates are not really informative
+        gen <- str_replace(genus, "Candidatus", "") %>% str_trim()
+        spec <- str_replace(species[!is.na(gen)],
+                            gen[!is.na(gen)], "") %>% str_trim()
+        species[!is.na(genus)] <- paste(gen[!is.na(genus)], spec)
+    }
     names(species) <- rownames(taxonomy)
     return(species)
 }
