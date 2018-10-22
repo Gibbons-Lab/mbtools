@@ -24,7 +24,8 @@ Imports:
     Hmisc,
     data.table,
     yaml,
-    magrittr
+    magrittr,
+    futile.logger
 License: Apache License (== 2.0)
 URL: https://github.com/Gibbons-Lab/mbtools
 BugReports: https://github.com/Gibbons-Lab/mbtools/issues

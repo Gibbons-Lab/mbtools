@@ -21,14 +21,14 @@ download_index <- function(where="./bowtie2", genome_file=NA) {
 
     if (is.na(genome_file)) {
         genome_file <- HS_INDEX
-        cat("No genome file given, downloading hg19...\n")
+        flog.info("No genome file given, downloading hg19...")
     }
     base <- basename(genome_file)
     loc <- file.path(where, base)
     download.file(HS_GENOME, loc)
     fileext <- strsplit(base, "\\.")[[1]]
     if (fileext[2] == "zip") {
-        cat("Extracting...\n")
+        flog.info("Extracting %s...", base)
         unzip(loc, exdir = fileext[1])
     }
 }
@@ -56,7 +56,7 @@ remove_organism <- function(reads, index=NA, out, organism = "hg19",
     paired <- length(reads) == 2 & !any(is.na(reads))
     bowtie2_index <- file.path(where, organism)
 
-    cat("Finding human sequences...")
+    flog.info("Finding sequences...")
     if (!paired) {
         system2("bowtie2", c("-x", bowtie2_index, "-U", reads[1],
                              "2>", file.path(out, "bowtie2.log"), "|",

@@ -4,7 +4,7 @@
 \alias{count_hits}
 \title{Count alignment hits to a reference database.}
 \usage{
-count_hits(alignment_files)
+count_hits(alignment_files, tags = character(0))
 }
 \arguments{
 \item{alignment_files}{Paths to BAM files.}

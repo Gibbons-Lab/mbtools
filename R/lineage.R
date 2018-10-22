@@ -24,7 +24,7 @@ run_slimm <- function(alignments, slimm_db, reports = NULL) {
         reports <- tempdir()
     }
 
-    write("Running SLIMM...", file="")
+    flog.info("Running SLIMM...")
     ecodes <- pbsapply(as.character(alignments$alignment), function(al) {
         ecode <- system2("slimm", args=c("-m", slimm_db, "-o",
                          file.path(reports, ""), al),
@@ -60,7 +60,7 @@ run_slimm <- function(alignments, slimm_db, reports = NULL) {
 #' @export
 #' @importFrom data.table fread rbindlist :=
 read_slimm <- function(reports) {
-    write("Summarizing results", file = "")
+    flog.info("Summarizing results")
     tsvs <- list.files(reports, pattern = "_reported.tsv", full.names = TRUE)
     dts <- pblapply(tsvs, function(file) {
         elements <- strsplit(basename(file), "_")[[1]]

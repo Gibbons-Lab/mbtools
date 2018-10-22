@@ -2,12 +2,22 @@
 % Please edit documentation in R/refdb.R
 \name{build_lineage}
 \alias{build_lineage}
-\title{Build the lineage from a SILVA path string.
-importFrom stringr str_split_fixed}
+\title{Build the lineage from a SILVA path string.}
 \usage{
 build_lineage(silva_path, taxid, taxonomy)
 }
+\arguments{
+\item{silva_path}{A string containing a taxonomy path with taxa separated
+by semicolons.}
+
+\item{taxid}{The overall taxid for the path/taxon.}
+
+\item{taxonomy}{The SILVA taxonomy as data table.}
+
+\item{return}{A data table containing the individual taxa ranks with ids.
+
+importFrom stringr str_split_fixed}
+}
 \description{
 Build the lineage from a SILVA path string.
-importFrom stringr str_split_fixed
 }

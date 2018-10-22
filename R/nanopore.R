@@ -18,9 +18,9 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
     if (!dir.exists(alignments_folder)) {
         dir.create(alignments_folder)
     }
-    cat("Aligning reads to 16S references")
+    flog.info("Aligning reads to 16S references")
     successes <- lapply(read_files, function(file) {
-        cat(".")
+        flog.info("Aligning %s...", file)
         base <- strsplit(basename(file), ".fa")[[1]][1]
         out_path <- file.path(alignments_folder,
                               paste0(base, ".bam"))
@@ -30,7 +30,6 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
         success <- system2("minimap2", args = args)
         return(success)
     })
-    cat("\n")
     if (any(successes != 0)) {
         stop("At least one alignment failed!")
     }

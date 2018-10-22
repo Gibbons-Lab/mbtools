@@ -9,9 +9,13 @@ silva_build_taxonomy(taxmap, taxonomy)
 \arguments{
 \item{taxmap}{The SILVA taxonomy map (`taxmap_slv_*.txt`).}
 
-\item{taxonomy}{The SILVA taxonomy}
+\item{taxonomy}{The SILVA taxonomy.}
 
 \item{importFrom}{data.table rbind.data.table fread unique.data.table}
+}
+\value{
+The SILVA lineage mapping every taxon to its upper ranks up to the
+ root.
 }
 \description{
 Build the lineages for the entire SILVA database.

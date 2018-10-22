@@ -65,7 +65,7 @@ align_bowtie2 <- function(reads, index_basename, threads=1,
     }
     paired <- "reverse" %in% names(reads)
 
-    write("Aligning reads to microbial genomes...", file="")
+    flog.info("Aligning %d samples...", nrow(reads))
     alignments <- pbapply(reads, 1, function(read) {
         read <- as.list(read)
         log_file <- file.path(alignment_folder, paste0(read$id, ".log"))
