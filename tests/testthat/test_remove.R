@@ -1,4 +1,5 @@
 context("contamination removal")
+flog.threshold(WARN)
 
 test_that("index files can be downloaded", {
     with_mock(
@@ -28,8 +29,9 @@ test_that("sequences can be removed", {
     dir.create(file.path(d, "nh"), showWarnings = FALSE)
 
     index_folder <- system.file("extdata/indices", package = "mbtools")
-    counts <- remove_organism(reads, index, file.path(d, "nh"),
-                              organism = "lambda_virus", where = index_folder)
+    counts <- remove_reference(reads, index, file.path(d, "nh"),
+                               organism = "lambda_virus", where = index_folder)
     expect_equal(counts, c(reads = 100, removed = 0))
-
 })
+
+flog.threshold(INFO)

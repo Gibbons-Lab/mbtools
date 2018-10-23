@@ -49,6 +49,8 @@ silva_build_taxonomy <- function(taxmap, taxonomy) {
 
 ENSEMBL_CDNA <- paste0("ftp://ftp.ensemblgenomes.org/pub/bacteria/current/",
                        "fasta/%s/%s/cdna/%s.%s.cdna.all.fa.gz")
+ENSEMBL_PROTEIN <- paste0("ftp://ftp.ensemblgenomes.org/pub/bacteria/current/",
+                          "fasta/%s/%s/pep/%s.%s.pep.all.fa.gz")
 
 ens_title <- function(name) {
     return(paste0(toupper(substr(name, 1, 1)), substr(name, 2, nchar(name))))
@@ -64,14 +66,22 @@ ens_assembly <- function(assembly) {
 }
 
 #' Helper function to download ENSEMBL transcripts (cdna).
-#' @importFrom stringr str_to_title
-download_ensembl_cdna <- function(out="transcripts", collection,
-                                  name, assembly) {
+#' @importFrom stringr str_to_title str_split_fixed
+download_ensembl <- function(out="transcripts", what="cdna", collection,
+                             name, assembly) {
     collection <- str_split_fixed(collection, "_core", n=2)[1]
     assembly <- ens_assembly(assembly)
-    url <- sprintf(ENSEMBL_CDNA, collection, name,
-                   ens_title(name), assembly)
-    outfile <- file.path(out, paste0(name, ".", assembly, ".cdna.all.fa.gz"))
+    outfile <- file.path(out, paste0(name, ".", assembly))
+    if (what == "cdna") {
+        url <- sprintf(ENSEMBL_CDNA, collection, name,
+                       ens_title(name), assembly)
+        outfile <- paste0(outfile, ".cdna.all.fa.gz")
+    } else {
+        url <- sprintf(ENSEMBL_PROTEIN, collection, name,
+                       ens_title(name), assembly)
+        outfile <- paste0(outfile, ".pep.all.fa.gz")
+    }
+
     ret <- 0
     if (!file.exists(outfile)) {
         ret <- tryCatch(download.file(url, outfile, quiet=TRUE),
@@ -90,12 +100,14 @@ download_ensembl_cdna <- function(out="transcripts", collection,
 #'
 #' @param out Where to store the downloaded transcript files.
 #' @param np How many parallel download processes to use.
+#' @param what Download in which format. Can be "cdna" or "protein" to download
+#'  reverse transcribed DNA (cDNA) or protein sequences.
 #' @param remove_redundant Whether to remove alternative assemblies for the
 #'  same strain.
 #' @return A data table containing the downloaded species and assemblies.
 #' @importFrom data.table setkey
-download_bacterial_transcripts <- function(out="transcripts", np=8,
-                                          remove_redundant=TRUE) {
+download_bacterial_transcripts <- function(out="transcripts", what="cdna",
+                                           np=8, remove_redundant=TRUE) {
     dir.create(out, showWarnings=FALSE)
     db <- fread(paste0("ftp://ftp.ensemblgenomes.org/pub/bacteria/current/",
                        "species_EnsemblBacteria.txt"),
@@ -107,18 +119,24 @@ download_bacterial_transcripts <- function(out="transcripts", np=8,
                             "core_db", "species_id", "trash"))
     if (remove_redundant) {
         db <- db[order(-genebuild), .SD[1], by="taxonomy_id"]
-        flog.info("Downloading %d transcript files.", nrow(db))
+        flog.info("Downloading %d %s transcript files.", nrow(db), what)
     }
     downloaded <- pbapply(db, 1, function(row) {
-        download_ensembl_cdna(out, row["core_db"], row["species"],
-                              row["assembly"])
+        download_ensembl(out, what, row["core_db"], row["species"],
+                         row["assembly"])
     }, cl=np)
     setkey(db, "species")
     downloaded <- as.character(downloaded[!is.na(downloaded)])
-    flog.info("Downloaded %d transcript databases.", length(downloaded))
+    flog.info("Downloaded %d %s transcript databases.",
+              length(downloaded), what)
     downloaded <- db[downloaded]
-    downloaded[, "file" := paste0(species, ".", ens_assembly(assembly),
-                                  ".cdna.all.fa.gz")]
+    if (what == "cdna") {
+        downloaded[, "file" := paste0(species, ".", ens_assembly(assembly),
+                                      ".cdna.all.fa.gz")]
+    } else {
+        downloaded[, "file" := paste0(species, ".", ens_assembly(assembly),
+                                      ".pep.all.fa.gz")]
+    }
     return(downloaded)
 }
 
