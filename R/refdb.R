@@ -148,17 +148,26 @@ download_bacterial_transcripts <- function(out="transcripts", what="cdna",
 #' @param out The filename for the DB. Will be compressed and saved in the
 #'  transcript folder.
 #' @return The transcript counts for each file.
+#' @importFrom Biostrings readAAStringSet writeXStringSet
 merge_transcripts <- function(transcripts_files, transcripts_folder,
-                              out="ensembl_transcripts.fa.gz") {
-    flog.info("Merging %d transcript files from %s.",
-              nrow(transcripts_files), transcripts_folder)
+                              what="cdna", out="ensembl_transcripts.fa.gz") {
+    flog.info("Merging %d %s transcript files from %s.",
+              nrow(transcripts_files), what, transcripts_folder)
+    if (what == "cdna") {
+        reader <- readDNAStringSet
+    } else {
+        reader <- readAAStringSet
+    }
+    out <- file.path(transcripts_folder, out)
+    if (file.exists(out)) {
+        flog.info("Overwriting output %s with new data.", out)
+        file.remove(out)
+    }
     counts <- pbapply(transcripts_files, 1, function(row) {
-        fasta <- readFasta(file.path(transcripts_folder, row["file"]))
-        new_ids <- BStringSet(paste0("TAX", row["taxonomy_id"],
-                                     "_", id(fasta)))
-        writeFasta(ShortRead(sread(fasta), new_ids),
-                   file.path(transcripts_folder, out),
-                   mode="a", compress=TRUE)
+        fasta <- reader(file.path(transcripts_folder, row["file"]))
+        names(fasta) <- paste0("TAX", as.integer(row["taxonomy_id"]), "_",
+                               names(fasta))
+        writeXStringSet(fasta, out, append=TRUE, compress=TRUE)
         length(fasta)
     })
 
