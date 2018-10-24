@@ -15,7 +15,8 @@ addons:
 # Don't build vignettes
 before_install:
   - rm -rf vignettes
-  - curl -L https://github.com/lh3/minimap2/releases/download/v2.13/minimap2-2.13_x64-linux.tar.bz2 | tar -jxvf - /usr/bin/minimap2
+  - curl -L https://github.com/lh3/minimap2/releases/download/v2.13/minimap2-2.13_x64-linux.tar.bz2 | tar -jxvf - ./minimap2-2.13_x64-linux/minimap2
+  - cp minimap2 /usr/bin/minimap2
 
 after_success:
   - Rscript -e 'covr::codecov()'
