@@ -4,7 +4,7 @@
 \alias{remove_reference}
 \title{Removes sequence that map to a given reference.}
 \usage{
-remove_reference(reads, out, reference, index = NA, keep_bam = FALSE)
+remove_reference(reads, out, reference, index = NA, alignments = NA)
 }
 \arguments{
 \item{reads}{A character vector containing the read files in fastq format.
@@ -18,7 +18,7 @@ sequences to filter. Can be a genome or transcripts.}
 \item{index}{Additional barcode file that should be filtered as well. Can
 be used to filter multiplexed samples.}
 
-\item{keep_bam}{Whether to keep the alignment. If not FALSE should be a
+\item{alignments}{Whether to keep the alignment. If not NA should be a
 string indicating the path to the output bam file.}
 }
 \value{

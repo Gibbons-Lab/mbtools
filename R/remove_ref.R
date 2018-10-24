@@ -20,7 +20,7 @@
 #'  be used to filter multiplexed samples.
 #' @param reference Path to a fasta file (can be gzipped) that contains the
 #'  sequences to filter. Can be a genome or transcripts.
-#' @param keep_bam Whether to keep the alignment. If not FALSE should be a
+#' @param alignments Whether to keep the alignment. If not NA should be a
 #'  string indicating the path to the output bam file.
 #' @return A numeric vector with two entries. The number of sequences after
 #'  filtering (non-mapped), and the number of removed sequences (mapped).
@@ -28,10 +28,9 @@
 #'  NULL
 #'
 #' @export
-#' @importFrom GenomicAlignments readGAlignments seqnames
-remove_reference <- function(reads, out, reference, index=NA, keep_bam=FALSE) {
+remove_reference <- function(reads, out, reference, index=NA, alignments=NA) {
     paired <- length(reads) == 2 & !any(is.na(reads))
-    if (keep_bam == FALSE) {
+    if (is.na(alignments)) {
         alignment_file <- file.path(out, "filtered.bam")
     } else {
         flog.info("Saving alignment in %s.", keep_bam)
@@ -51,9 +50,9 @@ remove_reference <- function(reads, out, reference, index=NA, keep_bam=FALSE) {
     }
 
     flog.info("Getting hits and saving filtered reads to %s.", out)
-    hits <- readGAlignments(alignment_file, use.names = TRUE)
-    ref_ids <- unique(names(hits))
-    if (keep_bam == FALSE) {
+    hits <- as.data.table(read_bam(alignment_file))
+    ref_ids <- unique(hits$qname)
+    if (is.na(alignments)) {
         unlink(alignment_file)
     }
     new_files <- file.path(out, paste0(basename(reads), ".gz"))
@@ -76,5 +75,36 @@ remove_reference <- function(reads, out, reference, index=NA, keep_bam=FALSE) {
     })[, 1]
     flog.info("%d/%d reads passed filtering.", counts[2], counts[1])
 
-    return(c(reads = counts[1], removed = counts[1] - counts[2]))
+    return(list(reads = counts[1],
+                removed = counts[1] - counts[2],
+                counts = count_hit(hits)))
+}
+
+
+#' Filter a set of reference sequences from the data set.seed
+#'
+#' This will also return a data.table containing the counts of reference
+#' sequences for each sample.
+#'
+#' @param reads A data frame or data table containing the read files. Can be
+#'  generated with \link{\code{find_illumina}} for instance.
+#' @param out The folder where to store filtered reads. Should be empty as
+#'  files **will be overwritten**.
+#' @param reference Fasta file (can be gzipped) containing the reference
+#'  DNA sequences.
+#' @param alignments Optional folder in which to store the alignments.
+filter_reference <- function(reads, out, reference, alignments = NA) {
+    paired <- "reverse" %in% names(reads)
+    counts <- pbapply(reads, 1, function(row) {
+        r <- if (paired) row[c("forward", "reverse")] else row["forward"]
+        if (is.na(alignments)) {
+            aln <- NA
+        } else {
+            aln <- file.path(alignments, paste0(row["id"], "_filter.bam"))
+        }
+        res <- remove_reference(r, out, reference, alignments = aln)
+        res$counts[, "id" := row["id"]]
+        return(res$counts)
+    })
+    return(rbindlist(counts))
 }

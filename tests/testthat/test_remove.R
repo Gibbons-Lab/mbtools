@@ -1,7 +1,7 @@
 context("contamination removal")
 flog.threshold(WARN)
 
-test_that("sequences can be removed", {
+make_random_data <- function() {
     d <- tempdir()
     seqs <- replicate(100,
         paste(sample(c("A", "C", "G", "T"), 100, replace = TRUE),
@@ -16,29 +16,60 @@ test_that("sequences can be removed", {
     writeFastq(sr, file.path(d, "r.fastq.gz"))
     writeFastq(sr, file.path(d, "i.fastq.gz"))
 
-    reads <- file.path(d, c("f.fastq.gz", "r.fastq.gz"))
-    index <- file.path(d, "i.fastq.gz")
-    dir.create(file.path(d, "nh"), showWarnings = FALSE)
-
     index_folder <- system.file("extdata/genomes", package = "mbtools")
-    counts <- remove_reference(reads, out = file.path(d, "filtered"),
-                reference = file.path(index_folder, "phiX.fa.gz"),
-                index = index)
-    expect_equal(counts, c(reads = 100, removed = 0))
-
-    counts <- remove_reference(reads[1], out = file.path(d, "filtered"),
-                reference = file.path(index_folder, "phiX.fa.gz"))
-    expect_equal(counts, c(reads = 100, removed = 0))
-
     phix <- readFasta(file.path(index_folder, "phiX.fa.gz"))
     phix <- substr(as.character(sread(phix)[1]), 1, 100)
     sr <- ShortReadQ(sread = DNAStringSet(c(seqs[1:99], phix)),
                      quality = BStringSet(quals),
                      id = BStringSet(paste0("S", 1:100)))
-    writeFastq(sr, file.path(d, "f2.fastq.gz"))
-    counts <- remove_reference(file.path(d, "f2.fastq.gz"), out = file.path(d, "filtered"),
+    f2 <- file.path(d, "f2.fastq.gz")
+    writeFastq(sr, f2)
+
+    dset <- data.table(forward=file.path(d, c("f.fastq.gz", "f2.fastq.gz")),
+                       reverse=file.path(d, c("r.fastq.gz", "f2.fastq.gz")),
+                       index=file.path(d, c("f.fastq.gz", "f2.fastq.gz")),
+                       id=c("random", "single"))
+    return(dset)
+}
+
+test_that("sequences can be removed", {
+    data <- make_random_data()
+    d <- tempdir()
+    dir.create(file.path(d, "out"), showWarnings = FALSE)
+    outpath <- file.path(d, "out")
+
+    index_folder <- system.file("extdata/genomes", package = "mbtools")
+    reads <- as.character(data[1, .(forward, reverse)])
+    index <- data[1, index]
+    counts <- remove_reference(reads, out = outpath,
+                reference = file.path(index_folder, "phiX.fa.gz"),
+                index = index)
+    expect_equal(counts[c("reads", "removed")], list(reads = 100, removed = 0))
+    expect_equal(nrow(counts$counts), 0)
+
+    counts <- remove_reference(reads[1], out = outpath,
                 reference = file.path(index_folder, "phiX.fa.gz"))
-    expect_equal(counts, c(reads = 100, removed = 1))
+    expect_equal(counts[c("reads", "removed")], list(reads = 100, removed = 0))
+    expect_equal(nrow(counts$counts), 0)
+
+    reads <- as.character(data[2, .(forward, reverse)])
+    counts <- remove_reference(reads, out = outpath,
+                reference = file.path(index_folder, "phiX.fa.gz"))
+    expect_equal(counts[c("reads", "removed")], list(reads = 100, removed = 1))
+    expect_equal(counts$counts[, sum(counts)], 1)
 })
 
+test_that("filtering works on full data sets", {
+    data <- make_random_data()
+    d <- tempdir()
+    dir.create(file.path(d, "out"), showWarnings = FALSE)
+    outpath <- file.path(d, "out")
+    index_folder <- system.file("extdata/genomes", package = "mbtools")
+
+    expect_output(counts <- filter_reference(data, out = outpath,
+                        reference = file.path(index_folder, "phiX.fa.gz")),
+                  "100% elapsed")
+    expect_equal(counts[, sum(counts)], 1)
+    expect_equal(counts[, uniqueN(id)], 1)
+})
 flog.threshold(INFO)
