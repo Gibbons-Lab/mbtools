@@ -194,25 +194,21 @@ parse_ensembl_id <- function(id) {
 #' Annotate diamond database hits with transcript info.
 #'
 #' @param matches Path to diamond output (*.m8).
-#' @param reference Path to the reference sequences (*.fa.gz).
 #' @return The annotated hits as data table.
+#' @importFrom Biostrings fasta.index
 #' @export
-annotate_contigs <- function(matches, reference) {
+annotate_contigs <- function(matches) {
     flog.info("Reading contig-reference alignments.")
     align <- fread(matches, header=FALSE)
     names(align) <- c("query", "reference", "percent_match", "alignment_length",
                       "num_mismatches", "num_gap_open", "query_start",
                       "query_end", "ref_start", "ref_end", "evalue",
                       "bit_score")
-    flog.info("Reading reference database (%.2f GB)...",
-              file.info(reference)$size/(1024^3))
-    if (grepl("proteins", reference)) {
-        ids <- names(readAAStringSet(reference))
-    } else {
-        ids <- names(readDNAStringSet(reference))
-    }
-    flog.info("Parsing annotations for %d sequences...")
+    flog.info("Getting unique reference hits...")
+    ids <- align[, unique(reference)]
+    flog.info("Parsing annotations for %d sequences...", length(ids))
     anns <- parse_ensembl_id(ids)
+    flog.info("Merging hits with annotations...")
     merged <- anns[align, by=c(id="reference")]
     return(merged)
 }
