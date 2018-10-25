@@ -148,7 +148,7 @@ download_bacterial_transcripts <- function(out="transcripts", what="cdna",
 #' @param out The filename for the DB. Will be compressed and saved in the
 #'  transcript folder.
 #' @return The transcript counts for each file.
-#' @importFrom Biostrings readAAStringSet writeXStringSet
+#' @importFrom Biostrings readAAStringSet readDNAStringSet writeXStringSet
 merge_transcripts <- function(transcripts_files, transcripts_folder,
                               what="cdna", out="ensembl_transcripts.fa.gz") {
     flog.info("Merging %d %s transcript files from %s.",
@@ -172,4 +172,47 @@ merge_transcripts <- function(transcripts_files, transcripts_folder,
     })
 
     return(counts)
+}
+
+ENSID <- paste0("TAX(\\d+)\\_(\\w+) (\\w+) supercontig:(.+) gene:(.+) ",
+                "transcript:(.+) gene_biotype:(.+) transcript_biotype:(.+) ",
+                "description:(.+)")
+
+#' Parse annotations from an ENSEMBL id
+#'
+#' @param id The id to be parsed.
+#' @param A data table containing the transcript id with annotations.
+parse_ensembl_id <- function(id) {
+    res <- as.data.table(str_match(id, ENSID)[, 2:10])
+    names(res) <- c("taxid", "seqid", "sequence_type", "supercontig", "gene",
+                    "transcript", "gene_biotype", "transcript_biotype",
+                    "description")
+    res[, "id" := paste0("TAX", as.integer(taxid), "_", seqid)]
+    return(res)
+}
+
+#' Annotate diamond database hits with transcript info.
+#'
+#' @param matches Path to diamond output (*.m8).
+#' @param reference Path to the reference sequences (*.fa.gz).
+#' @return The annotated hits as data table.
+#' @export
+annotate_contigs <- function(matches, reference) {
+    flog.info("Reading contig-reference alignments.")
+    align <- fread(matches, header=FALSE)
+    names(align) <- c("query", "reference", "percent_match", "alignment_length",
+                      "num_mismatches", "num_gap_open", "query_start",
+                      "query_end", "ref_start", "ref_end", "evalue",
+                      "bit_score")
+    flog.info("Reading reference database (%.2f GB)...",
+              file.info(reference)$size/(1024^3))
+    if (grepl("proteins", reference)) {
+        ids <- names(readAAStringSet(reference))
+    } else {
+        ids <- names(readDNAStringSet(reference))
+    }
+    flog.info("Parsing annotations for %d sequences...")
+    anns <- parse_ensembl_id(ids)
+    merged <- anns[align, by=c(id="reference")]
+    return(merged)
 }

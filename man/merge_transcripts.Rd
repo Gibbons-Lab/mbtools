@@ -4,7 +4,7 @@
 \alias{merge_transcripts}
 \title{Merge transcripts into a single database}
 \usage{
-merge_transcripts(transcripts_files, transcripts_folder,
+merge_transcripts(transcripts_files, transcripts_folder, what = "cdna",
   out = "ensembl_transcripts.fa.gz")
 }
 \arguments{
