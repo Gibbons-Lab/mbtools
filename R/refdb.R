@@ -174,9 +174,9 @@ merge_transcripts <- function(transcripts_files, transcripts_folder,
     return(counts)
 }
 
-ENSID <- paste0("TAX(\\d+)\\_(\\w+) (\\w+) supercontig:(.+) gene:(.+) ",
+ENSID <- paste0("TAX(\\d+)\\_(\\w+) (\\w+) \\w+:(.+) gene:(.+) ",
                 "transcript:(.+) gene_biotype:(.+) transcript_biotype:(.+) ",
-                "description:(.+)")
+                "(?:gene_symbol:)*(.*)\\s*description:(.+)")
 
 #' Parse annotations from an ENSEMBL id
 #'
@@ -184,31 +184,40 @@ ENSID <- paste0("TAX(\\d+)\\_(\\w+) (\\w+) supercontig:(.+) gene:(.+) ",
 #' @param A data table containing the transcript id with annotations.
 parse_ensembl_id <- function(id) {
     res <- as.data.table(str_match(id, ENSID)[, 2:10])
-    names(res) <- c("taxid", "seqid", "sequence_type", "supercontig", "gene",
+    names(res) <- c("taxid", "seqid", "sequence_type", "contig", "gene",
                     "transcript", "gene_biotype", "transcript_biotype",
-                    "description")
+                    "gene_symbol", "description")
     res[, "id" := paste0("TAX", as.integer(taxid), "_", seqid)]
+    res[gene_symbol == "", gene_symbol := NA]
     return(res)
 }
 
 #' Annotate diamond database hits with transcript info.
 #'
 #' @param matches Path to diamond output (*.m8).
+#' @param reference The reference fasta. Optional, required if matches have
+#'  truncated ids.
 #' @return The annotated hits as data table.
 #' @importFrom Biostrings fasta.index
 #' @export
-annotate_contigs <- function(matches) {
+annotate_contigs <- function(matches, reference=NA) {
     flog.info("Reading contig-reference alignments.")
     align <- fread(matches, header=FALSE)
     names(align) <- c("query", "reference", "percent_match", "alignment_length",
                       "num_mismatches", "num_gap_open", "query_start",
                       "query_end", "ref_start", "ref_end", "evalue",
                       "bit_score")
-    flog.info("Getting unique reference hits...")
-    ids <- align[, unique(reference)]
+    if (is.na(reference)) {
+        flog.info("Getting unique reference hits...")
+        ids <- align[, unique(reference)]
+    } else {
+        flog.info("Reading reference database (%.2f GiB).",
+                  file.info(reference)$size/(1024^3))
+        ids <- fasta.index(reference)$desc
+    }
     flog.info("Parsing annotations for %d sequences...", length(ids))
     anns <- parse_ensembl_id(ids)
     flog.info("Merging hits with annotations...")
-    merged <- anns[align, by=c(id="reference")]
+    merged <- anns[align, on=c(id="reference")]
     return(merged)
 }

@@ -150,16 +150,18 @@ count_hit <- function(alignments) {
 #' Count alignment hits to a reference database.
 #'
 #' @param alignment_files Paths to BAM files.
+#' @param tags Additional tags to read in the BAM file.
+#' @param threads Number of parallel processes.
 #' @return A data.table with sequence names, counts and sample name.
 #'
 #' @export
-count_hits <- function(alignment_files, tags=character(0)) {
+count_hits <- function(alignment_files, tags=character(0), threads=1) {
     counts <- pblapply(alignment_files, function(file) {
         bam <- read_bam(file, tags=tags)
         cn <- count_hit(bam)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
-    })
+    }, cl=threads)
 
     return(rbindlist(counts))
 }
