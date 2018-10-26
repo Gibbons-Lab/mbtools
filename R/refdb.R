@@ -183,7 +183,7 @@ ENSID <- paste0("TAX(\\d+)\\_(\\w+) (\\w+) \\w+:(.+) gene:(.+) ",
 #' @param id The id to be parsed.
 #' @param A data table containing the transcript id with annotations.
 parse_ensembl_id <- function(id) {
-    res <- as.data.table(str_match(id, ENSID)[, 2:10])
+    res <- as.data.table(str_match(id, ENSID)[, 2:11])
     names(res) <- c("taxid", "seqid", "sequence_type", "contig", "gene",
                     "transcript", "gene_biotype", "transcript_biotype",
                     "gene_symbol", "description")
