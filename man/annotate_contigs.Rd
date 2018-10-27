@@ -4,12 +4,13 @@
 \alias{annotate_contigs}
 \title{Annotate diamond database hits with transcript info.}
 \usage{
-annotate_contigs(matches, reference)
+annotate_contigs(matches, reference = NA)
 }
 \arguments{
 \item{matches}{Path to diamond output (*.m8).}
 
-\item{reference}{Path to the reference sequences (*.fa.gz).}
+\item{reference}{The reference fasta. Optional, required if matches have
+truncated ids.}
 }
 \value{
 The annotated hits as data table.
