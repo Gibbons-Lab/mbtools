@@ -174,9 +174,10 @@ merge_transcripts <- function(transcripts_files, transcripts_folder,
     return(counts)
 }
 
-ENSID <- paste0("TAX(\\d+)\\_(\\w+) (\\w+) \\w+:(.+) gene:(.+) ",
-                "transcript:(.+) gene_biotype:(.+) transcript_biotype:(.+) ",
-                "(?:gene_symbol:)*(.*)\\s*description:(.+)")
+ENSID <- paste0("TAX(\\d+)\\_(\\w+) (\\w+) \\w+:(\\w+) gene:(\\w+) ",
+                "transcript:(\\w+) gene_biotype:(\\w+) ",
+                "transcript_biotype:(\\w+) (?:gene_symbol:)*(\\w*)\\s*",
+                "description:(.+)")
 
 #' Parse annotations from an ENSEMBL id
 #'
