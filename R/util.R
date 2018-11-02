@@ -52,3 +52,22 @@ orlitsky <- function(counts) {
     }
     return(probs / sum(c(probs, new)))
 }
+
+
+#' Read a blast hit/alignment file.
+#'
+#' @param matches The file containing the matches like it is returned by
+#'  blast or diamond.
+#' @return The hits as a data table.
+#' @export
+read_blast <- function(matches) {
+    flog.info("Reading blast file %s.", matches)
+    align <- fread(matches, header = FALSE)
+    names(align) <- c("query", "reference", "percent_match", "alignment_length",
+                      "num_mismatches", "num_gap_open", "query_start",
+                      "query_end", "ref_start", "ref_end", "evalue",
+                      "bit_score")
+    flog.info("Read %d hits in total (max E=%g).",
+              nrow(align), align[, max(evalue)])
+    return(align)
+}
