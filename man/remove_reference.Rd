@@ -4,23 +4,22 @@
 \alias{remove_reference}
 \title{Removes sequence that map to a given reference.}
 \usage{
-remove_reference(reads, index = NA, out, organism = "hg19",
-  where = "./bowtie2", keep_bam = FALSE)
+remove_reference(reads, out, reference, index = NA, alignments = NA)
 }
 \arguments{
 \item{reads}{A character vector containing the read files in fastq format.
 Can be generated using \link{\code{find_illumina}}.}
 
-\item{index}{Additional barcode file that should be filtered as well.}
-
 \item{out}{A folder to which to save the filtered fastq files.}
 
-\item{where}{Where to find the previously generated index files.}
+\item{reference}{Path to a fasta file (can be gzipped) that contains the
+sequences to filter. Can be a genome or transcripts.}
 
-\item{keep_bam}{Whether to keep the alignment. If not FALSE should be a
+\item{index}{Additional barcode file that should be filtered as well. Can
+be used to filter multiplexed samples.}
+
+\item{alignments}{Whether to keep the alignment. If not NA should be a
 string indicating the path to the output bam file.}
-
-\item{reference}{The base name for the index. Defaults to human (hg19).}
 }
 \value{
 A numeric vector with two entries. The number of sequences after
@@ -33,8 +32,8 @@ This can be used for a variety of applications the most common ones are:
   \item removing ribosomal sequences
   \item removing contaminants
 }
-This function uses bowtie2 to align and identify hits.
-This requires a pre-built index, for instance by using \link{download_index}.
+This function uses minimap2 to align and identify hits and does not require
+a prebuilt index.
 }
 \examples{
  NULL

@@ -137,6 +137,9 @@ read_bam <- function(path, tags = character(0)) {
 
 count_hit <- function(alignments) {
     aln <- as.data.table(alignments)
+    if (nrow(aln) == 0) {
+        return(data.table(seqnames=character(), counts=integer()))
+    }
     if ("AS" %in% names(aln)) {
         aln <- aln[order(-mapq, -AS), .SD[1], by="qname"]
     } else {
