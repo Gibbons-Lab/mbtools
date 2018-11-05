@@ -55,14 +55,14 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA) {
     if (is.na(alignments)) {
         unlink(alignment_file)
     }
-    new_files <- file.path(out, paste0(basename(reads), ".gz"))
+    new_files <- file.path(out, basename(reads))
     dir.create(out, showWarnings = FALSE)
 
     streams <- reads
     if (!is.na(index)) {
         streams <- append(streams, index)
         new_files <- append(new_files,
-                            file.path(out, paste0(basename(index), ".gz")))
+                            file.path(out, basename(index)))
     }
 
     counts <- sapply(1:length(streams), function(i) {
@@ -104,6 +104,9 @@ filter_reference <- function(reads, out, reference, alignments = NA) {
         }
         res <- remove_reference(r, out, reference, alignments = aln)
         res$counts[, "id" := row["id"]]
+        if (!is.na(row["lane"])) {
+            res$counts[, "lane" := row["lane"]]
+        }
         return(res$counts)
     })
     return(rbindlist(counts))
