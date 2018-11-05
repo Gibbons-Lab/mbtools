@@ -4,7 +4,7 @@
 \alias{filter_reference}
 \title{Filter a set of reference sequences from the data set.seed}
 \usage{
-filter_reference(reads, out, reference, alignments = NA)
+filter_reference(reads, out, reference, alignments = NA, threads = 3)
 }
 \arguments{
 \item{reads}{A data frame or data table containing the read files. Can be
@@ -17,6 +17,8 @@ files **will be overwritten**.}
 DNA sequences.}
 
 \item{alignments}{Optional folder in which to store the alignments.}
+
+\item{threads}{How many threads to use for mapping.}
 }
 \description{
 This will also return a data.table containing the counts of reference

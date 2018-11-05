@@ -4,7 +4,8 @@
 \alias{remove_reference}
 \title{Removes sequence that map to a given reference.}
 \usage{
-remove_reference(reads, out, reference, index = NA, alignments = NA)
+remove_reference(reads, out, reference, index = NA, alignments = NA,
+  threads = 3)
 }
 \arguments{
 \item{reads}{A character vector containing the read files in fastq format.
@@ -20,6 +21,8 @@ be used to filter multiplexed samples.}
 
 \item{alignments}{Whether to keep the alignment. If not NA should be a
 string indicating the path to the output bam file.}
+
+\item{threads}{How many threads to use for mapping.}
 }
 \value{
 A numeric vector with two entries. The number of sequences after

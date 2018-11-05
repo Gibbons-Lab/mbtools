@@ -22,13 +22,15 @@
 #'  sequences to filter. Can be a genome or transcripts.
 #' @param alignments Whether to keep the alignment. If not NA should be a
 #'  string indicating the path to the output bam file.
+#' @param threads How many threads to use for mapping.
 #' @return A numeric vector with two entries. The number of sequences after
 #'  filtering (non-mapped), and the number of removed sequences (mapped).
 #' @examples
 #'  NULL
 #'
 #' @export
-remove_reference <- function(reads, out, reference, index=NA, alignments=NA) {
+remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
+                             threads=3) {
     paired <- length(reads) == 2 & !any(is.na(reads))
     if (is.na(alignments)) {
         alignment_file <- file.path(out, "filtered.bam")
@@ -39,13 +41,12 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA) {
 
     flog.info("Aligning reads to %s...", index)
     if (!paired) {
-        system2("minimap2", c("-ax", "sr", reference, reads[1], "2> /dev/null",
-                              "|", "samtools", "view", "-bS", "-", ">",
+        system2("minimap2", c("-t", threads, "-ax", "sr", reference, reads[1],
+                              "2> /dev/null | samtools view -bS - >",
                               alignment_file))
     } else {
-        system2("minimap2", c("-ax", "sr", reference, reads[1], reads[2],
-                              "2> /dev/null",
-                              "|", "samtools", "view", "-bS", "-", ">",
+        system2("minimap2", c("-t", threads, "-ax", "sr", reference, reads[1],
+                              reads[2], "2> /dev/null | samtools view -bS - >",
                               alignment_file))
     }
 
@@ -93,7 +94,9 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA) {
 #' @param reference Fasta file (can be gzipped) containing the reference
 #'  DNA sequences.
 #' @param alignments Optional folder in which to store the alignments.
-filter_reference <- function(reads, out, reference, alignments = NA) {
+#' @param threads How many threads to use for mapping.
+filter_reference <- function(reads, out, reference, alignments = NA,
+                             threads = 3) {
     paired <- "reverse" %in% names(reads)
     counts <- pbapply(reads, 1, function(row) {
         r <- if (paired) row[c("forward", "reverse")] else row["forward"]
@@ -102,7 +105,8 @@ filter_reference <- function(reads, out, reference, alignments = NA) {
         } else {
             aln <- file.path(alignments, paste0(row["id"], "_filter.bam"))
         }
-        res <- remove_reference(r, out, reference, alignments = aln)
+        res <- remove_reference(r, out, reference, alignments = aln,
+                                threads = threads)
         res$counts[, "id" := row["id"]]
         if (!is.na(row["lane"])) {
             res$counts[, "lane" := row["lane"]]
