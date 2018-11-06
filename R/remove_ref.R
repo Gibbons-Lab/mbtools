@@ -106,7 +106,8 @@ filter_reference <- function(reads, out, reference, alignments = NA,
     paired <- "reverse" %in% names(reads)
     dir.create(out, showWarnings = FALSE)
     threads <- ceiling(threads / 3)
-    counts <- mclapply(t(reads), function(row) {
+    counts <- mclapply(1:nrow(reads), function(i) {
+        row <- reads[i]
         flog.info("Processing %s on lane %d.", row["id"],
                   as.numeric(row["lane"]))
         r <- if (paired) row[c("forward", "reverse")] else row["forward"]
