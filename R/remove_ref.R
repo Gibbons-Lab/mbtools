@@ -95,6 +95,7 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
 #'  DNA sequences.
 #' @param alignments Optional folder in which to store the alignments.
 #' @param threads How many threads to use for mapping.
+#' @export
 filter_reference <- function(reads, out, reference, alignments = NA,
                              threads = 3) {
     paired <- "reverse" %in% names(reads)
