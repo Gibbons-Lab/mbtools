@@ -113,7 +113,7 @@ filter_reference <- function(reads, out, reference, alignments = NA,
             aln <- NA
         } else {
             name <- strsplit(basename(row["id"]), ".", fixed = TRUE)[[1]]
-            aln <- file.path(alignments, paste0(basename(name, ".bam"))
+            aln <- file.path(alignments, paste0(basename(name, ".bam")))
         }
         res <- remove_reference(r, out, reference, alignments = aln,
                                 threads = 3)
