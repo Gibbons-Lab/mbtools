@@ -29,6 +29,7 @@
 #'  NULL
 #'
 #' @export
+#' @importFrom data.table tstrsplit
 remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
                              threads=3) {
     paired <- length(reads) == 2 & !any(is.na(reads))
@@ -70,11 +71,13 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
         reads <- readFastq(streams[i])
         n <- length(reads)
         ids <- sub("/\\d+$", "", as.character(id(reads)))
+        ids <- tstrsplit(ids, " ", fixed = TRUE)[[1]]
         rem <- !(ids %in% ref_ids)
-        writeFastq(reads[rem], new_files[i], mode = "a")
+        writeFastq(reads[rem], new_files[i])
         c(n, length(reads[rem]))
     })[, 1]
-    flog.info("%d/%d reads passed filtering.", counts[2], counts[1])
+    flog.info("%d/%d reads passed filtering (%.2f %%).",
+              counts[2], counts[1], 100 * counts[2] / counts[1])
 
     return(list(reads = counts[1],
                 removed = counts[1] - counts[2],
@@ -101,6 +104,7 @@ filter_reference <- function(reads, out, reference, alignments = NA,
     paired <- "reverse" %in% names(reads)
     dir.create(out, showWarnings = FALSE)
     counts <- apply(reads, 1, function(row) {
+        flog.info("Processing %s on lane %d.", row["id"], row["lane"])
         r <- if (paired) row[c("forward", "reverse")] else row["forward"]
         if (is.na(alignments)) {
             aln <- NA
@@ -115,5 +119,6 @@ filter_reference <- function(reads, out, reference, alignments = NA,
         }
         return(res$counts)
     })
+    flog.info("Merging hit tables.")
     return(rbindlist(counts))
 }
