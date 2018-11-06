@@ -34,7 +34,8 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
                              threads=3) {
     paired <- length(reads) == 2 & !any(is.na(reads))
     if (is.na(alignments)) {
-        alignment_file <- file.path(out, "filtered.bam")
+        name <- strsplit(basename(reads[1]), ".", fixed = TRUE)[[1]]
+        alignment_file <- file.path(out, paste0(name, ".bam"))
     } else {
         flog.info("Saving alignment in %s.", keep_bam)
         alignment_file <- keep_bam
@@ -111,7 +112,8 @@ filter_reference <- function(reads, out, reference, alignments = NA,
         if (is.na(alignments)) {
             aln <- NA
         } else {
-            aln <- file.path(alignments, paste0(row["id"], "_filter.bam"))
+            name <- strsplit(basename(row["id"]), ".", fixed = TRUE)[[1]]
+            aln <- file.path(alignments, paste0(basename(name, ".bam"))
         }
         res <- remove_reference(r, out, reference, alignments = aln,
                                 threads = 3)
