@@ -103,7 +103,8 @@ filter_reference <- function(reads, out, reference, alignments = NA,
                              threads = 3) {
     paired <- "reverse" %in% names(reads)
     dir.create(out, showWarnings = FALSE)
-    counts <- apply(reads, 1, function(row) {
+    threads <- ceiling(threads / 3)
+    counts <- pbapply(reads, 1, function(row) {
         flog.info("Processing %s on lane %d.", row["id"],
                   as.numeric(row["lane"]))
         r <- if (paired) row[c("forward", "reverse")] else row["forward"]
@@ -113,13 +114,13 @@ filter_reference <- function(reads, out, reference, alignments = NA,
             aln <- file.path(alignments, paste0(row["id"], "_filter.bam"))
         }
         res <- remove_reference(r, out, reference, alignments = aln,
-                                threads = threads)
+                                threads = 3)
         res$counts[, "id" := row["id"]]
         if (!is.na(row["lane"])) {
             res$counts[, "lane" := row["lane"]]
         }
         return(res$counts)
-    })
+    }, cl = threads)
     flog.info("Merging hit tables.")
     return(rbindlist(counts))
 }
