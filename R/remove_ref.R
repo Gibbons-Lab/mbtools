@@ -108,7 +108,7 @@ filter_reference <- function(reads, out, reference, alignments = NA,
     threads <- ceiling(threads / 3)
     counts <- mclapply(1:nrow(reads), function(i) {
         row <- reads[i]
-        flog.info("Processing %s on lane %d.", row["id"],
+        flog.info("Processing %s on lane %d.", row[, id],
                   as.numeric(row[, lane]))
         r <- if (paired) row[, .(forward, reverse)] else row[, forward]
         if (is.na(alignments)) {
