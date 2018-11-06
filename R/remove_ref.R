@@ -111,7 +111,7 @@ filter_reference <- function(reads, out, reference, alignments = NA,
         print(row)
         flog.info("Processing %s on lane %d.", row["id"],
                   as.numeric(row[, lane]))
-        r <- if (paired) row[c("forward", "reverse")] else row["forward"]
+        r <- if (paired) row[, .(forward, reverse)] else row[, forward]
         if (is.na(alignments)) {
             aln <- NA
         } else {
@@ -120,7 +120,7 @@ filter_reference <- function(reads, out, reference, alignments = NA,
         }
         res <- remove_reference(r, out, reference, alignments = aln,
                                 threads = 3)
-        res$counts[, "id" := row["id"]]
+        res$counts[, "id" := row[, id]]
         if (!is.na(row[, lane])) {
             res$counts[, "lane" := row[, lane]]
         }
