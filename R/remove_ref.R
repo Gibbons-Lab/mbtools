@@ -76,7 +76,7 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
         writeFastq(reads[rem], new_files[i])
         c(n, length(reads[rem]))
     })[, 1]
-    flog.info("%d/%d reads passed filtering (%.2f %%).",
+    flog.info("%d/%d reads passed filtering (%.2f%%).",
               counts[2], counts[1], 100 * counts[2] / counts[1])
 
     return(list(reads = counts[1],
@@ -104,7 +104,8 @@ filter_reference <- function(reads, out, reference, alignments = NA,
     paired <- "reverse" %in% names(reads)
     dir.create(out, showWarnings = FALSE)
     counts <- apply(reads, 1, function(row) {
-        flog.info("Processing %s on lane %d.", row["id"], row["lane"])
+        flog.info("Processing %s on lane %d.", row["id"],
+                  as.numeric(row["lane"]))
         r <- if (paired) row[c("forward", "reverse")] else row["forward"]
         if (is.na(alignments)) {
             aln <- NA
