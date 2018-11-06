@@ -108,20 +108,21 @@ filter_reference <- function(reads, out, reference, alignments = NA,
     threads <- ceiling(threads / 3)
     counts <- mclapply(1:nrow(reads), function(i) {
         row <- reads[i]
+        print(row)
         flog.info("Processing %s on lane %d.", row["id"],
-                  as.numeric(row["lane"]))
+                  as.numeric(row[, lane]))
         r <- if (paired) row[c("forward", "reverse")] else row["forward"]
         if (is.na(alignments)) {
             aln <- NA
         } else {
-            name <- strsplit(basename(row["id"]), ".", fixed = TRUE)[[1]]
+            name <- strsplit(basename(row[, id]), ".", fixed = TRUE)[[1]]
             aln <- file.path(alignments, paste0(basename(name, ".bam")))
         }
         res <- remove_reference(r, out, reference, alignments = aln,
                                 threads = 3)
         res$counts[, "id" := row["id"]]
-        if (!is.na(row["lane"])) {
-            res$counts[, "lane" := row["lane"]]
+        if (!is.na(row[, lane])) {
+            res$counts[, "lane" := row[, lane]]
         }
         return(res$counts)
     }, mc.cores = threads)
