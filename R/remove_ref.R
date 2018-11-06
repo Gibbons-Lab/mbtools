@@ -39,7 +39,7 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
         alignment_file <- keep_bam
     }
 
-    flog.info("Aligning reads to %s...", index)
+    flog.info("Aligning reads to %s...", reference)
     if (!paired) {
         system2("minimap2", c("-t", threads, "-ax", "sr", reference, reads[1],
                               "2> /dev/null | samtools view -bS - >",
@@ -100,7 +100,7 @@ filter_reference <- function(reads, out, reference, alignments = NA,
                              threads = 3) {
     paired <- "reverse" %in% names(reads)
     dir.create(out, showWarnings = FALSE)
-    counts <- pbapply(reads, 1, function(row) {
+    counts <- apply(reads, 1, function(row) {
         r <- if (paired) row[c("forward", "reverse")] else row["forward"]
         if (is.na(alignments)) {
             aln <- NA
