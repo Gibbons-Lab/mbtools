@@ -30,11 +30,12 @@
 #'
 #' @export
 #' @importFrom data.table tstrsplit
+#' @importFrom digest digest
 remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
                              threads=3) {
     paired <- length(reads) == 2 & !any(is.na(reads))
     if (is.na(alignments)) {
-        name <- "filtered" #strsplit(basename(reads[1]), ".", fixed = TRUE)[[1]]
+        name <- digest(reads, "md5")
         alignment_file <- file.path(out, paste0(name, ".bam"))
     } else {
         flog.info("Saving alignment in %s.", keep_bam)
@@ -105,7 +106,7 @@ filter_reference <- function(reads, out, reference, alignments = NA,
     paired <- "reverse" %in% names(reads)
     dir.create(out, showWarnings = FALSE)
     threads <- ceiling(threads / 3)
-    counts <- apply(reads, 1, function(row) {
+    counts <- mclapply(t(reads), function(row) {
         flog.info("Processing %s on lane %d.", row["id"],
                   as.numeric(row["lane"]))
         r <- if (paired) row[c("forward", "reverse")] else row["forward"]
@@ -116,13 +117,13 @@ filter_reference <- function(reads, out, reference, alignments = NA,
             aln <- file.path(alignments, paste0(basename(name, ".bam")))
         }
         res <- remove_reference(r, out, reference, alignments = aln,
-                                threads = threads)
+                                threads = 3)
         res$counts[, "id" := row["id"]]
         if (!is.na(row["lane"])) {
             res$counts[, "lane" := row["lane"]]
         }
         return(res$counts)
-    })
+    }, mc.cores = threads)
     flog.info("Merging hit tables.")
     return(rbindlist(counts))
 }
