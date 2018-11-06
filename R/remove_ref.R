@@ -38,11 +38,11 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
         name <- digest(reads, "md5")
         alignment_file <- file.path(out, paste0(name, ".bam"))
     } else {
-        flog.info("Saving alignment in %s.", keep_bam)
-        alignment_file <- keep_bam
+        alignment_file <- alignments
     }
 
-    flog.info("Aligning reads to %s...", reference)
+    flog.info("[%s] Aligning reads to %s, saving in %s.",
+              basename(reads[1]), reference, alignment_file)
     if (!paired) {
         system2("minimap2", c("-t", threads, "-ax", "sr", reference, reads[1],
                               "2> /dev/null | samtools view -bS - >",
@@ -53,7 +53,6 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
                               alignment_file))
     }
 
-    flog.info("Getting hits and saving filtered reads to %s.", out)
     hits <- as.data.table(read_bam(alignment_file))
     ref_ids <- unique(hits$qname)
     if (is.na(alignments)) {
@@ -78,7 +77,8 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
         writeFastq(reads[rem], new_files[i])
         c(n, length(reads[rem]))
     })[, 1]
-    flog.info("%d/%d reads passed filtering (%.2f%%).",
+    flog.info("[%s] %d/%d reads passed filtering (%.2f%%).",
+              basename(reads[1]),
               counts[2], counts[1], 100 * counts[2] / counts[1])
 
     return(list(reads = counts[1],
@@ -105,7 +105,9 @@ filter_reference <- function(reads, out, reference, alignments = NA,
                              threads = 3) {
     paired <- "reverse" %in% names(reads)
     dir.create(out, showWarnings = FALSE)
+    # we will leave 3 threads for minimap2
     threads <- ceiling(threads / 3)
+    flog.info("Actually using %d threads to filter and count.", threads * 3)
     counts <- mclapply(1:nrow(reads), function(i) {
         row <- reads[i]
         flog.info("Processing %s on lane %d.", row[, id],
@@ -125,6 +127,6 @@ filter_reference <- function(reads, out, reference, alignments = NA,
         }
         return(res$counts)
     }, mc.cores = threads)
-    flog.info("Merging hit tables.")
+    flog.info("Merging hit tables...")
     return(rbindlist(counts))
 }
