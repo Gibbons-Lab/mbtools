@@ -21,7 +21,7 @@ multimapping with an expectation maximzation algorithm.}
 \item{cutoff}{Only for method="em". Stop EM if maximum relative change in
 transcript abundance is not at least this value. For instance a value of
 0.01 (default) means that the EM algorithm is stopped if transcript
-abundances change less than 1% between iterations.}
+abundances change less than 1\% between iterations.}
 
 \item{counts}{Whether to return counts. If FALSE returns transcripts per
 million.}
@@ -29,7 +29,7 @@ million.}
 \item{tags}{Additional tags to read in the BAM file.}
 }
 \value{
-A data.table with sequence names, counts and sample name.
+A data.table with transcript names, counts and sample name.
 }
 \description{
 This will correct for effective transcript lengths as done by almost any

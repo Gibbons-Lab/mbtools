@@ -82,10 +82,10 @@ count_alns <- function(alignments, txlengths, file, method="em",
 #' @param cutoff Only for method="em". Stop EM if maximum relative change in
 #'  transcript abundance is not at least this value. For instance a value of
 #'  0.01 (default) means that the EM algorithm is stopped if transcript
-#'  abundances change less than 1% between iterations.
+#'  abundances change less than 1\% between iterations.
 #' @param counts Whether to return counts. If FALSE returns transcripts per
 #'  million.
-#' @return A data.table with sequence names, counts and sample name.
+#' @return A data.table with transcript names, counts and sample name.
 #'
 #' @export
 #' @importFrom data.table tstrsplit
