@@ -134,7 +134,8 @@ read_bam <- function(path, tags = character(0)) {
     return(bam)
 }
 
-
+#' @useDynLib mbtools, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
 count_hit <- function(alignments) {
     aln <- as.data.table(alignments)
     if (nrow(aln) == 0) {
