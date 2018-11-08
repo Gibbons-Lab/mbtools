@@ -13,6 +13,7 @@ using namespace Rcpp;
 
 unsigned int miniter = 20;
 
+// Convert an int vector to string representation. Used to hash the vectors.
 std::string vec_to_str(std::vector<int> vec) {
     std::stringstream ss;
     for (unsigned int i=0; i<vec.size(); ++i) {
@@ -21,6 +22,10 @@ std::string vec_to_str(std::vector<int> vec) {
     return ss.str();
 }
 
+// Compresses the mapping of reads to transcripts into equivalence classes.
+//
+// This means that reads that map to exactly the same transcripts get lumped
+// together.
 std::unordered_map<std::string, std::vector<int> > equivalence_classes(
     std::vector<std::vector<int> > reads_to_txs) {
     std::unordered_map<std::string, std::vector<int> > ecs;
@@ -41,6 +46,14 @@ std::unordered_map<std::string, std::vector<int> > equivalence_classes(
     return ecs;
 }
 
+//' Calculate the effective transcript lengths. This is the mean number of
+//' positions in the transcript the fragment could map to.
+//'
+//' @param txlength The sequence lengths for each transcript.
+//' @param rdlengths The length of all mapped fragments. Mapped length of the
+//'  read after accounting for mismatches and indels.
+//' @return The effective lengths.
+//' @export
 // [[Rcpp::export]]
 NumericVector effective_lengths(NumericVector txlengths,
                                 NumericVector rdlengths) {
@@ -60,7 +73,7 @@ NumericVector effective_lengths(NumericVector txlengths,
 
 // [[Rcpp::export]]
 List em_count(NumericMatrix txreads, NumericVector txlengths,
-                       int ntx, int nr, int maxit=1000, double cutoff=0.01) {
+              int ntx, int nr, int maxit=1000, double cutoff=0.01) {
     std::vector<std::vector<int> > reads_to_txs(nr);
     NumericVector p(ntx, 1.0 / ntx);
     NumericVector pnew(ntx, 0.0);
