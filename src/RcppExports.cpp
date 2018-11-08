@@ -5,6 +5,18 @@
 
 using namespace Rcpp;
 
+// effective_lengths
+NumericVector effective_lengths(NumericVector txlengths, NumericVector rdlengths);
+RcppExport SEXP _mbtools_effective_lengths(SEXP txlengthsSEXP, SEXP rdlengthsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type txlengths(txlengthsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type rdlengths(rdlengthsSEXP);
+    rcpp_result_gen = Rcpp::wrap(effective_lengths(txlengths, rdlengths));
+    return rcpp_result_gen;
+END_RCPP
+}
 // em_count
 List em_count(NumericMatrix txreads, NumericVector txlengths, int ntx, int nr, int maxit, double cutoff);
 RcppExport SEXP _mbtools_em_count(SEXP txreadsSEXP, SEXP txlengthsSEXP, SEXP ntxSEXP, SEXP nrSEXP, SEXP maxitSEXP, SEXP cutoffSEXP) {
@@ -23,6 +35,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_mbtools_effective_lengths", (DL_FUNC) &_mbtools_effective_lengths, 2},
     {"_mbtools_em_count", (DL_FUNC) &_mbtools_em_count, 6},
     {NULL, NULL, 0}
 };
