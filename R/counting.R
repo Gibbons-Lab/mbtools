@@ -23,6 +23,7 @@ count_alns <- function(alignments, txlengths, file, method="em",
     aln[, seqnames := factor(as.character(seqnames))]
     efflengths <- effective_lengths(aln[, txlengths[levels(seqnames)]],
                                     aln[, width])
+    names(efflengths) <- aln[, txlengths[levels(seqnames)]]
     flog.info(paste("[%s] %d transcripts. Confidence interval for effective",
                     "lengths: [%.2f, %.2f]."),
               file, aln[, length(levels(seqnames))],
@@ -41,6 +42,7 @@ count_alns <- function(alignments, txlengths, file, method="em",
         names(counts)[1] <- "transcript"
         counts[, counts := counts / efflengths[transcript]]
         counts[, counts := counts / sum(counts) * libsize]
+        counts[, effective_length := efflengths[transcript]]
     } else {
         aln[, seqnames := factor(seqnames)]
         aln[, qname := factor(qname)]
@@ -50,11 +52,12 @@ count_alns <- function(alignments, txlengths, file, method="em",
         em_result <- em_count(cbind(txids, rids), efflengths,
                               length(txnames), max(rids) + 1, maxit, cutoff)
         flog.info(paste("[%s] Used %d EM iterations on %d equivalence classes.",
-                        "Last relative change was %.4f."),
+                        "Last relative change was %g."),
                   file, em_result$iterations, em_result$num_ecs,
                   max(em_result$change))
         counts <- data.table(transcript = txnames,
-                             counts = round(em_result$p * libsize))
+                             counts = round(em_result$p * libsize),
+                             effective_length = efflengths[txnames])
         counts <- counts[counts > 0]
     }
 
@@ -85,7 +88,8 @@ count_alns <- function(alignments, txlengths, file, method="em",
 #'  abundances change less than 1\% between iterations.
 #' @param counts Whether to return counts. If FALSE returns transcripts per
 #'  million.
-#' @return A data.table with transcript names, counts and sample name.
+#' @return A data.table with transcript names, counts, effective transcript
+#'  length and sample name.
 #'
 #' @export
 #' @importFrom data.table tstrsplit

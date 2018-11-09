@@ -29,7 +29,8 @@ million.}
 \item{tags}{Additional tags to read in the BAM file.}
 }
 \value{
-A data.table with transcript names, counts and sample name.
+A data.table with transcript names, counts, effective transcript
+ length and sample name.
 }
 \description{
 This will correct for effective transcript lengths as done by almost any
