@@ -99,7 +99,7 @@ count_hits <- function(alignment_files, reference, threads = 1,
     flog.info("Normalized IDs. Starting counting...")
     counts <- mclapply(alignment_files, function(file) {
         bam <- read_bam(file)
-        flog.info("[%s] Read %d alignments.", file, nrow(bam))
+        flog.info("[%s] Read %d alignments.", file, length(bam))
         cn <- count_alns(bam, txlengths, file=file)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
