@@ -75,9 +75,10 @@ NumericVector effective_lengths(NumericVector txlengths,
 List em_count(NumericMatrix txreads, NumericVector txlengths,
               int ntx, int nr, int maxit=1000, double cutoff=0.01) {
     std::vector<std::vector<int> > reads_to_txs(nr);
-    NumericVector p(ntx, 1.0 / ntx);
+    NumericVector p(ntx, (double) nr / ntx);
     NumericVector pnew(ntx, 0.0);
-    NumericVector txs, change;
+    NumericVector change;
+    std::vector<int> txs;
     LogicalVector is_large;
     double read_sum, count;
     std::unordered_map<std::string, std::vector<int> > ecs;
@@ -92,6 +93,7 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
 
     unsigned int k;
     for (k=0; k<maxit; ++k) {
+        checkUserInterrupt();
         for (unsigned int i=0; i<ntx; ++i) {
             pnew[i] = 0.0;
         }
@@ -106,9 +108,8 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
                 pnew[txs[txi]] += count * p[txs[txi]] / read_sum;
             }
         }
-        pnew = pnew / nr;
         pnew = (pnew / txlengths);
-        pnew = pnew / sum(pnew);
+        pnew = pnew * nr / sum(pnew);
         is_large = pnew > cutoff;
         change = abs(pnew - p) / pnew;
         change = change[is_large];
@@ -120,6 +121,6 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
 
     return List::create(_["p"] = pnew,
                         _["iterations"] = k,
-                        _["change"] = change,
+                        _["change"] = (double) max(change),
                         _["num_ecs"] = ecs.size());
 }

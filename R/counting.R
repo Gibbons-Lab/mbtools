@@ -54,10 +54,14 @@ count_alns <- function(alignments, txlengths, file, method="em",
         flog.info(paste("[%s] Used %d EM iterations on %d equivalence classes.",
                         "Last relative change was %g."),
                   file, em_result$iterations, em_result$num_ecs,
-                  max(em_result$change))
+                  em_result$change)
         counts <- data.table(transcript = txnames,
-                             counts = round(em_result$p * libsize),
+                             counts = round(em_result$p),
                              effective_length = efflengths[txnames])
+        if (!counts) {
+            counts[, counts := em_result$p / (max(rids) + 1) * libsize]
+            counts[counts < 1e-8, counts := 0]
+        }
         counts <- counts[counts > 0]
     }
 
