@@ -8,7 +8,7 @@ filter_reference(reads, out, reference, alignments = NA, threads = 3)
 }
 \arguments{
 \item{reads}{A data frame or data table containing the read files. Can be
-generated with \link{\code{find_illumina}} for instance.}
+generated with \code{\link{find_illumina}} for instance.}
 
 \item{out}{The folder where to store filtered reads. Should be empty as
 files **will be overwritten**.}
@@ -19,6 +19,9 @@ DNA sequences.}
 \item{alignments}{Optional folder in which to store the alignments.}
 
 \item{threads}{How many threads to use for mapping.}
+}
+\value{
+A data.table with the counts in the reference.
 }
 \description{
 This will also return a data.table containing the counts of reference

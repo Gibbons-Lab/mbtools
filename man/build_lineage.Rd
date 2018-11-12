@@ -13,10 +13,9 @@ by semicolons.}
 \item{taxid}{The overall taxid for the path/taxon.}
 
 \item{taxonomy}{The SILVA taxonomy as data table.}
-
-\item{return}{A data table containing the individual taxa ranks with ids.
-
-importFrom stringr str_split_fixed}
+}
+\value{
+A data table containing the individual taxa ranks with ids.
 }
 \description{
 Build the lineage from a SILVA path string.

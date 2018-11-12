@@ -8,10 +8,10 @@ positions in the transcript the fragment could map to.}
 effective_lengths(txlengths, rdlengths)
 }
 \arguments{
+\item{txlengths}{The sequence lengths for each transcript.}
+
 \item{rdlengths}{The length of all mapped fragments. Mapped length of the
 read after accounting for mismatches and indels.}
-
-\item{txlength}{The sequence lengths for each transcript.}
 }
 \value{
 The effective lengths.

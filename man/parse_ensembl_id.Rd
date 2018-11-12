@@ -8,8 +8,9 @@ parse_ensembl_id(id)
 }
 \arguments{
 \item{id}{The id to be parsed.}
-
-\item{A}{data table containing the transcript id with annotations.}
+}
+\value{
+A data table containing the transcript id with annotations.
 }
 \description{
 Parse annotations from an ENSEMBL id

@@ -17,6 +17,7 @@ read_bam <- function(path, tags = character(0)) {
 
 #' @useDynLib mbtools, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom stats quantile
 count_alns <- function(alignments, txlengths, file, method="em",
                        maxit=1000, cutoff=0.01, tpm=FALSE) {
     aln <- as.data.table(alignments)
@@ -82,7 +83,8 @@ count_alns <- function(alignments, txlengths, file, method="em",
 #' (https://doi.org/10.1038/nbt.3519).
 #'
 #' @param alignment_files Paths to BAM files.
-#' @param tags Additional tags to read in the BAM file.
+#' @param reference Path to the reference FASTA file. Used to get transcript
+#'  lengths.
 #' @param threads Number of parallel processes.
 #' @param method The counting method. Can be either "naive" for assigning each
 #'  read to any transcript with the highest mapping score or "em" to resolve
@@ -99,7 +101,7 @@ count_alns <- function(alignments, txlengths, file, method="em",
 #'
 #' @export
 #' @importFrom data.table tstrsplit
-count_hits <- function(alignment_files, reference, threads = 1,
+count_transcripts <- function(alignment_files, reference, threads = 1,
                        method = "em", maxit = 1000, cutoff = 0.01,
                        tpm = FALSE) {
     flog.info("Getting transcript lengths from %s...", reference)

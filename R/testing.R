@@ -77,7 +77,7 @@ iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
     if (shrink) {
         fit <- eBayes(fit)
     }
-    res <- topTable(fit, coef=ncol(design), sort="none", n=Inf)
+    res <- topTable(fit, coef=ncol(design), sort.by="none", number=Inf)
     res <- as.data.table(res)
     names(res) <- c("log2FoldChange", "baseMean", "t", "pvalue", "padj", "B")
     set(res, j = tax, value = colnames(counts))

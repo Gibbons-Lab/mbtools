@@ -9,7 +9,7 @@ remove_reference(reads, out, reference, index = NA, alignments = NA,
 }
 \arguments{
 \item{reads}{A character vector containing the read files in fastq format.
-Can be generated using \link{\code{find_illumina}}.}
+Can be generated using \code{\link{find_illumina}}.}
 
 \item{out}{A folder to which to save the filtered fastq files.}
 

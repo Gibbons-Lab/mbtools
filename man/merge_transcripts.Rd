@@ -4,17 +4,19 @@
 \alias{merge_transcripts}
 \title{Merge transcripts into a single database}
 \usage{
-merge_transcripts(transcripts_files, transcripts_folder, what = "cdna",
+merge_transcripts(transcript_files, transcript_folder, what = "cdna",
   out = "ensembl_transcripts.fa.gz")
 }
 \arguments{
-\item{out}{The filename for the DB. Will be compressed and saved in the
-transcript folder.}
-
 \item{transcript_files}{A data table as returned by
-\code{\link{download_bacterial_trasncripts}}.}
+\code{\link{download_bacterial_transcripts}}.}
 
 \item{transcript_folder}{In which folder to look for transcripts.}
+
+\item{what}{The type of database, either "cdna" or "protein".}
+
+\item{out}{The filename for the DB. Will be compressed and saved in the
+transcript folder.}
 }
 \value{
 The transcript counts for each file.

@@ -6,9 +6,9 @@
 #'  by semicolons.
 #' @param taxid The overall taxid for the path/taxon.
 #' @param taxonomy The SILVA taxonomy as data table.
-#' @param return A data table containing the individual taxa ranks with ids.
+#' @return A data table containing the individual taxa ranks with ids.
 #'
-#' importFrom stringr str_split_fixed
+#' @importFrom stringr str_split_fixed
 build_lineage <- function(silva_path, taxid, taxonomy) {
     levs <- str_split_fixed(silva_path, ";", n=Inf)[1, ]
     n <- length(levs)
@@ -32,7 +32,7 @@ build_lineage <- function(silva_path, taxid, taxonomy) {
 #' @return The SILVA lineage mapping every taxon to its upper ranks up to the
 #'  root.
 #'
-#' @param importFrom data.table rbind.data.table fread unique.data.table
+#' @importFrom data.table fread
 #' @export
 silva_build_taxonomy <- function(taxmap, taxonomy) {
     map <- fread(taxmap)
@@ -65,8 +65,7 @@ ens_assembly <- function(assembly) {
     return(assembly)
 }
 
-#' Helper function to download ENSEMBL transcripts (cdna).
-#' @importFrom stringr str_to_title str_split_fixed
+# Helper function to download ENSEMBL transcripts (cdna).
 download_ensembl <- function(out="transcripts", what="cdna", collection,
                              name, assembly) {
     collection <- str_split_fixed(collection, "_core", n=2)[1]
@@ -143,28 +142,30 @@ download_bacterial_transcripts <- function(out="transcripts", what="cdna",
 #' Merge transcripts into a single database
 #'
 #' @param transcript_files A data table as returned by
-#'  \code{\link{download_bacterial_trasncripts}}.
+#'  \code{\link{download_bacterial_transcripts}}.
 #' @param transcript_folder In which folder to look for transcripts.
+#' @param what The type of database, either "cdna" or "protein".
 #' @param out The filename for the DB. Will be compressed and saved in the
 #'  transcript folder.
 #' @return The transcript counts for each file.
 #' @importFrom Biostrings readAAStringSet readDNAStringSet writeXStringSet
-merge_transcripts <- function(transcripts_files, transcripts_folder,
+#' @export
+merge_transcripts <- function(transcript_files, transcript_folder,
                               what="cdna", out="ensembl_transcripts.fa.gz") {
     flog.info("Merging %d %s transcript files from %s.",
-              nrow(transcripts_files), what, transcripts_folder)
+              nrow(transcript_files), what, transcript_folder)
     if (what == "cdna") {
         reader <- readDNAStringSet
     } else {
         reader <- readAAStringSet
     }
-    out <- file.path(transcripts_folder, out)
+    out <- file.path(transcript_folder, out)
     if (file.exists(out)) {
         flog.info("Overwriting output %s with new data.", out)
         file.remove(out)
     }
-    counts <- pbapply(transcripts_files, 1, function(row) {
-        fasta <- reader(file.path(transcripts_folder, row["file"]))
+    counts <- pbapply(transcript_files, 1, function(row) {
+        fasta <- reader(file.path(transcript_folder, row["file"]))
         names(fasta) <- paste0("TAX", as.integer(row["taxonomy_id"]), "_",
                                names(fasta))
         writeXStringSet(fasta, out, append=TRUE, compress=TRUE)
@@ -182,7 +183,7 @@ ENSID <- paste0("TAX(\\d+)\\_(\\w+) (\\w+) \\w+:(.+) gene:(\\w+) ",
 #' Parse annotations from an ENSEMBL id
 #'
 #' @param id The id to be parsed.
-#' @param A data table containing the transcript id with annotations.
+#' @return A data table containing the transcript id with annotations.
 parse_ensembl_id <- function(id) {
     res <- as.data.table(str_match(id, ENSID)[, 2:11])
     names(res) <- c("taxid", "seqid", "sequence_type", "contig", "gene",

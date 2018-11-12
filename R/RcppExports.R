@@ -4,7 +4,7 @@
 #' Calculate the effective transcript lengths. This is the mean number of
 #' positions in the transcript the fragment could map to.
 #'
-#' @param txlength The sequence lengths for each transcript.
+#' @param txlengths The sequence lengths for each transcript.
 #' @param rdlengths The length of all mapped fragments. Mapped length of the
 #'  read after accounting for mismatches and indels.
 #' @return The effective lengths.
@@ -13,6 +13,26 @@ effective_lengths <- function(txlengths, rdlengths) {
     .Call(`_mbtools_effective_lengths`, txlengths, rdlengths)
 }
 
+#' Count transcripts using an Expectation Maximization (EM) algorithm.
+#'
+#' @param txreads A minimal matrix where each row corresponds to an
+#'   alignment. The first column denotes transcript indices in [0, ntx-1] and
+#'   the second column denotes read indices in [0, nr -1].
+#' @param txlengths The sequence lengths for each transcript. Ideally those
+#'   should be the effective transcript lengths meaning the overall number
+#'   of possible alignment start positions in a transcript.
+#' @param ntx The total number of unique transcripts.
+#' @param nr The total number of unique reads.
+#' @param maxit Maximum number of EM iterations.
+#' @param reltol The relative tolerance for convergence.
+#' @param abstol The absolute tolerance for convergence.
+#' @return A list with the following components.
+#'     \describe{
+#'      \item{p}{The length-normalized and read scaled transcript counts}
+#'      \item{iterations}{The number of used EM iterations}
+#'      \item{num_ecs}{The number of equivalence classes}
+#'      \item{change}{The last osbserved absolute change in transcript counts}
+#'     }
 em_count <- function(txreads, txlengths, ntx, nr, maxit = 1000L, reltol = 0.01, abstol = 0.01) {
     .Call(`_mbtools_em_count`, txreads, txlengths, ntx, nr, maxit, reltol, abstol)
 }

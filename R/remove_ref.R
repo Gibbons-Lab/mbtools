@@ -14,7 +14,7 @@
 #' a prebuilt index.
 #'
 #' @param reads A character vector containing the read files in fastq format.
-#'  Can be generated using \link{\code{find_illumina}}.
+#'  Can be generated using \code{\link{find_illumina}}.
 #' @param out A folder to which to save the filtered fastq files.
 #' @param index Additional barcode file that should be filtered as well. Can
 #'  be used to filter multiplexed samples.
@@ -82,8 +82,7 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
               counts[2], counts[1], 100 * counts[2] / counts[1])
 
     return(list(reads = counts[1],
-                removed = counts[1] - counts[2],
-                counts = count_hit(hits)))
+                removed = counts[1] - counts[2]))
 }
 
 
@@ -93,13 +92,14 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
 #' sequences for each sample.
 #'
 #' @param reads A data frame or data table containing the read files. Can be
-#'  generated with \link{\code{find_illumina}} for instance.
+#'  generated with \code{\link{find_illumina}} for instance.
 #' @param out The folder where to store filtered reads. Should be empty as
 #'  files **will be overwritten**.
 #' @param reference Fasta file (can be gzipped) containing the reference
 #'  DNA sequences.
 #' @param alignments Optional folder in which to store the alignments.
 #' @param threads How many threads to use for mapping.
+#' @return A data.table with the counts in the reference.
 #' @export
 filter_reference <- function(reads, out, reference, alignments = NA,
                              threads = 3) {
@@ -110,22 +110,24 @@ filter_reference <- function(reads, out, reference, alignments = NA,
     flog.info("Actually using %d threads to filter and count.", threads * 3)
     counts <- mclapply(1:nrow(reads), function(i) {
         row <- reads[i]
-        flog.info("Processing %s on lane %d.", row[, id],
-                  as.numeric(row[, lane]))
+        if ("lane" %in% names(row)) {
+            lane <- as.numeric(row$lane)
+        } else {
+            lane <- NA
+        }
+        flog.info("Processing %s on lane %d.", row[, id], lane)
         r <- if (paired) row[, .(forward, reverse)] else row[, forward]
         if (is.na(alignments)) {
             aln <- NA
         } else {
-            name <- strsplit(basename(row[, id]), ".", fixed = TRUE)[[1]]
-            aln <- file.path(alignments, paste0(basename(name, ".bam")))
+            name <- strsplit(basename(row[, id]), ".", fixed = TRUE)[[1]][1]
+            aln <- file.path(alignments, paste0(basename(name), ".bam"))
         }
-        res <- remove_reference(r, out, reference, alignments = aln,
-                                threads = 3)
-        res$counts[, "id" := row[, id]]
-        if (!is.na(row[, lane])) {
-            res$counts[, "lane" := row[, lane]]
-        }
-        return(res$counts)
+        res <- remove_reference(as.character(r), out, reference,
+                                alignments = aln, threads = 3)
+        res$id <- row[, id]
+        res$lane <- lane
+        return(res)
     }, mc.cores = threads)
     flog.info("Merging hit tables...")
     return(rbindlist(counts))

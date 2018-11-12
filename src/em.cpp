@@ -49,7 +49,7 @@ std::unordered_map<std::string, std::vector<int> > equivalence_classes(
 //' Calculate the effective transcript lengths. This is the mean number of
 //' positions in the transcript the fragment could map to.
 //'
-//' @param txlength The sequence lengths for each transcript.
+//' @param txlengths The sequence lengths for each transcript.
 //' @param rdlengths The length of all mapped fragments. Mapped length of the
 //'  read after accounting for mismatches and indels.
 //' @return The effective lengths.
@@ -71,6 +71,26 @@ NumericVector effective_lengths(NumericVector txlengths,
     return round(efflen, 0);
 }
 
+//' Count transcripts using an Expectation Maximization (EM) algorithm.
+//'
+//' @param txreads A minimal matrix where each row corresponds to an
+//'   alignment. The first column denotes transcript indices in [0, ntx-1] and
+//'   the second column denotes read indices in [0, nr -1].
+//' @param txlengths The sequence lengths for each transcript. Ideally those
+//'   should be the effective transcript lengths meaning the overall number
+//'   of possible alignment start positions in a transcript.
+//' @param ntx The total number of unique transcripts.
+//' @param nr The total number of unique reads.
+//' @param maxit Maximum number of EM iterations.
+//' @param reltol The relative tolerance for convergence.
+//' @param abstol The absolute tolerance for convergence.
+//' @return A list with the following components.
+//'     \describe{
+//'      \item{p}{The length-normalized and read scaled transcript counts}
+//'      \item{iterations}{The number of used EM iterations}
+//'      \item{num_ecs}{The number of equivalence classes}
+//'      \item{change}{The last osbserved absolute change in transcript counts}
+//'     }
 // [[Rcpp::export]]
 List em_count(NumericMatrix txreads, NumericVector txlengths,
               int ntx, int nr, int maxit=1000,
