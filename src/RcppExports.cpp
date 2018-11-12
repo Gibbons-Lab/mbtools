@@ -18,8 +18,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // em_count
-List em_count(NumericMatrix txreads, NumericVector txlengths, int ntx, int nr, int maxit, double cutoff);
-RcppExport SEXP _mbtools_em_count(SEXP txreadsSEXP, SEXP txlengthsSEXP, SEXP ntxSEXP, SEXP nrSEXP, SEXP maxitSEXP, SEXP cutoffSEXP) {
+List em_count(NumericMatrix txreads, NumericVector txlengths, int ntx, int nr, int maxit, double reltol, double abstol);
+RcppExport SEXP _mbtools_em_count(SEXP txreadsSEXP, SEXP txlengthsSEXP, SEXP ntxSEXP, SEXP nrSEXP, SEXP maxitSEXP, SEXP reltolSEXP, SEXP abstolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -28,15 +28,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type ntx(ntxSEXP);
     Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
     Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
-    Rcpp::traits::input_parameter< double >::type cutoff(cutoffSEXP);
-    rcpp_result_gen = Rcpp::wrap(em_count(txreads, txlengths, ntx, nr, maxit, cutoff));
+    Rcpp::traits::input_parameter< double >::type reltol(reltolSEXP);
+    Rcpp::traits::input_parameter< double >::type abstol(abstolSEXP);
+    rcpp_result_gen = Rcpp::wrap(em_count(txreads, txlengths, ntx, nr, maxit, reltol, abstol));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mbtools_effective_lengths", (DL_FUNC) &_mbtools_effective_lengths, 2},
-    {"_mbtools_em_count", (DL_FUNC) &_mbtools_em_count, 6},
+    {"_mbtools_em_count", (DL_FUNC) &_mbtools_em_count, 7},
     {NULL, NULL, 0}
 };
 

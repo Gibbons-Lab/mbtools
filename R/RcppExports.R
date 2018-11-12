@@ -13,7 +13,7 @@ effective_lengths <- function(txlengths, rdlengths) {
     .Call(`_mbtools_effective_lengths`, txlengths, rdlengths)
 }
 
-em_count <- function(txreads, txlengths, ntx, nr, maxit = 1000L, cutoff = 0.01) {
-    .Call(`_mbtools_em_count`, txreads, txlengths, ntx, nr, maxit, cutoff)
+em_count <- function(txreads, txlengths, ntx, nr, maxit = 1000L, reltol = 0.01, abstol = 0.01) {
+    .Call(`_mbtools_em_count`, txreads, txlengths, ntx, nr, maxit, reltol, abstol)
 }
 

@@ -18,7 +18,7 @@ read_bam <- function(path, tags = character(0)) {
 #' @useDynLib mbtools, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 count_alns <- function(alignments, txlengths, file, method="em",
-                       maxit=1000, cutoff=0.01, counts=TRUE) {
+                       maxit=1000, cutoff=0.01, tpm=FALSE) {
     aln <- as.data.table(alignments)
     aln[, seqnames := factor(as.character(seqnames))]
     efflengths <- effective_lengths(aln[, txlengths[levels(seqnames)]],
@@ -31,10 +31,10 @@ count_alns <- function(alignments, txlengths, file, method="em",
     if (nrow(aln) == 0) {
         return(data.table(seqnames=character(), counts=integer()))
     }
-    if (counts) {
-        libsize <- aln[, uniqueN(qname)]
+    if (tpm) {
+        libsize <- 1e6
     } else {
-        libsize = 1e6  # return TPM
+        libsize <-  aln[, uniqueN(qname)]  # return counts
     }
     if (method == "naive") {
         aln <- aln[order(-mapq), .SD[1], by="qname"]
@@ -50,21 +50,23 @@ count_alns <- function(alignments, txlengths, file, method="em",
         txnames <- aln[, levels(seqnames)]
         rids <- aln[, as.integer(qname) - 1]
         em_result <- em_count(cbind(txids, rids), efflengths,
-                              length(txnames), max(rids) + 1, maxit, cutoff)
+                              length(txnames), max(rids) + 1, maxit,
+                              cutoff, cutoff)
         flog.info(paste("[%s] Used %d EM iterations on %d equivalence classes.",
-                        "Last relative change was %g."),
+                        "Last mean abs. change was %g."),
                   file, em_result$iterations, em_result$num_ecs,
-                  em_result$change)
+                  mean(em_result$change))
         counts <- data.table(transcript = txnames,
-                             counts = round(em_result$p),
-                             effective_length = efflengths[txnames])
-        if (!counts) {
+                             counts = em_result$p,
+                             effective_length = efflengths)
+        if (tpm) {
             counts[, counts := em_result$p / (max(rids) + 1) * libsize]
             counts[counts < 1e-8, counts := 0]
+        } else {
+            counts[counts < cutoff, counts := 0]
         }
         counts <- counts[counts > 0]
     }
-
     return(counts)
 }
 
@@ -90,8 +92,8 @@ count_alns <- function(alignments, txlengths, file, method="em",
 #'  transcript abundance is not at least this value. For instance a value of
 #'  0.01 (default) means that the EM algorithm is stopped if transcript
 #'  abundances change less than 1\% between iterations.
-#' @param counts Whether to return counts. If FALSE returns transcripts per
-#'  million.
+#' @param tpm Whether to return counts or transcripts per
+#'  million. If FALSE returns counts.
 #' @return A data.table with transcript names, counts, effective transcript
 #'  length and sample name.
 #'
@@ -99,7 +101,7 @@ count_alns <- function(alignments, txlengths, file, method="em",
 #' @importFrom data.table tstrsplit
 count_hits <- function(alignment_files, reference, threads = 1,
                        method = "em", maxit = 1000, cutoff = 0.01,
-                       counts = TRUE) {
+                       tpm = FALSE) {
     flog.info("Getting transcript lengths from %s...", reference)
     fasta_index <- fasta.index(reference)[, c("desc", "seqlength")]
     txlengths <- fasta_index$seqlength
@@ -111,7 +113,7 @@ count_hits <- function(alignment_files, reference, threads = 1,
         cn <- count_alns(bam, txlengths, file=file)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
-    }, mc.cores=threads)
+    }, mc.cores = threads)
 
     return(rbindlist(counts))
 }

@@ -73,11 +73,12 @@ NumericVector effective_lengths(NumericVector txlengths,
 
 // [[Rcpp::export]]
 List em_count(NumericMatrix txreads, NumericVector txlengths,
-              int ntx, int nr, int maxit=1000, double cutoff=0.01) {
+              int ntx, int nr, int maxit=1000,
+              double reltol=0.01, double abstol=0.01) {
     std::vector<std::vector<int> > reads_to_txs(nr);
     NumericVector p(ntx, (double) nr / ntx);
     NumericVector pnew(ntx, 0.0);
-    NumericVector change;
+    NumericVector change, cutoffs;
     std::vector<int> txs;
     LogicalVector is_large;
     double read_sum, count;
@@ -110,10 +111,9 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
         }
         pnew = (pnew / txlengths);
         pnew = pnew * nr / sum(pnew);
-        is_large = pnew > cutoff;
-        change = abs(pnew - p) / pnew;
-        change = change[is_large];
-        if (max(change) < cutoff && k >= miniter) {
+        change = abs(pnew - p);
+        cutoffs = reltol * pnew + abstol;
+        if (is_true(all(change < cutoffs)) && k >= miniter) {
             break;
         }
         for (unsigned int i=0; i<ntx; ++i) p[i] = pnew[i];
@@ -121,6 +121,6 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
 
     return List::create(_["p"] = pnew,
                         _["iterations"] = k,
-                        _["change"] = (double) max(change),
+                        _["change"] = change,
                         _["num_ecs"] = ecs.size());
 }
