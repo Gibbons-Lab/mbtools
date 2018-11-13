@@ -34,7 +34,8 @@ count_alns <- function(alignments, txlengths, file, method="em",
               file, aln[, length(levels(seqnames))],
               quantile(efflengths, 0.025), quantile(efflengths, 0.975))
     if (nrow(aln) == 0) {
-        return(data.table(seqnames=character(), counts=integer()))
+        return(data.table(transcript=character(), counts=integer(),
+                          effective_length=integer()))
     }
     if (tpm) {
         libsize <- 1e6
