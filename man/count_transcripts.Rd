@@ -4,14 +4,15 @@
 \alias{count_transcripts}
 \title{Count alignment hits to a reference database.}
 \usage{
-count_transcripts(alignment_files, reference, threads = 1,
+count_transcripts(alignment_files, reference = NA, threads = 1,
   method = "em", maxit = 1000, cutoff = 0.01, tpm = FALSE)
 }
 \arguments{
 \item{alignment_files}{Paths to BAM files.}
 
 \item{reference}{Path to the reference FASTA file. Used to get transcript
-lengths.}
+lengths. If NA assumes constant length transcripts and will not correct
+for transcript lengths.}
 
 \item{threads}{Number of parallel processes.}
 

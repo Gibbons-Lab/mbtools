@@ -22,8 +22,12 @@ count_alns <- function(alignments, txlengths, file, method="em",
                        maxit=1000, cutoff=0.01, tpm=FALSE) {
     aln <- as.data.table(alignments)
     aln[, seqnames := factor(as.character(seqnames))]
-    efflengths <- effective_lengths(aln[, txlengths[levels(seqnames)]],
-                                    aln[, width])
+    if (is.na(txlengths)) {
+        efflengths <- rep(1, aln[, length(levels(seqnames))])
+    } else {
+        efflengths <- effective_lengths(aln[, txlengths[levels(seqnames)]],
+                                        aln[, width])
+    }
     names(efflengths) <- aln[, txlengths[levels(seqnames)]]
     flog.info(paste("[%s] %d transcripts. Confidence interval for effective",
                     "lengths: [%.2f, %.2f]."),
@@ -84,7 +88,8 @@ count_alns <- function(alignments, txlengths, file, method="em",
 #'
 #' @param alignment_files Paths to BAM files.
 #' @param reference Path to the reference FASTA file. Used to get transcript
-#'  lengths.
+#'  lengths. If NA assumes constant length transcripts and will not correct
+#'  for transcript lengths.
 #' @param threads Number of parallel processes.
 #' @param method The counting method. Can be either "naive" for assigning each
 #'  read to any transcript with the highest mapping score or "em" to resolve
@@ -101,14 +106,20 @@ count_alns <- function(alignments, txlengths, file, method="em",
 #'
 #' @export
 #' @importFrom data.table tstrsplit
-count_transcripts <- function(alignment_files, reference, threads = 1,
-                       method = "em", maxit = 1000, cutoff = 0.01,
-                       tpm = FALSE) {
-    flog.info("Getting transcript lengths from %s...", reference)
-    fasta_index <- fasta.index(reference)[, c("desc", "seqlength")]
-    txlengths <- fasta_index$seqlength
-    names(txlengths) <- gsub("\\s.+", "", fasta_index$desc)
-    flog.info("Normalized IDs. Starting counting...")
+count_transcripts <- function(alignment_files, reference=NA, threads = 1,
+                              method = "em", maxit = 1000, cutoff = 0.01,
+                              tpm = FALSE) {
+    if (is.na(reference)) {
+        flog.info(paste("No reference given so assuming constant length",
+                        "transcripts. Starting counting..."))
+        txlengths <- NA
+    } else {
+        flog.info("Getting transcript lengths from %s...", reference)
+        fasta_index <- fasta.index(reference)[, c("desc", "seqlength")]
+        txlengths <- fasta_index$seqlength
+        names(txlengths) <- gsub("\\s.+", "", fasta_index$desc)
+        flog.info("Normalized IDs. Starting counting...")
+    }
     counts <- mclapply(alignment_files, function(file) {
         bam <- read_bam(file)
         flog.info("[%s] Read %d alignments.", file, length(bam))
