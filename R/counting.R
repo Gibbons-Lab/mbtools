@@ -22,7 +22,7 @@ count_alns <- function(alignments, txlengths, file, method="em",
                        maxit=1000, cutoff=0.01, tpm=FALSE) {
     aln <- as.data.table(alignments)
     aln[, seqnames := factor(as.character(seqnames))]
-    if (is.na(txlengths)) {
+    if (is.null(txlengths)) {
         efflengths <- rep(1, aln[, length(levels(seqnames))])
     } else {
         efflengths <- effective_lengths(aln[, txlengths[levels(seqnames)]],
@@ -113,7 +113,7 @@ count_transcripts <- function(alignment_files, reference=NA, threads = 1,
     if (is.na(reference)) {
         flog.info(paste("No reference given so assuming constant length",
                         "transcripts. Starting counting..."))
-        txlengths <- NA
+        txlengths <- NULL
     } else {
         flog.info("Getting transcript lengths from %s...", reference)
         fasta_index <- fasta.index(reference)[, c("desc", "seqlength")]
