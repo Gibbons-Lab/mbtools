@@ -8,13 +8,16 @@ illumina <- function(dir) {
     annotations <- as.data.table(str_match(files, illumina_pattern))
     names(annotations) <- c("file", "id", "injection_order", "lane",
                             "direction")
+    annotations[, direction := as.numeric(direction)]
     annotations$file <- files
+    names(annotations)[1] <- "forward"
     if (annotations[, uniqueN(direction)] == 2) {
-        fwd <- annotations[direction == "001"]
-        bwd <- annotations[direction == "002"]
-        annotations <- bwd[fwd[, .(reverse=file, id)], on="id"]
+        fwd <- annotations[direction == 1]
+        bwd <- annotations[direction == 2]
+        annotations <- fwd[bwd[, .(reverse=forward, id)], on="id"]
+        annotations <- annotations[, .(forward, reverse, id,
+                                       injection_order, lane)]
     } else {
-        names(annotations)[1] <- "forward"
         annotations[, direction := NULL]
     }
     annotations[, injection_order := as.numeric(injection_order)]
