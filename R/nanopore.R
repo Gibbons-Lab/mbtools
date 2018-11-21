@@ -10,11 +10,13 @@
 #' @param alignments_folder Where to store the alignments.
 #' @param log_file The log file used to store status messages.
 #' @param threads Number of threds used for alignment.
+#' @param secondary Return at most that many secondary alignments.
 #' @return A data.table with sequence names, counts and sample name.
 #'
 #' @export
-align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
-                           log_file="minimap2.log", threads=4) {
+align_nanopore <- function(read_files, ref, alignments_folder = "./alignments",
+                           log_file="minimap2.log", threads = 4,
+                           secondary = 50) {
     if (!dir.exists(alignments_folder)) {
         dir.create(alignments_folder)
     }
@@ -24,7 +26,7 @@ align_nanopore <- function(read_files, ref, alignments_folder="./alignments",
         base <- strsplit(basename(file), ".fa")[[1]][1]
         out_path <- file.path(alignments_folder,
                               paste0(base, ".bam"))
-        args <- c("-acx", "map-ont", "-t", threads, "index.mmi", file)
+        args <- c("-acx", "map-ont", "-t", threads, "-N", secondary, ref, file)
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
         success <- system2("minimap2", args = args)

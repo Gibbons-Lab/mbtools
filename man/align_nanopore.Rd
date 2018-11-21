@@ -5,7 +5,7 @@
 \title{Align nanopore reads to a 16S reference database.}
 \usage{
 align_nanopore(read_files, ref, alignments_folder = "./alignments",
-  log_file = "minimap2.log", threads = 4)
+  log_file = "minimap2.log", threads = 4, secondary = 50)
 }
 \arguments{
 \item{read_files}{Paths to fastq files (can be gzipped).}
@@ -17,6 +17,8 @@ align_nanopore(read_files, ref, alignments_folder = "./alignments",
 \item{log_file}{The log file used to store status messages.}
 
 \item{threads}{Number of threds used for alignment.}
+
+\item{secondary}{Return at most that many secondary alignments.}
 }
 \value{
 A data.table with sequence names, counts and sample name.
