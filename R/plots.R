@@ -72,7 +72,7 @@ shorten <- function(texts, n=40) {
 #'  NULL
 #'
 #' @export
-plot_taxa <- function(ps, level="Phylum", sort=TRUE,
+plot_taxa <- function(ps, level="Phylum", x="id", sort=TRUE,
                       max_taxa = 12, only_data = FALSE) {
     counts <- taxa_count(ps, lev=level)[, reads := as.double(reads)]
     counts[, reads := reads / sum(reads), by = "sample"]
@@ -91,13 +91,17 @@ plot_taxa <- function(ps, level="Phylum", sort=TRUE,
 
     if (only_data) return(counts)
 
-    pl <- ggplot(counts, aes(x=id, y=reads, fill=taxa)) +
+    pl <- ggplot(counts, aes_string(x=x, y="reads", fill="taxa")) +
         geom_bar(stat="identity", col=NA, width=1) +
-        scale_x_continuous(expand = c(0, 1)) +
         scale_y_continuous(expand = c(0, 0.01)) +
         scale_fill_brewer(palette="Paired", direction = -1, label=shorten) +
         xlab("sample index") + ylab("% of reads") + labs(fill="") +
         theme_bw()
+
+    if (x == "sample") {
+        pl <- pl + theme(axis.text.x = element_text(angle = 90,
+                                                    hjust = 1, vjust = 0.5))
+    }
 
     return(pl)
 }

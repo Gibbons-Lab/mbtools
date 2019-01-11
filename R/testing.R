@@ -22,7 +22,8 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
             design = reformulate(c(confounders, variable))))
     dds <- suppressMessages(
         DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
-              fitType = fit_type, reduced = ref_model))
+              fitType = fit_type, reduced = ref_model,
+              sfType = "poscounts"))
     if (is_reg) {
         totals <- colSums(counts(dds))
         mod <- glm(reformulate(c(confounders, variable), "totals"),
@@ -39,8 +40,10 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
                             results = res)
     }
     res <- as.data.table(res)
-    set(res, j = tax, value = colnames(counts))
+    set(res, j = ifelse(is.na(tax), "variant", tax),
+        value = colnames(counts))
     set(res, j = "variable", value = variable)
+    set(res, j = "coef", value = resultsNames(dds)[length(resultsNames(dds))])
     set(res, j = "robust", value = !outliers)
     if (is_reg) {
         n <- sum(good)
@@ -80,7 +83,8 @@ iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
     res <- topTable(fit, coef=ncol(design), sort.by="none", number=Inf)
     res <- as.data.table(res)
     names(res) <- c("log2FoldChange", "baseMean", "t", "pvalue", "padj", "B")
-    set(res, j = tax, value = colnames(counts))
+    set(res, j = ifelse(is.na(tax), "variant", tax),
+        value = colnames(counts))
     set(res, j = "variable", value = variable)
     set(res, j = "robust", value = !outliers)
     if (is_reg) {

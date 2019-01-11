@@ -1,6 +1,6 @@
 # Helpers to manage read files
 
-illumina_pattern <- "([A-Za-z0-9\\-]+)_S(\\d+)_L(\\d+)_R(\\d+)_001.fastq"
+illumina_pattern <- "([A-Za-z0-9\\-]+)_S(\\d+)(?:_L(\\d+))*_R(\\d+)_001.fastq"
 
 illumina <- function(dir) {
     files <- list.files(dir, pattern=illumina_pattern, recursive=TRUE,

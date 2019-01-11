@@ -20,7 +20,9 @@ align_nanopore <- function(read_files, ref, alignments_folder = "./alignments",
     if (!dir.exists(alignments_folder)) {
         dir.create(alignments_folder)
     }
-    flog.info("Aligning reads to 16S references")
+    flog.info(paste("Aligning %d files on %d threads.",
+                    "Keeping up to %d secondary alignments."),
+                    length(read_files), threads, secondary)
     alns <- lapply(read_files, function(file) {
         flog.info("Aligning %s...", file)
         base <- strsplit(basename(file), ".fa")[[1]][1]
