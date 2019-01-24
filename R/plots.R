@@ -49,21 +49,12 @@ plot_counts <- function(ps, variable, tax_level = "genus", taxa = NULL,
     return(pl)
 }
 
-
-shorten <- function(texts, n=40) {
-    before <- sapply(texts, nchar)
-    texts <- substr(texts, 1, n)
-    after <- sapply(texts, nchar)
-    texts[before > after] <- paste0(texts[before > after], "...")
-    return(texts)
-}
-
-
 #' Plots relative distribution for taxa across samples.
 #'
 #' @param ps A phyloseq data set.
 #' @param level The taxonomy level to use. Defaults to phylum.
 #' @param sort Whether to sort taxa by abundance across all samples.
+#' @param show_samples Whether to show sample names.
 #' @param max_taxa Maximum number of different taxa to plot. If more than 12
 #'  there is probably no color scale that can visualize them.
 #' @param only_data Only get the raw data for the plot as a data table.
@@ -72,7 +63,9 @@ shorten <- function(texts, n=40) {
 #'  NULL
 #'
 #' @export
-plot_taxa <- function(ps, level="Phylum", x="id", sort=TRUE,
+#' @importFrom scales percent
+#' @importFrom stringr str_trunc
+plot_taxa <- function(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
                       max_taxa = 12, only_data = FALSE) {
     counts <- taxa_count(ps, lev=level)[, reads := as.double(reads)]
     counts[, reads := reads / sum(reads), by = "sample"]
@@ -90,15 +83,19 @@ plot_taxa <- function(ps, level="Phylum", x="id", sort=TRUE,
     counts[, id := as.numeric(sample)]
 
     if (only_data) return(counts)
+    x <- "id"
+    if (show_samples) x <- "sample"
 
     pl <- ggplot(counts, aes_string(x=x, y="reads", fill="taxa")) +
         geom_bar(stat="identity", col=NA, width=1) +
-        scale_y_continuous(expand = c(0, 0.01)) +
-        scale_fill_brewer(palette="Paired", direction = -1, label=shorten) +
-        xlab("sample index") + ylab("% of reads") + labs(fill="") +
+        scale_y_continuous(expand = c(0, 0.01), labels = percent) +
+        scale_fill_brewer(palette = "Paired", direction = -1,
+                          label = function(x) str_trunc(x, 30)) +
+        labs(x = ifelse(show_samples, "", "sample index"),
+             y = "relative abundance", fill = "") +
         theme_bw()
 
-    if (x == "sample") {
+    if (show_samples) {
         pl <- pl + theme(axis.text.x = element_text(angle = 90,
                                                     hjust = 1, vjust = 0.5))
     }

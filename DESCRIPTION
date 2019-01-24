@@ -19,6 +19,7 @@ Imports:
     phyloseq,
     dada2,
     ggplot2,
+    scales,
     stringr,
     R.utils,
     Hmisc,
@@ -39,7 +40,7 @@ Suggests:
     IHW,
     knitr,
     rmarkdown
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
-LinkingTo: 
+LinkingTo:
     Rcpp

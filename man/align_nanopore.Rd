@@ -21,7 +21,7 @@ align_nanopore(read_files, ref, alignments_folder = "./alignments",
 \item{secondary}{Return at most that many secondary alignments.}
 }
 \value{
-A data.table with sequence names, counts and sample name.
+A data.table with sample name and alignment.
 }
 \description{
 Align nanopore reads to a 16S reference database.
