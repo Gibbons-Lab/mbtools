@@ -3,7 +3,7 @@
 
 iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     good <- !is.na(meta[[variable]])
-    is_reg = !is.factor(meta[[variable]])
+    is_reg <- !is.factor(meta[[variable]])
     if (sum(good) < 4) {
         return(NULL)
     }
@@ -61,7 +61,7 @@ iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
     if (sum(good) < 4) {
         return(NULL)
     }
-    is_reg = !is.factor(meta[[variable]])
+    is_reg <- !is.factor(meta[[variable]])
     norm_counts <- t(suppressMessages(normalize(counts[good, ])))
     design <- model.matrix(reformulate(c(confounders, variable)), data=meta)
     model <- voom(norm_counts, design, plot=FALSE)
@@ -266,4 +266,3 @@ combinatorial_association <- function(ps, variable, tax = "genus",
 
     return(tests)
 }
-

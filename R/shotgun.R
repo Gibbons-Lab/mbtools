@@ -21,7 +21,7 @@ alignment_rate <- function(log_file) {
             single <- as.numeric(match[, 2])
         }
     }
-    return(c(total=total, aligned=single + multi))
+    return(c(total = total, aligned = single + multi))
 }
 
 
@@ -112,7 +112,7 @@ align_bowtie2 <- function(reads, index_basename, threads=1,
 
         return(data.table(id = read$id, success = success == 0, log = log_file,
                           alignment = out_path, reads = rate[1],
-                          aligned = rate[2], rate = rate[2]/rate[1]))
+                          aligned = rate[2], rate = rate[2] / rate[1]))
     })
 
     return(rbindlist(alignments))
