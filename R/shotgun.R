@@ -83,7 +83,7 @@ align_bowtie2 <- function(reads, index_basename, threads=1,
             if (!is.null(rate) && file.exists(out_path)) {
                 return(data.table(id = read$id, success = TRUE,
                        log = log_file, alignment = out_path, reads = rate[1],
-                       aligned = rate[2], rate = rate[2]/rate[1]))
+                       aligned = rate[2], rate = rate[2] / rate[1]))
             }
         }
 
