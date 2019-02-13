@@ -12,7 +12,7 @@ NULL
 pkgs <- c("ggplot2", "dada2", "phyloseq", "ShortRead",
           "data.table", "yaml", "magrittr")
 
-tools <- c("bowtie2", "minimap2", "slimm")
+tools <- c("bowtie2", "minimap2", "slimm", "samtools")
 
 silent_lib <- function(...) suppressPackageStartupMessages(library(...))
 

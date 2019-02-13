@@ -1,45 +1,63 @@
 # Helpers to manage read files
 
 illumina_pattern <- "([A-Za-z0-9\\-]+)_S(\\d+)(?:_L(\\d+))*_R(\\d+)_001.fastq"
+illumina_annotations <- c("id", "injection_order", "lane", "direction")
 
-illumina <- function(dir) {
-    files <- list.files(dir, pattern=illumina_pattern, recursive=TRUE,
-                        include.dirs=TRUE)
-    annotations <- as.data.table(str_match(files, illumina_pattern))
-    names(annotations) <- c("file", "id", "injection_order", "lane",
-                            "direction")
-    annotations[, direction := as.numeric(direction)]
-    annotations$file <- files
-    names(annotations)[1] <- "forward"
-    if (annotations[, uniqueN(direction)] == 2) {
-        fwd <- annotations[direction == 1]
-        bwd <- annotations[direction == 2]
-        annotations <- fwd[bwd[, .(reverse=forward, id)], on="id"]
-        annotations <- annotations[, .(forward, reverse, id,
-                                       injection_order, lane)]
-    } else {
-        annotations[, direction := NULL]
+annotate_files <- function(dir, pattern, annotations) {
+    if (!"id" %in% annotations) {
+        stop("need at least the id for each sample")
     }
-    annotations[, injection_order := as.numeric(injection_order)]
-    annotations[, lane := as.numeric(lane)]
-    return(annotations)
+    files <- list.files(dir, pattern = pattern, recursive = TRUE,
+                        include.dirs = TRUE)
+    anns <- as.data.table(str_match(files, pattern))
+    names(anns) <- c("file", annotations)
+    if ("direction" %in% annotations) {
+        anns[, direction := as.numeric(direction)]
+    } else {
+        anns[, direction := 1]
+    }
+    anns$file <- files
+    names(anns)[1] <- "forward"
+    if (anns[, uniqueN(direction)] == 2) {
+        fwd <- anns[direction == 1]
+        bwd <- anns[direction == 2]
+        anns <- fwd[bwd[, .(reverse = forward, id)], on = "id"]
+        other_cols <- names(anns)[!names(anns) %in% c("forward", "reverse")]
+        anns <- anns[, c("forward", "reverse", other_cols), with = FALSE]
+    }
+    anns[, direction := NULL]
+    if ("injection_order" %in% names(anns)) {
+        anns[, injection_order := as.numeric(injection_order)]
+    }
+    if ("lane" %in% names(anns)) {
+        anns[, lane := as.numeric(lane)]
+    }
+    return(anns)
 }
 
-#' Find Illumina read files in a given directory.
+#' Find read files in a given directory.
 #'
 #' @param directory The directory in which to look.
 #' @param dirs_are_runs Whether subdirctories indicate different sequencing
 #'  runs.
+#' @param pattern Regular expression pattern for the file names. Each capture
+#'  group will be used as an annotation.
+#' @param annotations Names for the annotations. Must contain one name for each
+#'  capture group in `pattern`.
 #' @return A data table that contains the samples and their annotations.
 #'
 #' @export
 #' @importFrom stringr str_match_all
 #' @importFrom data.table setDT uniqueN
-find_illumina <- function(directory, dirs_are_runs=FALSE) {
+find_read_files <- function(directory, dirs_are_runs = FALSE,
+                            pattern = illumina_pattern,
+                            annotations = illumina_annotations) {
     if (dirs_are_runs) {
         files <- list()
-        for (dir in list.dirs(directory, recursive=FALSE, full.names=FALSE)) {
-            fi <- illumina(file.path(directory, dir))
+        for (dir in list.dirs(directory, recursive = FALSE,
+                              full.names = FALSE)) {
+            fi <- annotate_files(file.path(directory, dir), pattern,
+                                 annotations)
             fi[, "run" := dir]
             fi[, forward := file.path(dir, forward)]
             if ("reverse" %in% names(fi)) {
@@ -49,7 +67,7 @@ find_illumina <- function(directory, dirs_are_runs=FALSE) {
         }
         files <- rbindlist(files)
     } else {
-        files <- illumina(directory)
+        files <- annotate_files(directory, pattern, annotations)
     }
     files[, forward := file.path(directory, forward)]
     if ("reverse" %in% names(files)) {

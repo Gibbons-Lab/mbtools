@@ -16,7 +16,7 @@
 #'  NULL
 #'
 #' @export
-run_slimm <- function(alignments, slimm_db, reports = NULL) {
+slimm <- function(alignments, slimm_db, reports = NULL) {
     if (!all(alignments$success)) {
         stop("some alignments were not successful!")
     }
@@ -24,17 +24,20 @@ run_slimm <- function(alignments, slimm_db, reports = NULL) {
         reports <- tempdir()
     }
 
-    flog.info("Running SLIMM...")
+    flog.info("running SLIMM on %d alignments with database %s.",
+              nrow(alignments), slimm_db)
     ecodes <- pbsapply(as.character(alignments$alignment), function(al) {
-        ecode <- system2("slimm", args=c("-m", slimm_db, "-o",
-                         file.path(reports, ""), al),
-                         stdout=file.path(reports, "slimm.log"), stderr = NULL)
+        ecode <- system2(
+            "slimm",
+            args = c("-m", slimm_db, "-o", file.path(reports, ""), al),
+            stdout = file.path(reports, "slimm.log"),
+            stderr = NULL)
         return(ecode)
     })
 
     if (any(ecodes != 0)) {
-        stop(paste0("slimm terminated with an error, logs can be found in",
-                    file.path(reports, "slimm.log")))
+        paste0("slimm terminated with an error, logs can be found in ",
+               file.path(reports, "slimm.log")) %>% stop
     }
 
     return(reports)
