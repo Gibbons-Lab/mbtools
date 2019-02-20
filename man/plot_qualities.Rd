@@ -4,9 +4,12 @@
 \alias{plot_qualities}
 \title{Plots the quality profile for an entire experiment.}
 \usage{
-plot_qualities(qp)
+plot_qualities(qp, min_score = 10)
 }
 \arguments{
+\item{min_score}{Smallest acceptable score. Defaults to 10 (10% per base
+error). A reference line will be plotted but no data will be discarded.}
+
 \item{cycles}{A quality profile as returned by
 \code{\link{quality_profile}}.}
 }

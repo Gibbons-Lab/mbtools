@@ -72,7 +72,8 @@ mockrobiota <- function(name, folder, quiet=!interactive()) {
     taxa <- do.call(rbind, strsplit(taxa, ";\\s*", perl = TRUE))
     colnames(taxa) <- L[1:ncol(taxa)]
     silva <- phyloseq(tax_table(as.matrix(taxa)),
-                      otu_table(silva[, -1, drop = FALSE], taxa_are_rows = TRUE),
+                      otu_table(silva[, -1, drop = FALSE],
+                                taxa_are_rows = TRUE),
                       sample_data(samples))
 
     list(

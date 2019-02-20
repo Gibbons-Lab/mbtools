@@ -4,14 +4,21 @@
 \alias{workflow_qa}
 \title{Workflow for basic quality assessment of the read files.}
 \usage{
-workflow_qa(files, min_score = 10, n = 10000)
+workflow_qa(object, min_score = 10, n = 10000)
 }
 \arguments{
+\item{object}{An experiment data table as returned by
+\code{\link{find_read_files}} or a worflow object.}
+
 \item{min_score}{The smallest quality score still considered okayish.}
+
+\item{n}{Largest number of reads for each file. Will be sampled if more
+are found.}
 }
 \value{
 A list with the following elements:
 \describe{
+  \item{files}{The input files to produce the report}
   \item{qualities}{data table of qualities scores per cycle and sample}
   \item{bases}{data table of base calls per cycle and sample}
   \item{quality_plot}{sample quality profiles}

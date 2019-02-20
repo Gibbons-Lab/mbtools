@@ -35,6 +35,16 @@ annotate_files <- function(dir, pattern, annotations) {
     return(anns)
 }
 
+get_files <- function(obj) {
+    if ("data.table" %in% class(obj) &&
+        all(c("forward", "id") %in% names(obj))) {
+            return(obj)
+    } else if ("list" %in% class(obj) && "files" %in% names(obj)) {
+        return(obj[["files"]])
+    }
+    return(NULL)
+}
+
 #' Find read files in a given directory.
 #'
 #' @param directory The directory in which to look.
@@ -49,9 +59,10 @@ annotate_files <- function(dir, pattern, annotations) {
 #' @export
 #' @importFrom stringr str_match_all
 #' @importFrom data.table setDT uniqueN
-find_read_files <- function(directory, dirs_are_runs = FALSE,
+find_read_files <- function(directory,
                             pattern = illumina_pattern,
-                            annotations = illumina_annotations) {
+                            annotations = illumina_annotations,
+                            dirs_are_runs = FALSE) {
     if (dirs_are_runs) {
         files <- list()
         for (dir in list.dirs(directory, recursive = FALSE,

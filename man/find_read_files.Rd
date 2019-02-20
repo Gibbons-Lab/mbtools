@@ -4,20 +4,20 @@
 \alias{find_read_files}
 \title{Find read files in a given directory.}
 \usage{
-find_read_files(directory, dirs_are_runs = FALSE,
-  pattern = illumina_pattern, annotations = illumina_annotations)
+find_read_files(directory, pattern = illumina_pattern,
+  annotations = illumina_annotations, dirs_are_runs = FALSE)
 }
 \arguments{
 \item{directory}{The directory in which to look.}
-
-\item{dirs_are_runs}{Whether subdirctories indicate different sequencing
-runs.}
 
 \item{pattern}{Regular expression pattern for the file names. Each capture
 group will be used as an annotation.}
 
 \item{annotations}{Names for the annotations. Must contain one name for each
 capture group in `pattern`.}
+
+\item{dirs_are_runs}{Whether subdirctories indicate different sequencing
+runs.}
 }
 \value{
 A data table that contains the samples and their annotations.

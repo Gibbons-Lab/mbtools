@@ -21,12 +21,20 @@ entropy <- function(counts) {
 basecalls <- function(srqa) {
     cycles <- srqa[["perCycle"]]$baseCall %>% as.data.table
     names(cycles) <- c("cycle", "base", "count", "file")
-    med_entropy <- cycles[, entropy(count), by = c("cycle", "file")] %>% mean
-    flog.info("Mean per cycle entropy is %.3f%% (in [0, 2]).",
-              med_entropy)
+    med_entropy <- cycles[, entropy(count), by = c("cycle", "file")][, V1]
+    flog.info("Mean per cycle entropy is %.3f (in [0, 2]).",
+              mean(med_entropy, na.rm = TRUE))
     return(cycles)
 }
 
+#' @importFrom stats setNames
+library_size <- function(srqa) {
+    sizes <- srqa[["readCounts"]]
+    sizes <- data.table(file = rownames(sizes), count = sizes[, 1])
+    flog.info("On average we have %.2f ± %.2f reads per file.",
+              sizes[, mean(count)], sizes[, sd(count)])
+    return(sizes)
+}
 
 #' Get the quality profiles and base calls for each cycle across all
 #' input files.
@@ -49,45 +57,58 @@ quality_profile <- function(files, n = 1e4) {
     srqa <- qa(files$forward, sample = TRUE, n = n)
     cycles <- qualities(srqa)
     bases <- basecalls(srqa)
+    sizes <- library_size(srqa)
     cycles[, direction := "forward"]
     bases[, direction := "forward"]
+    sizes[, direction := "forward"]
     cycles <- files[, .(file = basename(forward), id)][cycles, on = "file"]
     bases <- files[, .(file = basename(forward), id)][bases, on = "file"]
+    sizes <- files[, .(file = basename(forward), id)][sizes, on = "file"]
     if ("reverse" %in% names(files)) {
         flog.info("Running quality assay for forward reads from %d files.",
               files[, .N])
-        rcycles <- qualities(files$reverse)
+        srqa <- qa(files$reverse, sample = TRUE, n = n)
+        rcycles <- qualities(srqa)
         rbases <- basecalls(srqa)
+        rsizes <- library_size(srqa)
         rcycles[, direction := "reverse"]
         rbases[, direction := "reverse"]
+        rsizes[, direction := "reverse"]
         rcycles <- files[, .(file = basename(reverse), id)][
             rcycles, on = "file"]
         rbases <- files[, .(file = basename(reverse), id)][
             rbases, on = "file"]
+        rsizes <- files[, .(file = basename(reverse), id)][
+            rsizes, on = "file"]
         cycles <- rbind(cycles, rcycles)
         bases <- rbind(bases, rbases)
+        sizes <- rbind(sizes, rsizes)
     }
-    return(list(qualities = cycles, bases = bases))
+    return(list(qualities = cycles, bases = bases, sizes = sizes))
 }
 
 #' Plots the quality profile for an entire experiment.
 #'
 #' @param cycles A quality profile as returned by
 #'  \code{\link{quality_profile}}.
+#' @param min_score Smallest acceptable score. Defaults to 10 (10% per base
+#'  error). A reference line will be plotted but no data will be discarded.
 #' @return A ggplot2 plot mapping the read positions to mean quality for each
 #'  sample. Will be facetted into fowrward and reverse if applicable.
 #'
 #' @export
-plot_qualities <- function(qp) {
+plot_qualities <- function(qp, min_score = 10) {
     cycles <- qp$qualities
     mean_scores <- cycles[, .(quality = sum(count * quality) / sum(count),
                               direction),
                           by = c("cycle", "file")]
     pl <- ggplot(mean_scores, aes(x = cycle, y = quality)) +
-            geom_hline(yintercept = 10, col = "red") +
-            geom_point(alpha = 0.1, stroke = 0, size = 2) +
-            geom_smooth() + theme_bw() +
-            labs(x = "read position / cycle [bps]", y = "quality score")
+            geom_hline(yintercept = min_score, col = "blue") +
+            geom_bin2d(bins = 50) +
+            geom_smooth(col = "tomato", fill = "tomato") + theme_bw() +
+            scale_fill_viridis_c(limits = c(0, NA)) +
+            labs(x = "read position / cycle [bps]",
+                 y = "quality score [mean per sample]")
     n <- cycles[, uniqueN(direction)]
     if (n > 1) {
         pl <- pl + facet_wrap(~ direction)
@@ -117,7 +138,7 @@ plot_lengths <- function(qp, min_score = 10) {
             scale_x_continuous(limits = range(nice$cycle), expand = c(0, 0)) +
             theme_bw() +
             labs(x = "read position / cycle [bps]", y = "")
-    n <- cycles[, uniqueN(direction)]
+    n <- qp$qualities[, uniqueN(direction)]
     if (n > 1) {
         pl <- pl + facet_wrap(~ direction)
     }
@@ -133,11 +154,13 @@ plot_lengths <- function(qp, min_score = 10) {
 #'
 #' @export
 plot_entropy <- function(qp) {
-    ent <- qp$bases[, .(entropy = entropy(count)), by = c("cycle", "file")]
+    ent <- qp$bases[, .(entropy = entropy(count), direction),
+                    by = c("cycle", "file")]
     pl <- ggplot(ent, aes(x = cycle, y = entropy)) +
-            geom_hline(yintercept = 2, col = "red") +
-            geom_point(alpha = 0.05, stroke = 0) +
-            stat_smooth() + theme_bw() +
+            geom_hline(yintercept = 2, col = "blue") +
+            geom_bin2d(bins = 50) +
+            scale_fill_viridis_c(limits = c(0, NA)) +
+            stat_smooth(col = "tomato", fill = "tomato") + theme_bw() +
             labs(x = "read position / cycle [bps]", y = "entropy [bits]")
     n <- qp$bases[, uniqueN(direction)]
     if (n > 1) {
