@@ -131,7 +131,7 @@ iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
 #'  resultsNames estimateSizeFactors
 #' @importFrom limma voom eBayes lmFit topTable
 #' @importFrom stats model.matrix
-association <- function(ps, variables = NULL, tax = "genus", method="deseq2",
+association <- function(ps, variables = NULL, tax = "genus", method = "deseq2",
                         confounders = NULL, min_count = 10, in_samples = 0.1,
                         independent_weighting = TRUE, standardize = TRUE,
                         shrink = TRUE) {

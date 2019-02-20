@@ -16,8 +16,6 @@
 #' @param reads A character vector containing the read files in fastq format.
 #'  Can be generated using \code{\link{find_illumina}}.
 #' @param out A folder to which to save the filtered fastq files.
-#' @param index Additional barcode file that should be filtered as well. Can
-#'  be used to filter multiplexed samples.
 #' @param reference Path to a fasta file (can be gzipped) that contains the
 #'  sequences to filter. Can be a genome or transcripts.
 #' @param alignments Whether to keep the alignment. If not NA should be a
@@ -28,10 +26,9 @@
 #' @examples
 #'  NULL
 #'
-#' @export
 #' @importFrom data.table tstrsplit
 #' @importFrom digest digest
-remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
+remove_reference <- function(reads, out, reference, alignments=NA,
                              threads=3) {
     paired <- length(reads) == 2 & !any(is.na(reads))
     if (is.na(alignments)) {
@@ -62,12 +59,6 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
     dir.create(out, showWarnings = FALSE)
 
     streams <- reads
-    if (!is.na(index)) {
-        streams <- append(streams, index)
-        new_files <- append(new_files,
-                            file.path(out, basename(index)))
-    }
-
     counts <- sapply(1:length(streams), function(i) {
         reads <- readFastq(streams[i])
         n <- length(reads)
@@ -86,30 +77,54 @@ remove_reference <- function(reads, out, reference, index=NA, alignments=NA,
 }
 
 
+#' Build a configuration for the reference removal workflow.
+#'
+#' This can be saved and passed on to others to ensure reproducibility.
+#'
+#' @param ... Any arguments are used to update the default configuration. See
+#'  the example below. Optional.
+#' @return A list with the parameters used in the DADA2 workflow.
+#' @export
+#' @examples
+#'  config <- config_reference(reference = "refs/mouse.fna.gz")
+config_reference <- function(...) {
+    config <- list(
+        threads = 1,
+        out_dir = "reference_removed",
+        alignment_dir = NA,
+        reference = NA
+    )
+    args <- list(...)
+    for (arg in names(args)) {
+        config[[arg]] <- args[[arg]]
+    }
+    return(config)
+}
+
+
 #' Filter a set of reference sequences from the data set.seed
 #'
 #' This will also return a data.table containing the counts of reference
 #' sequences for each sample.
 #'
-#' @param reads A data frame or data table containing the read files. Can be
-#'  generated with \code{\link{find_illumina}} for instance.
-#' @param out The folder where to store filtered reads. Should be empty as
-#'  files **will be overwritten**.
-#' @param reference Fasta file (can be gzipped) containing the reference
-#'  DNA sequences.
-#' @param alignments Optional folder in which to store the alignments.
-#' @param threads How many threads to use for mapping.
-#' @return A data.table with the counts in the reference.
+#' @param object An experiment data table as returned by
+#'  \code{\link{find_read_files}} or a worflow object.
+#' @param config A configuration file as returned by
+#'  \code{\link{config_reference}}.
+#' @return A list with the processed files and removal counts for each sample.
 #' @export
-filter_reference <- function(reads, out, reference, alignments = NA,
-                             threads = 3) {
-    paired <- "reverse" %in% names(reads)
-    dir.create(out, showWarnings = FALSE)
+filter_reference <- function(object, config) {
+    files <- get_files(object)
+    if (is.na(config$reference)) {
+        stop("Must specify a reference to remove in configuration :/")
+    }
+    paired <- "reverse" %in% names(files)
+    dir.create(config$out_dir, showWarnings = FALSE, recursive = TRUE)
     # we will leave 3 threads for minimap2
-    threads <- ceiling(threads / 3)
+    threads <- ceiling(config$threads / 3)
     flog.info("Actually using %d threads to filter and count.", threads * 3)
-    counts <- mclapply(1:nrow(reads), function(i) {
-        row <- reads[i]
+    counts <- mclapply(1:nrow(files), function(i) {
+        row <- files[i]
         if ("lane" %in% names(row)) {
             lane <- as.numeric(row$lane)
         } else {
@@ -117,18 +132,29 @@ filter_reference <- function(reads, out, reference, alignments = NA,
         }
         flog.info("Processing %s on lane %d.", row[, id], lane)
         r <- if (paired) row[, .(forward, reverse)] else row[, forward]
-        if (is.na(alignments)) {
+        if (is.na(config$alignment_dir)) {
             aln <- NA
         } else {
             name <- strsplit(basename(row[, id]), ".", fixed = TRUE)[[1]][1]
-            aln <- file.path(alignments, paste0(basename(name), ".bam"))
+            aln <- file.path(config$alignment_dir,
+                             paste0(basename(name), ".bam"))
         }
-        res <- remove_reference(as.character(r), out, reference,
-                                alignments = aln, threads = 3)
+        res <- remove_reference(as.character(r), config$out_dir,
+                                config$reference, alignments = aln,
+                                threads = 3)
         res$id <- row[, id]
         res$lane <- lane
         return(res)
     }, mc.cores = threads)
     flog.info("Merging hit tables...")
-    return(rbindlist(counts))
+    filtered <- copy(files)
+    filtered[, forward := file.path(config$out_dir, basename(forward))]
+    if (paired) {
+        filtered[, reverse := file.path(config$out_dir, basename(reverse))]
+    }
+    artifact <- list(
+        counts = rbindlist(counts),
+        files = filtered
+    )
+    return(artifact)
 }

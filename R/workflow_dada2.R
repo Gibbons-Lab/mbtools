@@ -79,9 +79,6 @@ getN <- function(x) sum(getUniques(x))
 #' @importFrom digest digest
 denoise <- function(object, config) {
     files <- get_files(object)
-    if (is.null(files)) {
-        stop("`object` must be a file list or a workflow object :/")
-    }
     files <- copy(files)
     if (!"run" %in% names(files)) {
         files[, "run" := "all"]

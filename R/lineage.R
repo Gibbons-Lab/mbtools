@@ -2,7 +2,7 @@
 #
 # Apache license 2.0. See LICENSE for more information.
 #
-# Tools for lineage/taxonomy calling of metagenomics data.
+# Tools for lineage/taxonomy calling of metagenomic data.
 
 
 #' Quantifies abundances for the bacteria using SLIMM

@@ -1,6 +1,32 @@
-# Copyright 2016 Christian Diener <mail[at]cdiener.com>
+# Copyright 2016-2019 Christian Diener <mail[at]cdiener.com>
 #
 # Apache license 2.0. See LICENSE for more information.
+
+#' Build a configuration for the demultiplexing workflow.
+#'
+#' This can be saved and passed on to others to ensure reproducibility.
+#'
+#' @param ... Any arguments are used to update the default configuration. See
+#'  the example below. Optional.
+#' @return A list with the parameters used in the demultiplexing workflow.
+#' @export
+#' @examples
+#'  config <- config_demultiplex(n = 1e4)
+config_demultiplex <- function(...) {
+    config <- list(
+        out_dir = "demultiplexed",
+        barcodes = NULL,
+        samples = NULL,
+        n = 1e5,
+        max_edit = 1,
+        reverse_complement = TRUE
+    )
+    args <- list(...)
+    for (arg in names(args)) {
+        config[[arg]] <- args[[arg]]
+    }
+    return(config)
+}
 
 #' Splits FASTQ files into individual samples.
 #'
@@ -17,71 +43,84 @@
 #' @param max_ed Maximum allowed edit distance between the sequenced and
 #'  reference barcode.
 #' @param n Maximum number of records to read in each iteration.
-#' @return A numeric vector containing three entries, where the first defines the
-#'  reads that are kept.
-#'  \itemize{
-#'  \item{The number of reads that could be mapped uniquely.}
-#'  \item{The number of reads for which no match was found.}
-#'  \item{The number of reads for which more than one reference match was found.}
-#'  }
+#' @return A list containing the split files and matching statistics.
 #' @examples
 #'  NULL
 #'
 #' @export
 #' @importFrom Biostrings DNAStringSet reverseComplement
-split_barcodes <- function(reads, index, out, ref, n=1e5, max_ed=1) {
-    if (is.null(names(ref))) snames <- paste0("S", 1:length(ref))
-    else snames <- names(ref)
+demultiplex <- function(object, config) {
+    files <- get_files(object)
+    if (!"index" %in% names(files)) {
+        stop("must specify an index file for each sample :/")
+    }
+    if (is.null(config$barcodes)) {
+        stop("must specify barcodes in configuration :/")
+    }
 
-    ref <- DNAStringSet(ref)
+    ref <- DNAStringSet(config$barcodes)
     nref <- length(ref)
     if (nref < 2)
         stop("There is only one sample. Barcode filtering is not necessary!")
-    ref <- c(ref, reverseComplement(ref))
+    if (is.null(config$samples)) {
+        flog.warn("No sample names specified using S1-SN...")
+        snames <- paste0("S", 1:length(ref))
+    } else snames <- config$samples
 
-    istream <- FastqStreamer(index, n = n)
-    on.exit(close(istream))
+    if (config$reverse_complement) {
+        ref <- c(ref, reverseComplement(ref))
+    }
 
-    rstream <- lapply(reads, FastqStreamer, n = n)
-
-    if (dir.exists(out)) {
-        unlink(file.path(out, "*.fastq.gz"))
-    } else dir.create(out)
+    if (dir.exists(config$out_dir)) {
+        unlink(file.path(config$out_dir, "*.fastq.gz"))
+    } else dir.create(config$out_dir, recursive = TRUE)
     res <- c(unique = 0, multiple = 0, nomatch = 0)
     nseq <- 0
 
-    repeat {
-        fq <- yield(istream)
-        if (length(fq) == 0) break
+    for (i in 1:nrow(files)) {
+        flog.info("Processing ID %s...", files[i, id])
+        istream <- FastqStreamer(files[i, index], n = config$n)
+        rstream <- files[i, lapply(.(forward, reverse), FastqStreamer,
+                                   n = config$n)]
+        repeat {
+            fq <- yield(istream)
+            if (length(fq) == 0) break
 
-        ids <- sub("[/\\s].+$", "", id(fq), perl = TRUE)
+            ids <- sub("[/\\s].+$", "", id(fq), perl = TRUE)
 
-        hits <- do.call(cbind, srdistance(fq, ref)) <= max_ed
-        inds <- apply(hits, 1, function(x) {
-            i <- unique(which(x) %% nref) + 1
-            if (length(i) == 0) return(-1)
-            if (length(i) > 1) return(0)
-            else return(i)
-        })
+            hits <- do.call(cbind, srdistance(fq, ref)) <= config$max_edit
+            inds <- apply(hits, 1, function(x) {
+                i <- unique(which(x) %% nref) + 1
+                if (length(i) == 0) return(-1)
+                if (length(i) > 1) return(0)
+                else return(i)
+            })
 
-        for (i in 1:length(rstream)) {
-            rfq <- yield(rstream[[i]])
-            rids <- sub("[/\\s].+$", "", id(rfq), perl = TRUE)
-            if (any(rids != ids)) {
-                sapply(rstream, close)
-                stop("Index file and reads do not match!")
+            for (di in 1:length(rstream)) {
+                rfq <- yield(rstream[[di]])
+                rids <- sub("[/\\s].+$", "", id(rfq), perl = TRUE)
+                if (any(rids != ids)) {
+                    sapply(rstream, close)
+                    stop("Index file and reads do not match!")
+                }
+
+                for (sid in 1:nref) {
+                    filename <- sprintf("%s_S%d_L%d_R%d_001.fastq.gz",
+                                        snames[sid], sid, i, di)
+                    writeFastq(rfq[inds == sid],
+                               file.path(config$out_dir, filename),
+                               mode = "a", compress = TRUE)
+                }
             }
-            fn <- basename(reads[i])
-
-            for (sid in 1:nref) {
-                writeFastq(rfq[inds == sid], file.path(out,
-                    paste0(snames[sid], "_", fn)), "a")
-            }
+            nseq <- nseq + length(fq)
+            res <- res + c(sum(inds > 0), sum(inds == 0), sum(inds < 0))
         }
-        nseq <- nseq + length(fq)
-        res <- res + c(sum(inds > 0), sum(inds == 0), sum(inds < 0))
+        close(istream)
+        sapply(rstream, close)
     }
-    sapply(rstream, close)
-
-    return(res)
+    artifact <- list(
+        files = find_read_files(config$out_dir),
+        matches = res
+    )
+    return(artifact)
 }

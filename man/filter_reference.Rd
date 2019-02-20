@@ -4,24 +4,17 @@
 \alias{filter_reference}
 \title{Filter a set of reference sequences from the data set.seed}
 \usage{
-filter_reference(reads, out, reference, alignments = NA, threads = 3)
+filter_reference(object, config)
 }
 \arguments{
-\item{reads}{A data frame or data table containing the read files. Can be
-generated with \code{\link{find_illumina}} for instance.}
+\item{object}{An experiment data table as returned by
+\code{\link{find_read_files}} or a worflow object.}
 
-\item{out}{The folder where to store filtered reads. Should be empty as
-files **will be overwritten**.}
-
-\item{reference}{Fasta file (can be gzipped) containing the reference
-DNA sequences.}
-
-\item{alignments}{Optional folder in which to store the alignments.}
-
-\item{threads}{How many threads to use for mapping.}
+\item{config}{A configuration file as returned by
+\code{\link{config_reference}}.}
 }
 \value{
-A data.table with the counts in the reference.
+A list with the processed files and removal counts for each sample.
 }
 \description{
 This will also return a data.table containing the counts of reference

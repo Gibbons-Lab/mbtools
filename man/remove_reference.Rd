@@ -4,8 +4,7 @@
 \alias{remove_reference}
 \title{Removes sequence that map to a given reference.}
 \usage{
-remove_reference(reads, out, reference, index = NA, alignments = NA,
-  threads = 3)
+remove_reference(reads, out, reference, alignments = NA, threads = 3)
 }
 \arguments{
 \item{reads}{A character vector containing the read files in fastq format.
@@ -15,9 +14,6 @@ Can be generated using \code{\link{find_illumina}}.}
 
 \item{reference}{Path to a fasta file (can be gzipped) that contains the
 sequences to filter. Can be a genome or transcripts.}
-
-\item{index}{Additional barcode file that should be filtered as well. Can
-be used to filter multiplexed samples.}
 
 \item{alignments}{Whether to keep the alignment. If not NA should be a
 string indicating the path to the output bam file.}

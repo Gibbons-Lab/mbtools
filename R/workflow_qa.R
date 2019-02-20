@@ -18,11 +18,8 @@
 #'   \item{length_plot}{distribution of cycles that pass the quality cutoff}
 #'   \item{entropy_plot}{sample base entropy}
 #' }
-quality <- function(object, min_score = 10, n = 1e4) {
+quality_control <- function(object, min_score = 10, n = 1e4) {
     files <- get_files(object)
-    if (is.null(files)) {
-        stop("`object` must be a file list or a workflow object :/")
-    }
     qp <- quality_profile(files, n = n) %>% suppressPackageStartupMessages
     artifact <- list(
         files = files,

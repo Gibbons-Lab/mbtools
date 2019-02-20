@@ -42,7 +42,17 @@ get_files <- function(obj) {
     } else if ("list" %in% class(obj) && "files" %in% names(obj)) {
         return(obj[["files"]])
     }
-    return(NULL)
+    stop("`object` must be a file list or a workflow object :/")
+}
+
+get_alignments <- function(obj) {
+    if ("data.table" %in% class(obj) &&
+        all(c("alignments", "id") %in% names(obj))) {
+            return(obj)
+    } else if ("list" %in% class(obj) && "alignments" %in% names(obj)) {
+        return(obj[["alignments"]])
+    }
+    stop("`object` must be an alignment list or a workflow object :/")
 }
 
 #' Find read files in a given directory.
