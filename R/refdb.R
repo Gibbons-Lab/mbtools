@@ -209,7 +209,7 @@ annotate_contigs <- function(matches, reference=NA) {
         ids <- align[, unique(reference)]
     } else {
         flog.info("Reading reference database (%.2f GiB).",
-                  file.info(reference)$size/(1024^3))
+                  file.info(reference)$size / (1024^3))
         ids <- fasta.index(reference)$desc
     }
     flog.info("Parsing annotations for %d sequences...", length(ids))

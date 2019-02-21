@@ -11,7 +11,7 @@
 #' @return A list with the parameters used in the DADA2 workflow.
 #' @export
 #' @examples
-#'  config <- config_dada2(truncLen = c(240, 250))
+#'  config <- config_denoise(truncLen = c(240, 250))
 config_denoise <- function(...) {
     config <- list(
         threads = TRUE,

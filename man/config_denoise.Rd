@@ -17,5 +17,5 @@ A list with the parameters used in the DADA2 workflow.
 This can be saved and passed on to others to ensure reproducibility.
 }
 \examples{
- config <- config_dada2(truncLen = c(240, 250))
+ config <- config_denoise(truncLen = c(240, 250))
 }
