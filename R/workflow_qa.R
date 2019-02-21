@@ -9,6 +9,7 @@
 #' @param min_score The smallest quality score still considered okayish.
 #' @param n Largest number of reads for each file. Will be sampled if more
 #'  are found.
+#' @export
 #' @return A list with the following elements:
 #' \describe{
 #'   \item{files}{The input files to produce the report}
