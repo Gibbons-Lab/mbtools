@@ -19,7 +19,8 @@ silent_lib <- function(...) suppressPackageStartupMessages(library(...))
 #' @importFrom stringr str_split_fixed
 tool_version <- function(command) {
     out <- tryCatch(
-        system2(command, "--version", stdout = TRUE)[1],
+        system2(command, "--version", stdout = TRUE, stderr = FALSE)[1],
+        warning = function(e) return(NULL),
         error = function(e) return(NULL)
         )
     if (!is.null(out)) {
