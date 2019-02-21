@@ -114,7 +114,7 @@ denoise <- function(object, config) {
                              pool = config$pool)
         dada_stats[[r]][, "denoised_forward" := sapply(dada_forward, getN)]
         if (paired) {
-            dada_reverse <- dada(derep_reverse, err = errors[[r]]$forward,
+            dada_reverse <- dada(derep_reverse, err = errors[[r]]$reverse,
                                  multithread = config$threads, verbose = 0,
                                  pool = config$pool)
             dada_stats[[r]][, "denoised_reverse" := sapply(dada_reverse, getN)]
