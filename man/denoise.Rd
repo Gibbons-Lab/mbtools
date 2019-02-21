@@ -25,6 +25,8 @@ A list containing the workflow results:
    read direction (forward/reverse).}
   \item{passed_reads}{How many reads were kept in each step. Rows are
     samples and columns are workflow steps.}
+  \item{classified}{The proportion of sequence variants that could be
+       where a specific taxa rank could be classified.}
 }
 }
 \description{

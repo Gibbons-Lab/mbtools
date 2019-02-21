@@ -67,6 +67,8 @@ getN <- function(x) sum(getUniques(x))
 #'    read direction (forward/reverse).}
 #'   \item{passed_reads}{How many reads were kept in each step. Rows are
 #'     samples and columns are workflow steps.}
+#'   \item{classified}{The proportion of sequence variants that could be
+#'        where a specific taxa rank could be classified.}
 #' }
 #' @export
 #'
@@ -164,6 +166,10 @@ denoise <- function(object, config) {
                            minBoot = config$bootstrap_confidence * 100,
                            multithread = config$threads)
     taxa <- addSpecies(taxa, species_db)
+    classified <- apply(taxa, 2, function(x) sum(!is.na(x)) / length(x))
+    flog.info("Classified variants: %s",
+              paste0(names(classified), " = ", 100 * round(classified, 3),
+                     collapse = ", "))
     seqs <- rownames(taxa)
     taxa <- cbind(taxa, sequence = seqs)
     if (config$hash) {
@@ -183,6 +189,7 @@ denoise <- function(object, config) {
         error_plots = lapply(errors, function(x)
             lapply(x, plotErrors, nominalQ = TRUE)),
         passed_reads = dada_stats,
+        classified = classified,
         steps = c(object[["steps"]], "denoise")
     )
     return(artifact)
