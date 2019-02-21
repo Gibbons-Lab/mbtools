@@ -25,12 +25,10 @@ A list containing the workflow results:
    read direction (forward/reverse).}
   \item{passed_reads}{How many reads were kept in each step. Rows are
     samples and columns are workflow steps.}
-  \item{files}{Preprocessed sequencing files used to generate the results.}
 }
 }
 \description{
 This performs the following steps: \enumerate{
- \item{Preprocessing of the raw reads}
  \item{Learning the error rate for each run separately}
  \item{Inferring sequence variants for each run and sample}
  \item{Merging of feature tables across runs}
@@ -39,7 +37,9 @@ This performs the following steps: \enumerate{
  \item{Species assignment by exact alignment}
  \item{Diagnostic plots of the error rates}
  }
-Note that depending on your config the sequences might be represented by
+You will usually want to preprocess the read files first with
+\code{\link{preprocess}}.
+Depending on your config the sequences might be represented by
 an MD5 hash. In this case the taxa table has an additional `sequence` column
 containing the real sequences.
 }

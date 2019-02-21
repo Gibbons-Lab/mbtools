@@ -135,7 +135,8 @@ align_short_reads <- function(object, config) {
     artifact <- list(
         alignments = alignments,
         disk_size = sum(sapply(alignments$alignments,
-                               function(f) file.info(f)$size))
+                               function(f) file.info(f)$size)),
+        steps = c(object[["steps"]], "align_short_reads")
     )
     return(artifact)
 }

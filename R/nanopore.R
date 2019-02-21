@@ -79,7 +79,8 @@ align_long_reads <- function(object, config) {
         alignments = alns,
         logs = logs,
         disk_size = sum(sapply(alns$alignments,
-                               function(f) file.info(f)$size))
+                               function(f) file.info(f)$size)),
+        steps = c(object[["steps"]], "align_long_reads")
     )
     return(artifact)
 }

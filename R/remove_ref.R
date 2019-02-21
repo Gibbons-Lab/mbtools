@@ -154,7 +154,8 @@ filter_reference <- function(object, config) {
     }
     artifact <- list(
         counts = rbindlist(counts),
-        files = filtered
+        files = filtered,
+        steps = c(object[["steps"]], "filter_reference")
     )
     return(artifact)
 }

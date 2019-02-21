@@ -27,7 +27,8 @@ quality_control <- function(object, min_score = 10, n = 1e4) {
         bases = qp$bases,
         quality_plot = plot_qualities(qp, min_score = min_score),
         length_plot = plot_lengths(qp, min_score = min_score),
-        entropy_plot = plot_entropy(qp)
+        entropy_plot = plot_entropy(qp),
+        steps = c(object[["steps"]], "quality_control")
     )
     return(artifact)
 }

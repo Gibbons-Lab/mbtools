@@ -142,7 +142,8 @@ count_transcripts <- function(object, config) {
 
     artifact <- list(
         alignments = config$alignments,
-        counts = rbindlist(counts)
+        counts = rbindlist(counts),
+        steps = c(object[["steps"]], "count_transcripts")
     )
     return(counts)
 }

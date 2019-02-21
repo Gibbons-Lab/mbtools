@@ -120,7 +120,8 @@ demultiplex <- function(object, config) {
     }
     artifact <- list(
         files = find_read_files(config$out_dir),
-        matches = res
+        matches = res,
+        steps = c(object[["steps"]], "demultiplex")
     )
     return(artifact)
 }

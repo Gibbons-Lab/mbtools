@@ -11,14 +11,9 @@
 #' @return A list with the parameters used in the DADA2 workflow.
 #' @export
 #' @examples
-#'  config <- config_denoise(truncLen = c(240, 250))
+#'  config <- config_denoise(nbases = 1e9)
 config_denoise <- function(...) {
     config <- list(
-        threads = TRUE,
-        data_dir = "data",
-        trimLeft = 10,
-        truncLen = 0,
-        maxEE = 2,
         nbases = 2.5e8,
         pool = FALSE,
         bootstrap_confidence = 0.5,
@@ -42,7 +37,6 @@ getN <- function(x) sum(getUniques(x))
 #' Runs a full DADA2 workflow.
 #'
 #' This performs the following steps: \enumerate{
-#'  \item{Preprocessing of the raw reads}
 #'  \item{Learning the error rate for each run separately}
 #'  \item{Inferring sequence variants for each run and sample}
 #'  \item{Merging of feature tables across runs}
@@ -51,7 +45,9 @@ getN <- function(x) sum(getUniques(x))
 #'  \item{Species assignment by exact alignment}
 #'  \item{Diagnostic plots of the error rates}
 #'  }
-#' Note that depending on your config the sequences might be represented by
+#' You will usually want to preprocess the read files first with
+#' \code{\link{preprocess}}.
+#' Depending on your config the sequences might be represented by
 #' an MD5 hash. In this case the taxa table has an additional `sequence` column
 #' containing the real sequences.
 #'
@@ -70,11 +66,10 @@ getN <- function(x) sum(getUniques(x))
 #'    read direction (forward/reverse).}
 #'   \item{passed_reads}{How many reads were kept in each step. Rows are
 #'     samples and columns are workflow steps.}
-#'   \item{files}{Preprocessed sequencing files used to generate the results.}
 #' }
 #' @export
 #'
-#' @importFrom dada2 filterAndTrim learnErrors dada removeBimeraDenovo
+#' @importFrom dada2 learnErrors dada removeBimeraDenovo
 #'  mergeSequenceTables assignTaxonomy addSpecies plotErrors
 #' @importFrom digest digest
 denoise <- function(object, config) {
@@ -84,36 +79,6 @@ denoise <- function(object, config) {
         files[, "run" := "all"]
     }
     paired <- "reverse" %in% names(files)
-    flog.info("Running DADA2 workflow for %d samples in %d runs.",
-              nrow(files), files[, uniqueN(run)])
-
-    flog.info("Preprocessing reads...")
-    passed_files <- copy(files)
-    passed_files$forward <- file.path(config$data_dir, "preprocessed",
-                                      basename(files$forward))
-    if (paired) {
-        passed_files$reverse <- file.path(config$data_dir, "preprocessed",
-                                          basename(files$reverse))
-        passed_stats <- filterAndTrim(
-            fwd = files$forward, filt = passed_files$forward,
-            rev = files$reverse, filt.rev = passed_files$reverse,
-            trimLeft = config$trimLeft, truncLen = config$truncLen,
-            maxEE = config$maxEE, multithread = config$threads
-        )
-    } else {
-        passed_stats <- filterAndTrim(
-            fwd = files$forward, filt = passed_files$forward,
-            trimLeft = config$trimLeft, truncLen = config$truncLen,
-            maxEE = config$maxEE, multithread = config$threads
-        )
-    }
-    passed_stats <- as.data.table(passed_stats) %>%
-                    setNames(c("raw", "preprocessed"))
-    passed_stats[, "id" := files$id]
-    flog.info("%.3g/%.3g (%.2f%%) reads passed preprocessing.",
-              passed_stats[, sum(preprocessed)],
-              passed_stats[, sum(raw)],
-              passed_stats[, 100 * mean(preprocessed / raw)])
 
     flog.info("Running DADA2 on %d run(s) from a sample of %.3g bases.",
               files[, uniqueN(run)], config$nbases)
@@ -121,24 +86,26 @@ denoise <- function(object, config) {
     dada_stats <- list()
     feature_table <- list()
     for (r in files[, unique(run)]) {
-        fi <- passed_files[run == r]
-        dada_stats[[r]] <- data.table(id = passed_files$id)
+        fi <- files[run == r]
+        dada_stats[[r]] <- data.table(id = files$id)
         flog.info("Learning errors for run `%s` (%d samples)...", r, nrow(fi))
         errors[[r]] <- list()
         errors[[r]][["forward"]] <- learnErrors(
-            passed_files$forward, nbases = config$nbases,
+            files$forward, nbases = config$nbases,
             multithread = config$threads, verbose = 0)
         if (paired) {
             errors[[r]][["reverse"]] <- learnErrors(
-                passed_files$forward, nbases = config$nbases,
+                files$reverse, nbases = config$nbases,
                 multithread = config$threads, verbose = 0)
         }
         flog.info("Dereplicating run `%s` (%d samples)...", r, nrow(fi))
         derep_forward <- derepFastq(passed_files$forward)
-        names(derep_forward) <- passed_files$id
+        names(derep_forward) <- files$id
+        dada_stats[[r]][, "derep_forward" := sapply(derep_forward, getN)]
         if (paired) {
-            derep_reverse <- derepFastq(passed_files$reverse)
-            names(derep_reverse) <- passed_files$id
+            derep_reverse <- derepFastq(files$reverse)
+            names(derep_reverse) <- files$id
+            dada_stats[[r]][, "derep_reverse" := sapply(derep_reverse, getN)]
         }
         flog.info("Inferring sequence variants for run `%s`...", r)
         dada_forward <- dada(derep_forward, err = errors[[r]]$forward,
@@ -162,7 +129,9 @@ denoise <- function(object, config) {
     }
     feature_table <- mergeSequenceTables(tables = feature_table)
     dada_stats <- rbindlist(dada_stats)
-    dada_stats <- passed_stats[dada_stats, on = "id"]
+    if ("passed" %in% names(object)) {
+        dada_stats <- passed[dada_stats, on = "id"]
+    }
 
     flog.info("Merged sequence tables, now removing chimeras...")
     feature_table_nochim <- removeBimeraDenovo(feature_table)
@@ -212,7 +181,7 @@ denoise <- function(object, config) {
         error_plots = lapply(errors, function(x)
             lapply(x, plotErrors, nominalQ = TRUE)),
         passed_reads = dada_stats,
-        files = passed_files
+        steps = c(object[["steps"]], "denoise")
     )
     return(artifact)
 }
