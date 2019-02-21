@@ -130,7 +130,7 @@ denoise <- function(object, config) {
     feature_table <- mergeSequenceTables(tables = feature_table)
     dada_stats <- rbindlist(dada_stats)
     if ("passed" %in% names(object)) {
-        dada_stats <- passed[dada_stats, on = "id"]
+        dada_stats <- object$passed[dada_stats, on = "id"]
     }
 
     flog.info("Merged sequence tables, now removing chimeras...")

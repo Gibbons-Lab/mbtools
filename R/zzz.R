@@ -42,9 +42,11 @@ tool_version <- function(command) {
     packageStartupMessage(paste0("  - ", needed, "=", vs, collapse = "\n"))
     lapply(needed, silent_lib, character.only = TRUE, warn.conflicts = FALSE)
     tools_vs <- sapply(tools, tool_version)
-    packageStartupMessage("Found tools:")
-    paste0("  - ", tools[!is.null(tools_vs)],
-          "=", tools_vs[!is.null(tools_vs)],
-          collapse = "\n") %>% packageStartupMessage
+    found <- !sapply(tools_vs, is.null)
+    if (sum(found) > 0) {
+        packageStartupMessage("Found tools:")
+        paste0("  - ", tools[found], "=", tools_vs[found], collapse = "\n") %>%
+        packageStartupMessage
+    }
 
 }
