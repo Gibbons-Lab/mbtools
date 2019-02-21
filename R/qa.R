@@ -65,7 +65,7 @@ quality_profile <- function(files, n = 1e4) {
     bases <- files[, .(file = basename(forward), id)][bases, on = "file"]
     sizes <- files[, .(file = basename(forward), id)][sizes, on = "file"]
     if ("reverse" %in% names(files)) {
-        flog.info("Running quality assay for forward reads from %d files.",
+        flog.info("Running quality assay for reverse reads from %d files.",
               files[, .N])
         srqa <- qa(files$reverse, sample = TRUE, n = n)
         rcycles <- qualities(srqa)

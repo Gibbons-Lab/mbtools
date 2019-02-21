@@ -53,10 +53,10 @@ preprocess <- function(object, config) {
     flog.info("Preprocessing reads for %d %s-end samples...",
               nrow(files), ifelse(paired, "paired", "single"))
     passed_files <- copy(files)
-    passed_files$forward <- file.path(config$data_dir, "preprocessed",
+    passed_files$forward <- file.path(config$out_dir, "preprocessed",
                                       basename(files$forward))
     if (paired) {
-        passed_files$reverse <- file.path(config$data_dir, "preprocessed",
+        passed_files$reverse <- file.path(config$out_dir, "preprocessed",
                                           basename(files$reverse))
         passed_stats <- filterAndTrim(
             fwd = files$forward, filt = passed_files$forward,
