@@ -14,6 +14,7 @@
 #'  config <- config_denoise(nbases = 1e9)
 config_denoise <- function(...) {
     config <- list(
+        threads = TRUE,
         nbases = 2.5e8,
         pool = FALSE,
         bootstrap_confidence = 0.5,
@@ -109,12 +110,12 @@ denoise <- function(object, config) {
         }
         flog.info("Inferring sequence variants for run `%s`...", r)
         dada_forward <- dada(derep_forward, err = errors[[r]]$forward,
-                             multithread = config$processes, verbose = 0,
+                             multithread = config$threads, verbose = 0,
                              pool = config$pool)
         dada_stats[[r]][, "denoised_forward" := sapply(dada_forward, getN)]
         if (paired) {
             dada_reverse <- dada(derep_reverse, err = errors[[r]]$forward,
-                                 multithread = config$processes, verbose = 0,
+                                 multithread = config$threads, verbose = 0,
                                  pool = config$pool)
             dada_stats[[r]][, "denoised_reverse" := sapply(dada_reverse, getN)]
             merged <- mergePairs(dada_forward, derep_forward,
@@ -134,7 +135,8 @@ denoise <- function(object, config) {
     }
 
     flog.info("Merged sequence tables, now removing chimeras...")
-    feature_table_nochim <- removeBimeraDenovo(feature_table)
+    feature_table_nochim <- removeBimeraDenovo(feature_table,
+                                               multithread = config$threads)
     flog.info("Removed %d/%d sequence variants as chimeric (%.2f%% of reads)",
               ncol(feature_table) - ncol(feature_table_nochim),
               ncol(feature_table),
