@@ -99,7 +99,7 @@ denoise <- function(object, config) {
                 multithread = config$threads, verbose = 0)
         }
         flog.info("Dereplicating run `%s` (%d samples)...", r, nrow(fi))
-        derep_forward <- derepFastq(passed_files$forward)
+        derep_forward <- derepFastq(files$forward)
         names(derep_forward) <- files$id
         dada_stats[[r]][, "derep_forward" := sapply(derep_forward, getN)]
         if (paired) {
