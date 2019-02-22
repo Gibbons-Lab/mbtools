@@ -31,7 +31,7 @@ basecalls <- function(srqa) {
 library_size <- function(srqa) {
     sizes <- srqa[["readCounts"]]
     sizes <- data.table(file = rownames(sizes), count = sizes[, 1])
-    flog.info("On average we have %.2f ± %.2f reads per file.",
+    flog.info("On average we have %.2f +- %.2f reads per file.",
               sizes[, mean(count)], sizes[, sd(count)])
     return(sizes)
 }
@@ -89,7 +89,7 @@ quality_profile <- function(files, n = 1e4) {
 
 #' Plots the quality profile for an entire experiment.
 #'
-#' @param cycles A quality profile as returned by
+#' @param qp A quality profile as returned by
 #'  \code{\link{quality_profile}}.
 #' @param min_score Smallest acceptable score. Defaults to 10 (10% per base
 #'  error). A reference line will be plotted but no data will be discarded.
@@ -119,7 +119,7 @@ plot_qualities <- function(qp, min_score = 10) {
 
 #' Plots the distribution of sequence lengths with acceptable quality.
 #'
-#' @param cycles A quality profile as returned by
+#' @param qp A quality profile as returned by
 #'  \code{\link{quality_profile}}.
 #' @param min_score Smallest acceptable score. Defaults to 10 (10% per base
 #'  error).
@@ -147,7 +147,7 @@ plot_lengths <- function(qp, min_score = 10) {
 
 #' Plots the distribution of base entropy for each cycle.
 #'
-#' @param cycles A quality profile as returned by
+#' @param qp A quality profile as returned by
 #'  \code{\link{quality_profile}}.
 #' @return A ggplot2 plot mapping the read positions to mean quality for each
 #'  sample. Will be facetted into forward and reverse if applicable.

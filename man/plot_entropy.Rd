@@ -7,7 +7,7 @@
 plot_entropy(qp)
 }
 \arguments{
-\item{cycles}{A quality profile as returned by
+\item{qp}{A quality profile as returned by
 \code{\link{quality_profile}}.}
 }
 \value{

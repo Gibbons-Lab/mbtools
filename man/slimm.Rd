@@ -7,7 +7,7 @@
 slimm(alignments, slimm_db, reports = NULL)
 }
 \arguments{
-\item{alignments}{A data frame as output by \code{\link{align_bowtie2}}}
+\item{alignments}{A data frame as output by \code{\link{align_short_reads}}}
 
 \item{slimm_db}{Path for the SLIMM data base.}
 

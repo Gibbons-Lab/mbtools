@@ -7,20 +7,11 @@
 demultiplex(object, config)
 }
 \arguments{
-\item{reads}{A character vector containing the read files in fastq format.}
+\item{object}{An experiment data table as returned by
+\code{\link{find_read_files}} or a worflow object.}
 
-\item{index}{The index file containing the demultiplexed barcodes for each
-read file.}
-
-\item{out}{A folder to which to save the split fastq files.}
-
-\item{ref}{A character vector or DNAStringSet containing the reference
-barcodes.}
-
-\item{max_ed}{Maximum allowed edit distance between the sequenced and
-reference barcode.}
-
-\item{n}{Maximum number of records to read in each iteration.}
+\item{config}{A configuration file as returned by
+\code{\link{config_demultiplex}}.}
 }
 \value{
 A list containing the split files and matching statistics.

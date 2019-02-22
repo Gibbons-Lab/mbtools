@@ -7,11 +7,11 @@
 plot_qualities(qp, min_score = 10)
 }
 \arguments{
+\item{qp}{A quality profile as returned by
+\code{\link{quality_profile}}.}
+
 \item{min_score}{Smallest acceptable score. Defaults to 10 (10% per base
 error). A reference line will be plotted but no data will be discarded.}
-
-\item{cycles}{A quality profile as returned by
-\code{\link{quality_profile}}.}
 }
 \value{
 A ggplot2 plot mapping the read positions to mean quality for each

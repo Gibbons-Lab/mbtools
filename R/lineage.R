@@ -7,7 +7,7 @@
 
 #' Quantifies abundances for the bacteria using SLIMM
 #'
-#' @param alignments A data frame as output by \code{\link{align_bowtie2}}
+#' @param alignments A data frame as output by \code{\link{align_short_reads}}
 #' @param slimm_db Path for the SLIMM data base.
 #' @param reports Path where to save the SLIMM reports. Uses a temporary
 #'  directory by default.

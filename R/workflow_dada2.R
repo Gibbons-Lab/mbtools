@@ -54,7 +54,8 @@ getN <- function(x) sum(getUniques(x))
 #'
 #' @param object An experiment data table as returned by
 #'  \code{\link{find_read_files}} or a worflow object.
-#' @param config A configuration file as returned by \code{\link{config_dada2}}.
+#' @param config A configuration file as returned by
+#'  \code{\link{config_denoise}}.
 #' @return A list containing the workflow results:
 #' \describe{
 #'   \item{feature_table}{Matrix of sequence variant abundances. Samples are
@@ -169,7 +170,7 @@ denoise <- function(object, config) {
     classified <- apply(taxa, 2, function(x) sum(!is.na(x)) / length(x))
     flog.info("Classified variants: %s",
               paste0(names(classified), " = ", 100 * round(classified, 3),
-                     collapse = ", "))
+                     "%", collapse = ", "))
     seqs <- rownames(taxa)
     taxa <- cbind(taxa, sequence = seqs)
     if (config$hash) {

@@ -10,7 +10,8 @@ denoise(object, config)
 \item{object}{An experiment data table as returned by
 \code{\link{find_read_files}} or a worflow object.}
 
-\item{config}{A configuration file as returned by \code{\link{config_dada2}}.}
+\item{config}{A configuration file as returned by
+\code{\link{config_denoise}}.}
 }
 \value{
 A list containing the workflow results:

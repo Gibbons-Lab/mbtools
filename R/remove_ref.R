@@ -14,7 +14,7 @@
 #' a prebuilt index.
 #'
 #' @param reads A character vector containing the read files in fastq format.
-#'  Can be generated using \code{\link{find_illumina}}.
+#'  Can be generated using \code{\link{find_read_files}}.
 #' @param out A folder to which to save the filtered fastq files.
 #' @param reference Path to a fasta file (can be gzipped) that contains the
 #'  sequences to filter. Can be a genome or transcripts.

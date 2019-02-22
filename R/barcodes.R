@@ -34,15 +34,10 @@ config_demultiplex <- function(...) {
 #' the corresponding barcode from the reference set. After that it writes new
 #' fastq files containing only the reads for a single barcode.
 #'
-#' @param reads A character vector containing the read files in fastq format.
-#' @param index The index file containing the demultiplexed barcodes for each
-#'  read file.
-#' @param out A folder to which to save the split fastq files.
-#' @param ref A character vector or DNAStringSet containing the reference
-#'  barcodes.
-#' @param max_ed Maximum allowed edit distance between the sequenced and
-#'  reference barcode.
-#' @param n Maximum number of records to read in each iteration.
+#' @param object An experiment data table as returned by
+#'  \code{\link{find_read_files}} or a worflow object.
+#' @param config A configuration file as returned by
+#'  \code{\link{config_demultiplex}}.
 #' @return A list containing the split files and matching statistics.
 #' @examples
 #'  NULL
