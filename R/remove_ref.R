@@ -89,7 +89,7 @@ remove_reference <- function(reads, out, reference, alignments=NA,
 #'  config <- config_reference(reference = "refs/mouse.fna.gz")
 config_reference <- function(...) {
     config <- list(
-        threads = 1,
+        threads = TRUE,
         out_dir = "reference_removed",
         alignment_dir = NA,
         reference = NA

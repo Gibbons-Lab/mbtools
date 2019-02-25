@@ -37,7 +37,7 @@ alignment_rate <- function(log_file) {
 #'  config <- config_count(index = "refs/mouse")
 config_align_short <- function(...) {
     config <- list(
-        index = NULL,
+        reference = NULL,
         threads = 1,
         alignment_dir = "alignments",
         bowtie2_path = NULL,
@@ -67,8 +67,21 @@ config_align_short <- function(...) {
 #' @importFrom pbapply pbapply pbsapply pblapply
 align_short_reads <- function(object, config) {
     files <- get_files(object)
-    if (is.null(config$index)) {
+    if (is.null(config$reference)) {
         stop("must specify index in configuration :/")
+    }
+    if (grepl("(\\.fa\\.gz$)|(\\.fna\\.gz$)|(\\.fasta$)",
+              config$reference)) {
+        flog.info("Reference is a fasta file. Building index in %s.", index)
+        index <- file.path(tempdir(), "bref")
+        args <- c("--threads", config$threads, config$reference, index)
+        out <- system2("bowtie2-build", args = args, env = env, stdout = FALSE,
+                       stderr = FALSE)
+        if (out != 0) {
+            stop("failed building index :(")
+        }
+    } else {
+        index <- config$reference
     }
     env <- character()
     if (!is.null(config$bowtie2_path)) {
@@ -109,7 +122,7 @@ align_short_reads <- function(object, config) {
             }
         }
 
-        args <- c("-x", config$index)
+        args <- c("-x", index)
         if (paired) {
             args <- append(args, c("-1", read$forward, "-2", read$reverse))
         } else {
