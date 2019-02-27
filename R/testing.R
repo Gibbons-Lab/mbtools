@@ -135,15 +135,24 @@ association <- function(ps, variables = NULL, tax = "genus", method = "deseq2",
                         confounders = NULL, min_count = 10, in_samples = 0.1,
                         independent_weighting = TRUE, standardize = TRUE,
                         shrink = TRUE) {
+    meta <- as(sample_data(ps), "data.frame")
     if (!is.null(confounders)) {
         missing_conf <- apply(sample_data(ps)[, confounders], 1,
                               function(row) any(is.na(row)))
         ps <- prune_samples(!missing_conf, ps)
+        corrs <- cor(meta[, variables], meta[, confounders],
+                     use = "pairwise.complete.obs")
+        corrs <- apply(abs(corrs), 2, max)
+        if (any(corrs >= 0.9)) {
+            flog.info(paste0("The following variables are correlated with ",
+                             "the confounders and have been removed: %s"),
+                      paste0(names(corrs)[corrs >= 0.9], collapse = ", "))
+            variables <- variables[corrs < 0.9]
+        }
     }
     if (!requireNamespace("IHW", quietly = TRUE)) {
         stop("independent weighting requires the IHW package!")
     }
-    meta <- as(sample_data(ps), "data.frame")
     if (standardize) meta <- standardize(meta)
     if (is.null(variables)) variables <- names(meta)
     variables <- variables[!(variables %in% confounders)]
