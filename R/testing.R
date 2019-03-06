@@ -1,16 +1,46 @@
 # Functions for testing associations between the microbiome
 # and exogenous variables
 
-iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
+check_variables <- function(variable, counts, meta, confounders) {
     good <- !is.na(meta[[variable]])
-    is_reg <- !is.factor(meta[[variable]])
-    if (sum(good) < 4) {
+    # Check for constant variables
+    sds <- apply(meta[good, c(variable, confounders), drop = FALSE], 2,
+                 function(co) sd(as.numeric(co)))
+    if (any(is.na(sds) | sds < 1e-6)) {
+        file.info("Detected variable or confounder with zero variation.")
         return(NULL)
     }
     if (is.null(confounders)) {
         ref_model <- ~ 1
     } else {
         ref_model <- reformulate(confounders)
+        num_conf <- sapply(confounders, function(co) as.numeric(meta[[co]]))
+        corrs <- cor(as.numeric(meta[[variable]]), num_conf,
+                     use = "pairwise.complete.obs")
+        if (any(abs(corrs) > 0.9)) {
+            flog.info(
+                paste("Variable `%s` is correlated with the confounders.",
+                       "Skipping it."),
+                variable)
+            return(NULL)
+        }
+    }
+    if (sum(good) < length(variable) + length(confounders) + 4) {
+        flog.info("Not enough degrees of freedom. Skipping variable `%s`.",
+                  variable)
+        return(NULL)
+    }
+    return(list(good = good, ref_model = ref_model))
+}
+
+iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
+    is_reg <- !is.factor(meta[[variable]])
+    check <- check_variables(variable, counts, meta, confounders)
+    if (is.null(check)) {
+        return(NULL)
+    } else {
+        good <- check$good
+        ref_model <- check$ref_model
     }
     if (ncol(counts) < 50) {
         fit_type <- "mean"
@@ -24,75 +54,57 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
         DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
               fitType = fit_type, reduced = ref_model,
               sfType = "poscounts"))
-    if (is_reg) {
-        totals <- colSums(counts(dds))
-        mod <- glm(reformulate(c(confounders, variable), "totals"),
-                    data = meta[good, ])
-        infl <- influence(mod)
-        expected <- sum(infl$hat) / sum(good)
-        outliers <- any(infl$hat > (expected * 10))
-    } else {
-        outliers <- FALSE
-    }
     res <- results(dds)
     if (shrink) {
         res <- lfcShrink(dds, coef = length(resultsNames(dds)),
-                            results = res)
+                            results = res, quiet = TRUE)
     }
     res <- as.data.table(res)
     set(res, j = ifelse(is.na(tax), "variant", tax),
         value = colnames(counts))
     set(res, j = "variable", value = variable)
     set(res, j = "coef", value = resultsNames(dds)[length(resultsNames(dds))])
-    set(res, j = "robust", value = !outliers)
     if (is_reg) {
         n <- sum(good)
     } else {
         levs <- levels(meta[[variable]])
-        n <- min(sum(meta[[variable]] == levs[1]),
-                 sum(meta[[variable]] == levs[length(levs)]))
+        n <- min(sum(meta[good, variable] == levs[1]),
+                 sum(meta[good, variable] == levs[length(levs)]))
     }
     set(res, j = "n_eff", value = n)
     return(res)
 }
 
 iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
-    good <- !is.na(meta[[variable]])
-    if (sum(good) < 4) {
-        return(NULL)
-    }
     is_reg <- !is.factor(meta[[variable]])
+    check <- check_variables(variable, counts, meta, confounders)
+    if (is.null(check)) {
+        return(NULL)
+    } else {
+        good <- check$good
+        ref_model <- check$ref_model
+    }
     norm_counts <- t(suppressMessages(normalize(counts[good, ])))
     design <- model.matrix(reformulate(c(confounders, variable)), data=meta)
     model <- voom(norm_counts, design, plot=FALSE)
     fit <- lmFit(model, design)
 
-    if (is_reg) {
-        totals <- colSums(norm_counts)
-        mod <- glm(reformulate(c(confounders, variable), "totals"),
-                    data = meta[good, ])
-        infl <- influence(mod)
-        expected <- sum(infl$hat) / sum(good)
-        outliers <- any(infl$hat > (expected * 10))
-    } else {
-        outliers <- FALSE
-    }
     if (shrink) {
         fit <- eBayes(fit)
     }
     res <- topTable(fit, coef=ncol(design), sort.by="none", number=Inf)
     res <- as.data.table(res)
     names(res) <- c("log2FoldChange", "baseMean", "t", "pvalue", "padj", "B")
+    res$baseMean <- 2 ^ res$baseMean
     set(res, j = ifelse(is.na(tax), "variant", tax),
         value = colnames(counts))
     set(res, j = "variable", value = variable)
-    set(res, j = "robust", value = !outliers)
     if (is_reg) {
         n <- sum(good)
     } else {
         levs <- levels(meta[[variable]])
-        n <- min(sum(meta[[variable]] == levs[1]),
-                 sum(meta[[variable]] == levs[length(levs)]))
+        n <- min(sum(meta[good, variable] == levs[1]),
+                 sum(meta[good, variable] == levs[length(levs)]))
     }
     set(res, j = "n_eff", value = n)
     return(res)
@@ -140,15 +152,6 @@ association <- function(ps, variables = NULL, tax = "genus", method = "deseq2",
         missing_conf <- apply(sample_data(ps)[, confounders], 1,
                               function(row) any(is.na(row)))
         ps <- prune_samples(!missing_conf, ps)
-        corrs <- cor(meta[, variables], meta[, confounders],
-                     use = "pairwise.complete.obs")
-        corrs <- apply(abs(corrs), 2, max)
-        if (any(corrs >= 0.9)) {
-            flog.info(paste0("The following variables are correlated with ",
-                             "the confounders and have been removed: %s"),
-                      paste0(names(corrs)[corrs >= 0.9], collapse = ", "))
-            variables <- variables[corrs < 0.9]
-        }
     }
     if (!requireNamespace("IHW", quietly = TRUE)) {
         stop("independent weighting requires the IHW package!")
@@ -172,7 +175,7 @@ association <- function(ps, variables = NULL, tax = "genus", method = "deseq2",
             set(tests, j = "padj", value = IHW::adj_pvalues(weights))
         } else {
             set(tests, j = "padj", value =
-                p.adjust(tests$pvalues, method = "BH"))
+                p.adjust(tests$pvalue, method = "BH"))
         }
     }
 
