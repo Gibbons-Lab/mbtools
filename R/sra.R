@@ -345,11 +345,11 @@ sra_submission <- function(object, config) {
     }
     flog.info("Writing biosample attributes to %s.",
               file.path(config$out_dir, "05_biosample_attributes.tsv"))
-    fwrite(sample_data, sep="\t", file.path(config$out_dir,
+    fwrite(sample_data, sep = "\t", file.path(config$out_dir,
                                             "05_biosample_attributes.tsv"))
     flog.info("Writing file metadata to %s.",
               file.path(config$out_dir, "06_sra_metadata.tsv"))
-    fwrite(sra_metadata, sep="\t",
+    fwrite(sra_metadata, sep = "\t",
            file.path(config$out_dir, "06_sra_metadata.tsv"))
     flog.info(sprintf(preset["usage"], config$out_dir))
     artifact <- list(
