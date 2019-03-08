@@ -32,8 +32,12 @@ config_denoise <- function(...) {
 }
 
 #' @importFrom dada2 getUniques
-getN <- function(x) sum(getUniques(x))
-
+getN <- function(x) {
+    if (any(class(x) %in% c("dada", "derep", "matrix", "data.frame"))) {
+        x <- list(x)
+    }
+    sapply(x, function(xi) sum(getUniques(xi)))
+}
 
 #' Runs a full DADA2 workflow.
 #'
@@ -84,51 +88,50 @@ denoise <- function(object, config) {
     }
     paired <- "reverse" %in% names(files)
 
-    flog.info("Running DADA2 on %d run(s) from a sample of %.3g bases.",
+    flog.info("Running DADA2 on %d run(s) from a sample of up to %.3g bases.",
               files[, uniqueN(run)], config$nbases)
     errors <- list()
     dada_stats <- list()
     feature_table <- list()
     for (r in files[, unique(run)]) {
         fi <- files[run == r]
-        dada_stats[[r]] <- data.table(id = files$id)
+        dada_stats[[r]] <- data.table(id = fi$id)
         flog.info("Learning errors for run `%s` (%d samples)...", r, nrow(fi))
         errors[[r]] <- list()
         errors[[r]][["forward"]] <- learnErrors(
-            files$forward, nbases = config$nbases,
+            fi$forward, nbases = config$nbases,
             multithread = config$threads, verbose = 0)
         if (paired) {
             errors[[r]][["reverse"]] <- learnErrors(
-                files$reverse, nbases = config$nbases,
+                fi$reverse, nbases = config$nbases,
                 multithread = config$threads, verbose = 0)
         }
         flog.info("Dereplicating run `%s` (%d samples)...", r, nrow(fi))
-        derep_forward <- derepFastq(files$forward)
-        names(derep_forward) <- files$id
-        dada_stats[[r]][, "derep_forward" := sapply(derep_forward, getN)]
+        derep_forward <- derepFastq(fi$forward)
+        dada_stats[[r]][, "derep_forward" := getN(derep_forward)]
         if (paired) {
-            derep_reverse <- derepFastq(files$reverse)
-            names(derep_reverse) <- files$id
-            dada_stats[[r]][, "derep_reverse" := sapply(derep_reverse, getN)]
+            derep_reverse <- derepFastq(fi$reverse, )
+            dada_stats[[r]][, "derep_reverse" := getN(derep_reverse)]
         }
         flog.info("Inferring sequence variants for run `%s`...", r)
         dada_forward <- dada(derep_forward, err = errors[[r]]$forward,
                              multithread = config$threads, verbose = 0,
                              pool = config$pool)
-        dada_stats[[r]][, "denoised_forward" := sapply(dada_forward, getN)]
+        dada_stats[[r]][, "denoised_forward" := getN(dada_forward)]
         if (paired) {
             dada_reverse <- dada(derep_reverse, err = errors[[r]]$reverse,
                                  multithread = config$threads, verbose = 0,
                                  pool = config$pool)
-            dada_stats[[r]][, "denoised_reverse" := sapply(dada_reverse, getN)]
+            dada_stats[[r]][, "denoised_reverse" := getN(dada_reverse)]
             merged <- mergePairs(dada_forward, derep_forward,
                                  dada_reverse, derep_reverse,
                                  verbose = 0)
-            dada_stats[[r]][, "merged" := sapply(merged, getN)]
+            dada_stats[[r]][, "merged" := getN(merged)]
             feature_table[[r]] <- makeSequenceTable(merged)
         } else {
             feature_table[[r]] <- makeSequenceTable(dada_forward)
         }
+        rownames(feature_table[[r]]) <- fi$id
         flog.info("Finished run `%s`.", r)
     }
     feature_table <- mergeSequenceTables(tables = feature_table)
@@ -194,4 +197,28 @@ denoise <- function(object, config) {
         steps = c(object[["steps"]], "denoise")
     )
     return(artifact)
+}
+
+
+#' Converts the denoise artifact to a phyloseq object.
+#'
+#' @param object The artifact returned by \code{\link{denoise}}.
+#' @param metadata Sample metadata to add to the phyloseq object. Must have
+#'  rownames that match the sample names.
+#' @return A phyloseq object with additional annotations.
+#' @export
+as_phyloseq <- function(object, metadata = NULL) {
+    if (!all(c("feature_table", "taxonomy", "passed_reads", "steps") %in%
+             names(object))) {
+        stop("This is not a denoise artifact :(")
+    }
+
+    ps <- phyloseq(otu_table(object$feature_table, taxa_are_rows = FALSE),
+                   tax_table(object$taxonomy))
+    if (!is.null(metadata)) {
+        sample_data(ps) <- metadata
+    }
+    attr(ps, "passed_reads") <- object$passed_reads
+    attr(ps, "workflow_steps") <- object$steps
+    return(ps)
 }

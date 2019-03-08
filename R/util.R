@@ -71,3 +71,17 @@ read_blast <- function(matches) {
               nrow(align), align[, max(evalue)])
     return(align)
 }
+
+
+#' Very simple select for mbtools artifacts. Just gets a particular entry.
+#'
+#' @param object A mbtools artifact returned from a workflow step.
+#' @param entry The name of the entry to get.
+#' @return The requested entry.
+#' @export
+select <- function(object, entry) {
+    if (!entry %in% names(object)) {
+        stop(sprintf("This object has no entry named `%s` :(", entry))
+    }
+    return(object[[entry]])
+}

@@ -3,7 +3,8 @@
 # :poop: :leaves: :earth_americas: mbtools
 
 `mbtools` is a collection of helpers that we use to analyze microbiome
-data. It makes it easier to run some common analyses and is pretty opinionated.
+data. It makes it easier to run some common analyses and is pretty
+opinionated towards our own experiences.
 
 ## General philosophy
 
@@ -23,4 +24,60 @@ competition to those other excellent tools.
 
 ## Workflow steps
 
-For `mbtools` a workflow step is based
+For `mbtools` a workflow step is based on input data and a configuration,
+thus having the function signature `step(object, config)`.
+Most steps can be chained with the pipe operator to yield workflows.
+For instance, the following is a possible workflow with `mbtools`:
+
+```r
+config <- list(
+    demultiplex = config_demultiplex(barcodes = c("ACGTA", "AGCTT")),
+    preprocess = config_preprocess(truncLen = 200),
+    denoise = config_denoise()
+)
+
+output <- find_read_files("raw") %>%
+          demultiplex(config$demultiplex) %>%
+          quality_control() %>%
+          preprocess(config$preprocess) %>%
+          denoise(config$denoise)
+```
+
+This clearly logs the used workflow and the configuration. The configuration
+can also be saved and read in many formats, for instance yaml.
+
+config.yaml:
+```
+preprocess:
+  threads: yes
+  out_dir: preprocessed
+  trimLeft: 10.0
+  truncLen: 200.0
+  maxEE: 2.0
+denoise:
+  threads: yes
+  nbases: 2.5e+08
+  pool: no
+  bootstrap_confidence: 0.5
+  taxa_db: https://zenodo.org/record/1172783/files/silva_nr_v132_train_set.fa.gz?download=1
+  species_db: https://zenodo.org/record/1172783/files/silva_species_assignment_v132.fa.gz?download=1
+  hash: yes
+```
+
+This can now be reused by someone else:
+
+```r
+config <- read_yaml("config.yml")
+
+output <- find_read_files("raw") %>%
+          quality_control() %>%
+          preprocess(config$preprocess) %>%
+          denoise(config$denoise)
+```
+
+## Other functions
+
+All other functions are usually functions that are meant to be inside
+more complex code or functions that produce plots and endpoints of
+an analysis. Most of them act on phyloseq objects and some on tidy data
+tables.
