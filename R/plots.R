@@ -98,6 +98,9 @@ plot_taxa <- function(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
     if (show_samples) {
         pl <- pl + theme(axis.text.x = element_text(angle = 90,
                                                     hjust = 1, vjust = 0.5))
+    } else {
+        pl <- pl + scale_x_continuous(limits = range(counts[[x]]),
+                                      expand = c(0, 0))
     }
 
     return(pl)

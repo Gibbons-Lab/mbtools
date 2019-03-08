@@ -10,6 +10,8 @@ download_files(files, threads = 1)
 \item{files}{A data frame-like object with three columns: url, target,
 description specifying the source file, target location (including
 the file name) and description.}
+
+\item{threads}{Maximum number of parallel file downloads.}
 }
 \value{
 The list of files with indicated download success.

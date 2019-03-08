@@ -5,6 +5,7 @@
 #' @param files A data frame-like object with three columns: url, target,
 #'  description specifying the source file, target location (including
 #'  the file name) and description.
+#' @param threads Maximum number of parallel file downloads.
 #' @return The list of files with indicated download success.
 #' @export
 download_files <- function(files, threads = 1) {
