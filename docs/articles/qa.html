@@ -150,14 +150,14 @@
 <a href="#running-quality-assesment" class="anchor"></a>Running Quality assesment</h2>
 <p>Now we can run the quality assessment workflow step. This step does not take a configuration since it does not require that much prior information. It does take additional arguments to specify the maximum number of sampled reads and a quality cutoff that you consider sufficient. The default is a quality score of 10 which is the average for nanopore reads for instance. This corresponds to a per-base error of about 10%. We can be a bit more stringent here and use a cutoff of 1% error (quality score 20).</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">quals &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(<span class="dt">min_score =</span> <span class="dv">20</span>)</a></code></pre></div>
-<pre><code>## INFO [2019-03-08 13:28:32] Running quality assay for forward reads from 5 files.
-## INFO [2019-03-08 13:28:36] Average per base error is 0.026% (mean score = 35.79).
-## INFO [2019-03-08 13:28:36] Mean per cycle entropy is 0.809 (in [0, 2]).
-## INFO [2019-03-08 13:28:36] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-03-08 13:28:36] Running quality assay for reverse reads from 5 files.
-## INFO [2019-03-08 13:28:41] Average per base error is 0.043% (mean score = 33.69).
-## INFO [2019-03-08 13:28:41] Mean per cycle entropy is 0.731 (in [0, 2]).
-## INFO [2019-03-08 13:28:41] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<pre><code>## INFO [2019-03-08 16:40:02] Running quality assay for forward reads from 5 files.
+## INFO [2019-03-08 16:40:05] Average per base error is 0.026% (mean score = 35.79).
+## INFO [2019-03-08 16:40:05] Mean per cycle entropy is 0.809 (in [0, 2]).
+## INFO [2019-03-08 16:40:05] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-03-08 16:40:05] Running quality assay for reverse reads from 5 files.
+## INFO [2019-03-08 16:40:08] Average per base error is 0.043% (mean score = 33.68).
+## INFO [2019-03-08 16:40:08] Mean per cycle entropy is 0.731 (in [0, 2]).
+## INFO [2019-03-08 16:40:08] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
 <p>This runs in parallel and will report global quality metrics on the logging interface. We see that we have relatively shallow sequencing data, but the average quality and entropy is pretty good.</p>
 <div id="quality-plots" class="section level3">
 <h3 class="hasAnchor">

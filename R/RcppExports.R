@@ -8,7 +8,6 @@
 #' @param rdlengths The length of all mapped fragments. Mapped length of the
 #'  read after accounting for mismatches and indels.
 #' @return The effective lengths.
-#' @export
 effective_lengths <- function(txlengths, rdlengths) {
     .Call(`_mbtools_effective_lengths`, txlengths, rdlengths)
 }

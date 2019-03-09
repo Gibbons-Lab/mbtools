@@ -12,5 +12,5 @@ RUN Rscript -e "install.packages(c('devtools', 'BiocManager'); \
     && rm -rf /tmp/*
 
 RUN mkdir /home/rstudio/data
-COPY docs/mock_example.Rmd /home/rstdudio/data
+COPY vignettes /home/rstudio/tutorials
 RUN chown -R rstudio:rstudio /home/rstudio/data

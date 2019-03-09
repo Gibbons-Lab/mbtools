@@ -153,7 +153,7 @@
 ## [1] TRUE
 ## 
 ## $out_dir
-## [1] "/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpoBYXbd"
+## [1] "/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//Rtmp88w3wI"
 ## 
 ## $trimLeft
 ## [1] 10
@@ -170,8 +170,8 @@
 <a href="#running-the-preprocessing-step" class="anchor"></a>Running the preprocessing step</h2>
 <p>We can now run our preprocessing step.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">filtered &lt;-<span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(files, config)</a></code></pre></div>
-<pre><code>## INFO [2019-03-08 13:27:53] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-03-08 13:28:02] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
+<pre><code>## INFO [2019-03-08 16:39:33] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-03-08 16:39:39] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
 <p>This will report the percentage of passed reads on the logging interface but you can also inspect that in detail by</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">filtered<span class="op">$</span>passed</a></code></pre></div>
 <pre><code>##      raw preprocessed   id

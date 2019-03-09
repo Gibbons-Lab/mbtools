@@ -53,7 +53,6 @@ std::unordered_map<std::string, std::vector<int> > equivalence_classes(
 //' @param rdlengths The length of all mapped fragments. Mapped length of the
 //'  read after accounting for mismatches and indels.
 //' @return The effective lengths.
-//' @export
 // [[Rcpp::export]]
 NumericVector effective_lengths(NumericVector txlengths,
                                 NumericVector rdlengths) {

@@ -20,7 +20,7 @@ tutoarials with specific workflow steps for amplicon sequencing, for instance
 As before we will load `mbtools` and use our example data:
 
 ```{r}
-devtools::load_all()
+library(mbtools)
 path <- system.file("extdata/example", package = "mbtools")
 ```
 
@@ -48,7 +48,7 @@ For clarity we will define the confguration for the analysis on top.
 config <- list(
     preprocess = config_preprocess(
         trimLeft = 10,  # this is the default
-        trunLen = c(240, 200),  # forward and reverse truncation
+        trunLen = c(240, 180),  # forward and reverse truncation
         out_dir = tempdir()  # will store filtered files in a temporary dir
     ),
     denoise = config_denoise()  # will only use defaults
@@ -102,9 +102,8 @@ Rerunning the previous workflow with this file list will now give a slightly
 different output:
 
 ```{r}
-devtools::load_all("~/code/mbtools")
-denoised <- files %>% preprocess(config$preprocess) %>%
-            denoise(config$denoise)
+byrun <- files %>% preprocess(config$preprocess) %>%
+         denoise(config$denoise)
 ```
 
 Error profiles will now be estimated for each run individually and final tables
@@ -133,8 +132,10 @@ asv_counts <- taxa_count(ps, lev = NA)
 asv_counts[sample == "Mock" & reads > 0]
 ```
 
-Here we see that we have identified that there are 20 ASVs in the Mock sample
-which is the exact number of strains in that sample.
+Here we see that we have identified 10 ASVs in the Mock sample.
+The exact number of strains in that sample is 20, which we don't find since
+we don't have enough reads available to learn a perfect error model. This
+is not surprising since those are only a few files from that particular study.
 
 We could also plot the phyla distribution across the samples:
 

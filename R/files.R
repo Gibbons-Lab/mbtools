@@ -97,5 +97,11 @@ find_read_files <- function(directory,
     if ("reverse" %in% names(files)) {
         files[, reverse := file.path(directory, reverse)]
     }
+    tab <- table(files$id)
+    if (any(tab > 1)) {
+        flog.warn(paste0("There are duplicated ids, please fix them before ",
+                         "advancing to other workflow steps. Duplicated: %s"),
+                  paste(names(tab)[tab > 1], collapse = ", "))
+    }
     return(files)
 }
