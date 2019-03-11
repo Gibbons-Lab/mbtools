@@ -109,7 +109,7 @@ normalize <- function(counts, method="poscounts") {
     }
     dds <- DESeqDataSetFromMatrix(t(cmat), data.frame(name = rownames(cmat)),
                                    design = ~1) %>% suppressMessages()
-    dds <- estimateSizeFactors(dds, type = method) %>% suppressMessages()
+    dds <- estimateSizeFactors(dds, type = method, quiet = TRUE) %>% suppressMessages()
     sfs <- sizeFactors(dds)
 
     if (is_matrix) {
