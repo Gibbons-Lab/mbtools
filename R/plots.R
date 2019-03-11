@@ -38,7 +38,9 @@ plot_counts <- function(ps, variable, tax_level = "genus", taxa = NULL,
 
     if (is.integer(dts$value) || is.factor(dts$value)) {
         pl <- ggplot(dts, aes(x = value, y = reads + pc, group = value)) +
-              geom_boxplot() + facet_wrap(~ taxa) + scale_y_log10() +
+              geom_boxplot(outlier.color = NA) +
+              geom_jitter(width = 0.4, alpha = 0.5) +
+              facet_wrap(~ taxa) + scale_y_log10() +
               xlab(variable)
     } else {
         pl <- ggplot(dts, aes(x = value, y = reads + pc)) +
