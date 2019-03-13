@@ -2,6 +2,19 @@
 #
 # Apache license 2.0. See LICENSE for more information.
 
+classified_taxa <- function(feature_table, tax_table) {
+    ranks <- colnames(tax_table)
+    ranks <- ranks[ranks != "sequence"]  # if hashed
+    total <- colSums(feature_table)
+    classified <- sapply(ranks, function(r) {
+        known <- !is.na(taxa_table[, r])
+        asvs <- sum(known) / nrow(tax_table)
+        reads <- sum(total[known]) / sum(total)
+        return(data.table(rank = r, asvs = asvs, reads = reads))
+    })
+    return(rbindlist(classified))
+}
+
 #' Build a configuration for the DADA2 workflow.
 #'
 #' This can be saved and passed on to others to ensure reproducibility.
@@ -170,12 +183,12 @@ denoise <- function(object, config) {
                            minBoot = config$bootstrap_confidence * 100,
                            multithread = config$threads)
     taxa <- addSpecies(taxa, species_db)
-    classified <- apply(taxa, 2, function(x) sum(!is.na(x)) / length(x))
-    flog.info("Classified variants: %s",
-              paste0(names(classified), " = ", 100 * round(classified, 3),
-                     "%", collapse = ", "))
     seqs <- rownames(taxa)
     taxa <- cbind(taxa, sequence = seqs)
+    classified <- classified_taxa(feature_table, taxa)
+    flog.info("Reads with taxonomic classification: %s",
+              classified[, paste(rank, "=", 100 * round(reads, 3),
+                                 "%", collapse = ",")])
     if (config$hash) {
         flog.info("Hashing %d sequence variants.", nrow(taxa))
         seqs <- rownames(taxa)
@@ -221,4 +234,16 @@ as_phyloseq <- function(object, metadata = NULL) {
     attr(ps, "passed_reads") <- object$passed_reads
     attr(ps, "workflow_steps") <- object$steps
     return(ps)
+}
+
+#' Quantify classification rates for each taxonomic rank.
+#'
+#' @param ps A phyloseq object.
+#' @return A data table with 3 columns (rank, asvs, reads) specifying the
+#'  fraction of ASVs or reads that were classified successfully on that
+#'  taxa rank.
+#' @importFrom phyloseq otu_table tax_table
+with_classification <- function(ps) {
+    return(classified_taxa(otu_table(ps, taxa_are_rows = FALSE),
+                           tax_table(ps)))
 }
