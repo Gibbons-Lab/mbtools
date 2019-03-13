@@ -47,14 +47,14 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     } else {
         fit_type <- "local"
     }
-    dds <- (DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
-            design = reformulate(c(confounders, variable))))
-    dds <- (
+    dds <- suppressMessages(
+        DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
+        design = reformulate(c(confounders, variable))))
+    dds <- suppressMessages(
         DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
               fitType = fit_type, reduced = ref_model,
               sfType = "poscounts"))
     res <- results(dds)
-    print(res)
     if (shrink) {
         res <- lfcShrink(dds, coef = length(resultsNames(dds)),
                             results = res, quiet = TRUE)
