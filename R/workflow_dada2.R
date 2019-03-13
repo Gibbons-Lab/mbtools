@@ -242,6 +242,7 @@ as_phyloseq <- function(object, metadata = NULL) {
 #' @return A data table with 3 columns (rank, asvs, reads) specifying the
 #'  fraction of ASVs or reads that were classified successfully on that
 #'  taxa rank.
+#' @export
 #' @importFrom phyloseq otu_table tax_table
 with_classification <- function(ps) {
     return(classified_taxa(otu_table(ps, taxa_are_rows = FALSE),
