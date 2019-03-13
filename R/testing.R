@@ -4,10 +4,10 @@
 check_variables <- function(variable, counts, meta, confounders) {
     good <- !is.na(meta[[variable]])
     # Check for constant variables
-    sds <- apply(meta[good, c(variable, confounders), drop = FALSE], 2,
-                 function(co) sd(as.numeric(co)))
+    sds <- sapply(c(variable, confounders),
+                 function(co) sd(as.numeric(meta[good, co])))
     if (any(is.na(sds) | sds < 1e-6)) {
-        file.info("Detected variable or confounder with zero variation.")
+        flog.info("Detected variable or confounder with zero variation.")
         return(NULL)
     }
     if (is.null(confounders)) {
@@ -47,14 +47,14 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     } else {
         fit_type <- "local"
     }
-    dds <- suppressMessages(
-        DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
+    dds <- (DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
             design = reformulate(c(confounders, variable))))
-    dds <- suppressMessages(
+    dds <- (
         DESeq(dds, test = "LRT", parallel = TRUE, quiet = TRUE,
               fitType = fit_type, reduced = ref_model,
               sfType = "poscounts"))
     res <- results(dds)
+    print(res)
     if (shrink) {
         res <- lfcShrink(dds, coef = length(resultsNames(dds)),
                             results = res, quiet = TRUE)
