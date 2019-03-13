@@ -25,7 +25,7 @@ check_variables <- function(variable, counts, meta, confounders) {
             return(NULL)
         }
     }
-    if (sum(good) < length(variable) + length(confounders) + 4) {
+    if (sum(good) < length(confounders) + 2) {
         flog.info("Not enough degrees of freedom. Skipping variable `%s`.",
                   variable)
         return(NULL)
