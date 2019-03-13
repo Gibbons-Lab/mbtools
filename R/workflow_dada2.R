@@ -7,7 +7,7 @@ classified_taxa <- function(feature_table, tax_table) {
     ranks <- ranks[ranks != "sequence"]  # if hashed
     total <- colSums(feature_table)
     classified <- sapply(ranks, function(r) {
-        known <- !is.na(taxa_table[, r])
+        known <- !is.na(tax_table[, r])
         asvs <- sum(known) / nrow(tax_table)
         reads <- sum(total[known]) / sum(total)
         return(data.table(rank = r, asvs = asvs, reads = reads))
