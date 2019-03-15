@@ -79,7 +79,7 @@ align_long_reads <- function(object, config) {
     artifact <- list(
         alignments = alns,
         logs = logs,
-        disk_size = sum(sapply(alns$alignments,
+        disk_size = sum(sapply(alns$alignment,
                                function(f) file.info(f)$size)),
         steps = c(object[["steps"]], "align_long_reads")
     )

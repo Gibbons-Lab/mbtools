@@ -98,7 +98,7 @@ align_short_reads <- function(object, config) {
 
     if (config$progress && interactive()) {
         apply_fun <- pbapply
-    } else apply_fun <- lapply
+    } else apply_fun <- apply
 
     flog.info("Aligning %d samples...", nrow(files))
     alignments <- apply_fun(files, 1, function(read) {
@@ -147,7 +147,7 @@ align_short_reads <- function(object, config) {
     }) %>% rbindlist()
     artifact <- list(
         alignments = alignments,
-        disk_size = sum(sapply(alignments$alignments,
+        disk_size = sum(sapply(alignments$alignment,
                                function(f) file.info(f)$size)),
         steps = c(object[["steps"]], "align_short_reads")
     )
