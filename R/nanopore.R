@@ -58,8 +58,8 @@ align_long_reads <- function(object, config) {
         }
         out_path <- file.path(config$alignment_dir, paste0(file$id, ".bam"))
         log_file <- file.path(config$alignment_dir, paste0(file$id, ".log"))
-        args <- c("-acx", "map-ont", "-t", threads, "-N", config$max_hits,
-                  config$reference, reads)
+        args <- c("-acx", "map-ont", "-t", config$threads, "-N",
+                  config$max_hits, config$reference, reads)
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
         success <- system2("minimap2", args = args)
