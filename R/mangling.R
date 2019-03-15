@@ -75,7 +75,7 @@ taxa_count <- function(ps, lev = "Genus") {
             sums <- rowSums(otus[, idx, drop = FALSE])
             data.table(sample = sample_names(ps),
                     taxa = taxa[idx[1]],
-                    reads = sums)
+                    reads = sums)[reads > 0]
         }, simplify = FALSE)
         counts <- rbindlist(counts)
     }
