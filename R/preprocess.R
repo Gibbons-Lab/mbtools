@@ -18,7 +18,9 @@ config_preprocess <- function(...) {
         out_dir = "preprocessed",
         trimLeft = 10,
         truncLen = 0,
-        maxEE = 2
+        maxEE = 2,
+        truncQ = 2,
+        maxN = 0
     )
     args <- list(...)
     for (arg in names(args)) {
@@ -62,13 +64,16 @@ preprocess <- function(object, config) {
             fwd = files$forward, filt = passed_files$forward,
             rev = files$reverse, filt.rev = passed_files$reverse,
             trimLeft = config$trimLeft, truncLen = config$truncLen,
-            maxEE = config$maxEE, multithread = config$threads
+            maxEE = config$maxEE, multithread = config$threads,
+            truncQ = config$truncQ, maxN = config$maxN
+
         )
     } else {
         passed_stats <- filterAndTrim(
             fwd = files$forward, filt = passed_files$forward,
             trimLeft = config$trimLeft, truncLen = config$truncLen,
-            maxEE = config$maxEE, multithread = config$threads
+            maxEE = config$maxEE, multithread = config$threads,
+            truncQ = config$truncQ, maxN = config$maxN
         )
     }
     passed_stats <- as.data.table(passed_stats) %>%
