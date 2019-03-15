@@ -7,7 +7,8 @@ qualities <- function(srqa) {
     cycles <- srqa[["perCycle"]]$quality %>% as.data.table
     names(cycles) <- c("cycle", "quality_symbol", "quality",
                        "count", "file")
-    avg_score <- cycles[, sum(quality * count) / sum(count)]
+    avg_score <- cycles[, sum(as.numeric(quality * count), na.rm = T) /
+                          sum(as.numeric(count), na.rm = T)]
     flog.info("Average per base error is %.3f%% (mean score = %.2f).",
               10 ^ (-avg_score / 10 + 2), avg_score)
     return(cycles)

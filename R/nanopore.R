@@ -50,6 +50,7 @@ align_long_reads <- function(object, config) {
                     "Keeping up to %d secondary alignments."),
                     nrow(files), config$threads, config$max_hits)
     alns <- apply(files, 1, function(file) {
+        file <- as.list(file)
         flog.info("Aligning %s...", file$id)
         reads <- file$forward
         if (paired) {
