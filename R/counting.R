@@ -133,7 +133,7 @@ count_transcripts <- function(object, config) {
         names(txlengths) <- gsub("\\s.+", "", fasta_index$desc)
         flog.info("Normalized IDs. Starting counting...")
     }
-    counts <- mclapply(config$alignments, function(file) {
+    counts <- mclapply(object$alignments$alignment, function(file) {
         bam <- read_bam(file)
         flog.info("[%s] Read %d alignments.", file, length(bam))
         cn <- count_alns(bam, txlengths, file = file)
@@ -142,7 +142,7 @@ count_transcripts <- function(object, config) {
     }, mc.cores = config$threads)
 
     artifact <- list(
-        alignments = config$alignments,
+        alignments = object$alignments,
         counts = rbindlist(counts),
         steps = c(object[["steps"]], "count_transcripts")
     )
