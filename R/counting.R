@@ -146,5 +146,5 @@ count_transcripts <- function(object, config) {
         counts = rbindlist(counts),
         steps = c(object[["steps"]], "count_transcripts")
     )
-    return(counts)
+    return(artifact)
 }

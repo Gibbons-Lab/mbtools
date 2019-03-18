@@ -19,7 +19,8 @@ config_align_long <- function(...) {
         threads = 1,
         alignment_dir = "alignments",
         max_hits = 100,
-        progress = TRUE
+        progress = TRUE,
+        use_existing = TRUE
     )
     args <- list(...)
     for (arg in names(args)) {
@@ -58,6 +59,11 @@ align_long_reads <- function(object, config) {
         }
         out_path <- file.path(config$alignment_dir, paste0(file$id, ".bam"))
         log_file <- file.path(config$alignment_dir, paste0(file$id, ".log"))
+
+        if (config$use_existing && file.exists()) {
+            return(data.table(id = file$id, alignment = out_path, success = 0))
+        }
+
         args <- c("-acx", "map-ont", "-t", config$threads, "-N",
                   config$max_hits, config$reference, reads)
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
@@ -68,6 +74,9 @@ align_long_reads <- function(object, config) {
     })
     logs <- lapply(files$id, function(id) {
         log_file <- file.path(config$alignment_dir, paste0(id, ".log"))
+        if (!file.exists(log_file)) {
+            return(NA)
+        }
         content <- readChar(log_file, min(file.info(log_file)$size, 1e8))
         file.remove(log_file)
         return(content)
