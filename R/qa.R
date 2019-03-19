@@ -106,7 +106,7 @@ plot_qualities <- function(qp, min_score = 10) {
     pl <- ggplot(mean_scores, aes(x = cycle, y = quality)) +
             geom_hline(yintercept = min_score, col = "blue") +
             geom_bin2d(bins = 50) +
-            geom_smooth(col = "tomato", fill = "tomato") + theme_bw() +
+            geom_smooth(col = "tomato", fill = "tomato", method = "gam") +
             scale_fill_viridis_c(limits = c(0, NA)) +
             labs(x = "read position / cycle [bps]",
                  y = "quality score [mean per sample]")
@@ -137,7 +137,6 @@ plot_lengths <- function(qp, min_score = 10) {
             scale_fill_gradient(low = "white", high = "blue",
                                 limits = c(0, NA)) +
             scale_x_continuous(limits = range(nice$cycle), expand = c(0, 0)) +
-            theme_bw() +
             labs(x = "read position / cycle [bps]", y = "")
     n <- qp$qualities[, uniqueN(direction)]
     if (n > 1) {
@@ -161,7 +160,7 @@ plot_entropy <- function(qp) {
             geom_hline(yintercept = 2, col = "blue") +
             geom_bin2d(bins = 50) +
             scale_fill_viridis_c(limits = c(0, NA)) +
-            stat_smooth(col = "tomato", fill = "tomato") + theme_bw() +
+            stat_smooth(col = "tomato", fill = "tomato", method = "gam") +
             labs(x = "read position / cycle [bps]", y = "entropy [bits]")
     n <- qp$bases[, uniqueN(direction)]
     if (n > 1) {

@@ -250,5 +250,5 @@ mock_plot <- function(ps, ref) {
     ggplot(quants, aes(x = reference, y = measured, col = level)) +
         geom_abline(alpha = 0.5) +
         geom_smooth(aes(group = 1), method = "lm", lty = "dashed") +
-        geom_point(aes(col = level)) + facet_wrap(~ samples) + theme_bw()
+        geom_point(aes(col = level)) + facet_wrap(~ samples)
 }

@@ -95,8 +95,7 @@ plot_taxa <- function(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
         scale_fill_brewer(palette = "Paired", direction = -1,
                           label = function(x) str_trunc(x, 30)) +
         labs(x = ifelse(show_samples, "", "sample index"),
-             y = "relative abundance", fill = "") +
-        theme_bw()
+             y = "relative abundance", fill = "")
 
     if (show_samples) {
         pl <- pl + theme(axis.text.x = element_text(angle = 90,
