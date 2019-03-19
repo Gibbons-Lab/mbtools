@@ -52,7 +52,6 @@ align_long_reads <- function(object, config) {
                     nrow(files), config$threads, config$max_hits)
     alns <- apply(files, 1, function(file) {
         file <- as.list(file)
-        flog.info("Aligning %s...", file$id)
         reads <- file$forward
         if (paired) {
             reads <- c(reads, file$reverse)
@@ -61,6 +60,8 @@ align_long_reads <- function(object, config) {
         log_file <- file.path(config$alignment_dir, paste0(file$id, ".log"))
 
         if (config$use_existing && file.exists(out_path)) {
+            flog.info("Found existing alignment for %s. Will use that one.",
+                      file$id)
             return(data.table(id = file$id, alignment = out_path, success = 0))
         }
 
@@ -69,6 +70,11 @@ align_long_reads <- function(object, config) {
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
         success <- system2("minimap2", args = args)
+        if (success) {
+            flog.info("Finished aligning %s.", file$id)
+        } else {
+            flog.error("Failed aligning %s.", file$id)
+        }
         return(data.table(id = file$id, alignment = out_path,
                           success = success == 0))
     })
