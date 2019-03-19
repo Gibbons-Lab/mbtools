@@ -60,7 +60,7 @@ align_long_reads <- function(object, config) {
         out_path <- file.path(config$alignment_dir, paste0(file$id, ".bam"))
         log_file <- file.path(config$alignment_dir, paste0(file$id, ".log"))
 
-        if (config$use_existing && file.exists()) {
+        if (config$use_existing && file.exists(out_path)) {
             return(data.table(id = file$id, alignment = out_path, success = 0))
         }
 
