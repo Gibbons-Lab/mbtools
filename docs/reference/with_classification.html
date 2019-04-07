@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the quality profiles and base calls for each cycle across all
-input files. — quality_profile • mbtools</title>
+<title>Quantify classification rates for each taxonomic rank. — with_classification • mbtools</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,11 +30,9 @@ input files. — quality_profile • mbtools</title>
 
 
 
-<meta property="og:title" content="Get the quality profiles and base calls for each cycle across all
-input files. — quality_profile" />
+<meta property="og:title" content="Quantify classification rates for each taxonomic rank. — with_classification" />
 
-<meta property="og:description" content="Get the quality profiles and base calls for each cycle across all
-input files." />
+<meta property="og:description" content="Quantify classification rates for each taxonomic rank." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -120,44 +117,33 @@ input files." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the quality profiles and base calls for each cycle across all
-input files.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/qa.R'><code>R/qa.R</code></a></small>
-    <div class="hidden name"><code>quality_profile.Rd</code></div>
+    <h1>Quantify classification rates for each taxonomic rank.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/workflow_dada2.R'><code>R/workflow_dada2.R</code></a></small>
+    <div class="hidden name"><code>with_classification.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get the quality profiles and base calls for each cycle across all
-input files.</p>
+    <p>Quantify classification rates for each taxonomic rank.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>quality_profile</span>(<span class='no'>files</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10000</span>)</pre>
+    <pre class="usage"><span class='fu'>with_classification</span>(<span class='no'>ps</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>files</th>
-      <td><p>A data table containing the files as returned by
-<code><a href='find_read_files.html'>find_read_files</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>n</th>
-      <td><p>How many reads to sample from each file. If a file has less
-all of them will be used.</p></td>
+      <th>ps</th>
+      <td><p>A phyloseq object.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with two data tables giving the sampled metrics per cycle /
- base pair:</p><dl class='dl-horizontal'>
-   <dt>qualities</dt><dd><p>The quality scores for each cycle and sample.</p></dd>
-   <dt>bases</dt><dd><p>The base calls for each cycle and sample.</p></dd>
- </dl>
-
+    <p>A data table with 3 columns (rank, asvs, reads) specifying the
+ fraction of ASVs or reads that were classified successfully on that
+ taxa rank.</p>
     
 
   </div>

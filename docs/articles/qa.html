@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.26.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.27.11</span>
       </span>
     </div>
 
@@ -110,8 +110,7 @@
 ##   - yaml=2.2.0</code></pre>
 <pre><code>## Found tools:</code></pre>
 <pre><code>##   - bowtie2=2.3.4.3
-##   - minimap2=2.16-r922
-##   - slimm=0.3.4
+##   - minimap2=2.15-r905
 ##   - samtools=1.9</code></pre>
 <pre><code>## 
 ## Attaching package: 'mbtools'</code></pre>
@@ -125,18 +124,18 @@
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/example"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
 <a class="sourceLine" id="cb8-2" title="2">files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</a>
 <a class="sourceLine" id="cb8-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
-<pre><code>##                                                                                                                  forward
-## 1: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
-## 2: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
-## 3: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
-## 4: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
-## 5: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
-##                                                                                                                  reverse
-## 1: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
-## 2: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
-## 3: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
-## 4: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
-## 5: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
+<pre><code>##                                                                                                   forward
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
+##                                                                                                   reverse
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
 ##      id injection_order lane
 ## 1: F3D0             188    1
 ## 2: F3D1             189    1
@@ -150,21 +149,20 @@
 <a href="#running-quality-assesment" class="anchor"></a>Running Quality assesment</h2>
 <p>Now we can run the quality assessment workflow step. This step does not take a configuration since it does not require that much prior information. It does take additional arguments to specify the maximum number of sampled reads and a quality cutoff that you consider sufficient. The default is a quality score of 10 which is the average for nanopore reads for instance. This corresponds to a per-base error of about 10%. We can be a bit more stringent here and use a cutoff of 1% error (quality score 20).</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">quals &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(<span class="dt">min_score =</span> <span class="dv">20</span>)</a></code></pre></div>
-<pre><code>## INFO [2019-03-08 16:40:02] Running quality assay for forward reads from 5 files.
-## INFO [2019-03-08 16:40:05] Average per base error is 0.026% (mean score = 35.79).
-## INFO [2019-03-08 16:40:05] Mean per cycle entropy is 0.809 (in [0, 2]).
-## INFO [2019-03-08 16:40:05] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-03-08 16:40:05] Running quality assay for reverse reads from 5 files.
-## INFO [2019-03-08 16:40:08] Average per base error is 0.043% (mean score = 33.68).
-## INFO [2019-03-08 16:40:08] Mean per cycle entropy is 0.731 (in [0, 2]).
-## INFO [2019-03-08 16:40:08] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<pre><code>## INFO [2019-04-06 20:17:46] Running quality assay for forward reads from 5 files.
+## INFO [2019-04-06 20:17:48] Average per base error is 0.026% (mean score = 35.79).
+## INFO [2019-04-06 20:17:48] Mean per cycle entropy is 0.809 (in [0, 2]).
+## INFO [2019-04-06 20:17:48] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-04-06 20:17:48] Running quality assay for reverse reads from 5 files.
+## INFO [2019-04-06 20:17:50] Average per base error is 0.043% (mean score = 33.67).
+## INFO [2019-04-06 20:17:50] Mean per cycle entropy is 0.731 (in [0, 2]).
+## INFO [2019-04-06 20:17:50] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
 <p>This runs in parallel and will report global quality metrics on the logging interface. We see that we have relatively shallow sequencing data, but the average quality and entropy is pretty good.</p>
 <div id="quality-plots" class="section level3">
 <h3 class="hasAnchor">
 <a href="#quality-plots" class="anchor"></a>Quality plots</h3>
 <p>In order to indentify points where the quality tanks we can have a look at the average quality profile.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">quals<span class="op">$</span>quality_plot</a></code></pre></div>
-<pre><code>## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'</code></pre>
 <p><img src="qa_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>This is a quick global plot giving us the overall average quality per sample. The 5’ (first 10bp) qualities are usually artificially lowered by Illumina sequencers and have some lower confidence. We also see some declining qualities on the 3’ of the reverse reads. This is all pretty typical for MiSeq data.</p>
 </div>
@@ -172,7 +170,7 @@
 <h3 class="hasAnchor">
 <a href="#length-plots" class="anchor"></a>Length plots</h3>
 <p>One additional questions is if we have samples were reads are shorter of have strongly declining qualities compared to other samples. This can be evaluated by the length plot.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">quals<span class="op">$</span>length_plot</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">quals<span class="op">$</span>length_plot</a></code></pre></div>
 <p><img src="qa_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>You usually want to see horizontal bands of a single color. If the colors become lighter towards the right that means that some samples have shorter reads after trimming which could complicate some workflows.</p>
 </div>
@@ -180,8 +178,7 @@
 <h3 class="hasAnchor">
 <a href="#entropy-plots" class="anchor"></a>Entropy plots</h3>
 <p>We can also check how heterogenous the reads positions are. This is quantified by the entropy which tells us how varying a single position is. Any value appreciably larger than 0 is usually fine.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">quals<span class="op">$</span>entropy_plot</a></code></pre></div>
-<pre><code>## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">quals<span class="op">$</span>entropy_plot</a></code></pre></div>
 <p><img src="qa_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>16S amplified regions tend to have some lower variability on the ends which is what we see by the lower entropy on the beginning of the forward and reverse reads (the ends of the amplicon).</p>
 </div>

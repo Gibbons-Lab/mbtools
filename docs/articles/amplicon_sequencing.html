@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.26.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.27.11</span>
       </span>
     </div>
 
@@ -110,8 +110,7 @@
 ##   - yaml=2.2.0</code></pre>
 <pre><code>## Found tools:</code></pre>
 <pre><code>##   - bowtie2=2.3.4.3
-##   - minimap2=2.16-r922
-##   - slimm=0.3.4
+##   - minimap2=2.15-r905
 ##   - samtools=1.9</code></pre>
 <pre><code>## 
 ## Attaching package: 'mbtools'</code></pre>
@@ -124,16 +123,15 @@
 <a href="#quality-assessment" class="anchor"></a>Quality assessment</h2>
 <p>As before a good first step is to look at the qualities of the raw data.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">quals &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>()</a></code></pre></div>
-<pre><code>## INFO [2019-03-08 16:26:59] Running quality assay for forward reads from 5 files.
-## INFO [2019-03-08 16:27:02] Average per base error is 0.026% (mean score = 35.79).
-## INFO [2019-03-08 16:27:02] Mean per cycle entropy is 0.810 (in [0, 2]).
-## INFO [2019-03-08 16:27:02] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-03-08 16:27:02] Running quality assay for reverse reads from 5 files.
-## INFO [2019-03-08 16:27:06] Average per base error is 0.043% (mean score = 33.68).
-## INFO [2019-03-08 16:27:06] Mean per cycle entropy is 0.730 (in [0, 2]).
-## INFO [2019-03-08 16:27:06] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<pre><code>## INFO [2019-04-06 20:09:28] Running quality assay for forward reads from 5 files.
+## INFO [2019-04-06 20:09:31] Average per base error is 0.026% (mean score = 35.80).
+## INFO [2019-04-06 20:09:31] Mean per cycle entropy is 0.809 (in [0, 2]).
+## INFO [2019-04-06 20:09:31] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-04-06 20:09:31] Running quality assay for reverse reads from 5 files.
+## INFO [2019-04-06 20:09:33] Average per base error is 0.043% (mean score = 33.67).
+## INFO [2019-04-06 20:09:33] Mean per cycle entropy is 0.732 (in [0, 2]).
+## INFO [2019-04-06 20:09:33] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">quals<span class="op">$</span>quality_plot</a></code></pre></div>
-<pre><code>## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'</code></pre>
 <p><img src="amplicon_sequencing_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <p>Again we see that we might want to truncate the reads a bit on the 3’ ends to avoid the dip in quality. Depending on your amplified fragment make sure that this leaves sufficient overlap for merging (requires &gt;20bp).</p>
 </div>
@@ -141,33 +139,45 @@
 <h2 class="hasAnchor">
 <a href="#denoise" class="anchor"></a>Denoise</h2>
 <p>We can now perform our preprocessing and denoise workflow to obtain the amplicon sequence variants (ASVs) in our samples. We can chain our preprocessing and denoise workflows from our original quality assessment. For clarity we will define the confguration for the analysis on top.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(</a>
-<a class="sourceLine" id="cb13-2" title="2">    <span class="dt">preprocess =</span> <span class="kw"><a href="../reference/config_preprocess.html">config_preprocess</a></span>(</a>
-<a class="sourceLine" id="cb13-3" title="3">        <span class="dt">trimLeft =</span> <span class="dv">10</span>,  <span class="co"># this is the default</span></a>
-<a class="sourceLine" id="cb13-4" title="4">        <span class="dt">trunLen =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">240</span>, <span class="dv">180</span>),  <span class="co"># forward and reverse truncation</span></a>
-<a class="sourceLine" id="cb13-5" title="5">        <span class="dt">out_dir =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir</a></span>()  <span class="co"># will store filtered files in a temporary dir</span></a>
-<a class="sourceLine" id="cb13-6" title="6">    ),</a>
-<a class="sourceLine" id="cb13-7" title="7">    <span class="dt">denoise =</span> <span class="kw"><a href="../reference/config_denoise.html">config_denoise</a></span>()  <span class="co"># will only use defaults</span></a>
-<a class="sourceLine" id="cb13-8" title="8">)</a>
-<a class="sourceLine" id="cb13-9" title="9"></a>
-<a class="sourceLine" id="cb13-10" title="10">denoised &lt;-<span class="st"> </span>quals <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
-<pre><code>## INFO [2019-03-08 16:27:08] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-03-08 16:27:14] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
-## INFO [2019-03-08 16:27:14] Running DADA2 on 1 run(s) from a sample of up to 2.5e+08 bases.
-## INFO [2019-03-08 16:27:14] Learning errors for run `all` (5 samples)...
-## INFO [2019-03-08 16:27:33] Dereplicating run `all` (5 samples)...
-## INFO [2019-03-08 16:27:34] Inferring sequence variants for run `all`...
-## INFO [2019-03-08 16:27:40] Finished run `all`.
-## INFO [2019-03-08 16:27:40] Merged sequence tables, now removing chimeras...
-## INFO [2019-03-08 16:27:40] Removed 5/164 sequence variants as chimeric (1.20% of reads)
-## INFO [2019-03-08 16:27:40] Assigning taxonomy to 159 sequences...
-## INFO [2019-03-08 16:27:40] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpS5XIv4/taxa.fna.gz...
-## INFO [2019-03-08 16:28:58] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpS5XIv4/species.fna.gz...
-## INFO [2019-03-08 16:32:38] Classified variants: Kingdom = 100%, Phylum = 100%, Class = 100%, Order = 100%, Family = 98.7%, Genus = 65.4%, Species = 8.2%
-## INFO [2019-03-08 16:32:38] Hashing 159 sequence variants.</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(</a>
+<a class="sourceLine" id="cb12-2" title="2">    <span class="dt">preprocess =</span> <span class="kw"><a href="../reference/config_preprocess.html">config_preprocess</a></span>(</a>
+<a class="sourceLine" id="cb12-3" title="3">        <span class="dt">trimLeft =</span> <span class="dv">10</span>,  <span class="co"># this is the default</span></a>
+<a class="sourceLine" id="cb12-4" title="4">        <span class="dt">trunLen =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">240</span>, <span class="dv">180</span>),  <span class="co"># forward and reverse truncation</span></a>
+<a class="sourceLine" id="cb12-5" title="5">        <span class="dt">out_dir =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir</a></span>()  <span class="co"># will store filtered files in a temporary dir</span></a>
+<a class="sourceLine" id="cb12-6" title="6">    ),</a>
+<a class="sourceLine" id="cb12-7" title="7">    <span class="dt">denoise =</span> <span class="kw"><a href="../reference/config_denoise.html">config_denoise</a></span>()  <span class="co"># will only use defaults</span></a>
+<a class="sourceLine" id="cb12-8" title="8">)</a>
+<a class="sourceLine" id="cb12-9" title="9"></a>
+<a class="sourceLine" id="cb12-10" title="10">denoised &lt;-<span class="st"> </span>quals <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
+<pre><code>## INFO [2019-04-06 20:09:34] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-04-06 20:09:40] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
+## INFO [2019-04-06 20:09:40] Running DADA2 on 1 run(s) from a sample of up to 2.5e+08 bases.
+## INFO [2019-04-06 20:09:40] Learning errors for run `all` (5 samples)...
+## INFO [2019-04-06 20:10:26] Dereplicating run `all` (5 samples)...
+## INFO [2019-04-06 20:10:27] Inferring sequence variants for run `all`...
+## INFO [2019-04-06 20:10:39] Finished run `all`.
+## INFO [2019-04-06 20:10:39] Merged sequence tables, now removing chimeras...
+## INFO [2019-04-06 20:10:39] Removed 5/164 sequence variants as chimeric (1.20% of reads)
+## INFO [2019-04-06 20:10:39] Assigning taxonomy to 159 sequences...
+## INFO [2019-04-06 20:10:39] Downloading taxa db to /tmp/RtmpeuCCc4/taxa.fna.gz...
+## INFO [2019-04-06 20:11:20] Downloading taxa db to /tmp/RtmpeuCCc4/species.fna.gz...
+## INFO [2019-04-06 20:13:38] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.8 %,Species = 8.3 %
+## INFO [2019-04-06 20:13:38] Hashing 159 sequence variants.</code></pre>
 <p>This will run both workflow steps sequentially and will use all available CPUs by default. You will get some disgnostic output on the logging interface but you can also inspect those in the returned artifact.</p>
 <p>For instance to see how many reads were conserved in each processing step:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">denoised<span class="op">$</span>passed_reads</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">denoised<span class="op">$</span>passed_reads</a></code></pre></div>
+<pre><code>##      raw preprocessed   id derep_forward derep_reverse denoised_forward
+## 1:  7793         5616 F3D0          5616          5616             5461
+## 2:  5869         4388 F3D1          4388          4388             4280
+## 3: 19620        13787 F3D2         13787         13787            13633
+## 4:  6758         4527 F3D3          4527          4527             4424
+## 5:  4779         3953 Mock          3953          3953             3933
+##    denoised_reverse merged non_chimera
+## 1:             5415   4795        4795
+## 2:             4255   4005        4005
+## 3:            13583  12872       12701
+## 4:             4328   3761        3579
+## 5:             3934   3895        3895</code></pre>
 <p>We see that most samples were conserved (as reported in the logging).</p>
 <p>The abundance of each sequence variant is saved in <code>denoised$feature_tables</code> which contains abundances for samples x ASVs. The ASVs here have been named by their md5 hash value and you can get the taxonomy and original sequence from <code>denoised$taxonomy</code>:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">denoised<span class="op">$</span>taxonomy[<span class="dv">1</span>, , drop =<span class="st"> </span><span class="ot">FALSE</span>]</a></code></pre></div>
@@ -190,18 +200,18 @@
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">files &lt;-<span class="st"> </span>quals<span class="op">$</span>files</a>
 <a class="sourceLine" id="cb20-2" title="2">files[, run <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">times =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>))]</a>
 <a class="sourceLine" id="cb20-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
-<pre><code>##                                                                                                                  forward
-## 1: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
-## 2: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
-## 3: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
-## 4: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
-## 5: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
-##                                                                                                                  reverse
-## 1: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
-## 2: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
-## 3: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
-## 4: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
-## 5: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
+<pre><code>##                                                                                                   forward
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
+##                                                                                                   reverse
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
 ##      id injection_order lane run
 ## 1: F3D0             188    1   1
 ## 2: F3D1             189    1   1
@@ -211,28 +221,28 @@
 <p>Rerunning the previous workflow with this file list will now give a slightly different output:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">byrun &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb22-2" title="2"><span class="st">         </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
-<pre><code>## INFO [2019-03-08 16:32:38] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-03-08 16:32:42] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
-## INFO [2019-03-08 16:32:42] Running DADA2 on 3 run(s) from a sample of up to 2.5e+08 bases.
-## INFO [2019-03-08 16:32:42] Learning errors for run `1` (2 samples)...
-## INFO [2019-03-08 16:32:49] Dereplicating run `1` (2 samples)...
-## INFO [2019-03-08 16:32:49] Inferring sequence variants for run `1`...
-## INFO [2019-03-08 16:32:51] Finished run `1`.
-## INFO [2019-03-08 16:32:51] Learning errors for run `2` (2 samples)...
-## INFO [2019-03-08 16:33:00] Dereplicating run `2` (2 samples)...
-## INFO [2019-03-08 16:33:01] Inferring sequence variants for run `2`...
-## INFO [2019-03-08 16:33:04] Finished run `2`.
-## INFO [2019-03-08 16:33:04] Learning errors for run `3` (1 samples)...
-## INFO [2019-03-08 16:33:05] Dereplicating run `3` (1 samples)...
-## INFO [2019-03-08 16:33:05] Inferring sequence variants for run `3`...
-## INFO [2019-03-08 16:33:05] Finished run `3`.
-## INFO [2019-03-08 16:33:05] Merged sequence tables, now removing chimeras...
-## INFO [2019-03-08 16:33:05] Removed 5/162 sequence variants as chimeric (1.20% of reads)
-## INFO [2019-03-08 16:33:05] Assigning taxonomy to 157 sequences...
-## INFO [2019-03-08 16:33:05] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpS5XIv4/taxa.fna.gz...
-## INFO [2019-03-08 16:35:36] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpS5XIv4/species.fna.gz...
-## INFO [2019-03-08 16:39:09] Classified variants: Kingdom = 100%, Phylum = 100%, Class = 100%, Order = 100%, Family = 98.7%, Genus = 66.2%, Species = 8.3%
-## INFO [2019-03-08 16:39:09] Hashing 157 sequence variants.</code></pre>
+<pre><code>## INFO [2019-04-06 20:13:38] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-04-06 20:13:42] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
+## INFO [2019-04-06 20:13:42] Running DADA2 on 3 run(s) from a sample of up to 2.5e+08 bases.
+## INFO [2019-04-06 20:13:42] Learning errors for run `1` (2 samples)...
+## INFO [2019-04-06 20:13:59] Dereplicating run `1` (2 samples)...
+## INFO [2019-04-06 20:13:59] Inferring sequence variants for run `1`...
+## INFO [2019-04-06 20:14:03] Finished run `1`.
+## INFO [2019-04-06 20:14:03] Learning errors for run `2` (2 samples)...
+## INFO [2019-04-06 20:14:26] Dereplicating run `2` (2 samples)...
+## INFO [2019-04-06 20:14:27] Inferring sequence variants for run `2`...
+## INFO [2019-04-06 20:14:33] Finished run `2`.
+## INFO [2019-04-06 20:14:33] Learning errors for run `3` (1 samples)...
+## INFO [2019-04-06 20:14:34] Dereplicating run `3` (1 samples)...
+## INFO [2019-04-06 20:14:34] Inferring sequence variants for run `3`...
+## INFO [2019-04-06 20:14:35] Finished run `3`.
+## INFO [2019-04-06 20:14:35] Merged sequence tables, now removing chimeras...
+## INFO [2019-04-06 20:14:35] Removed 5/162 sequence variants as chimeric (1.20% of reads)
+## INFO [2019-04-06 20:14:35] Assigning taxonomy to 157 sequences...
+## INFO [2019-04-06 20:14:35] Downloading taxa db to /tmp/RtmpeuCCc4/taxa.fna.gz...
+## INFO [2019-04-06 20:14:48] Downloading taxa db to /tmp/RtmpeuCCc4/species.fna.gz...
+## INFO [2019-04-06 20:16:57] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57 %,Species = 8.2 %
+## INFO [2019-04-06 20:16:57] Hashing 157 sequence variants.</code></pre>
 <p>Error profiles will now be estimated for each run individually and final tables will be merged at the end. This is slower than having all files in one run so you should always try to distribute your samples across as few sequencing runs as possible.</p>
 </div>
 <div id="converting-to-phyloseq" class="section level2">

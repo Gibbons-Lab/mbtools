@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.26.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.27.11</span>
       </span>
     </div>
 
@@ -109,8 +109,7 @@
 ##   - yaml=2.2.0</code></pre>
 <pre><code>## Found tools:</code></pre>
 <pre><code>##   - bowtie2=2.3.4.3
-##   - minimap2=2.16-r922
-##   - slimm=0.3.4
+##   - minimap2=2.15-r905
 ##   - samtools=1.9</code></pre>
 <pre><code>## 
 ## Attaching package: 'mbtools'</code></pre>
@@ -124,18 +123,18 @@
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/example"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
 <a class="sourceLine" id="cb8-2" title="2">files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</a>
 <a class="sourceLine" id="cb8-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
-<pre><code>##                                                                                                                  forward
-## 1: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
-## 2: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
-## 3: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
-## 4: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
-## 5: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
-##                                                                                                                  reverse
-## 1: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
-## 2: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
-## 3: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
-## 4: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
-## 5: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
+<pre><code>##                                                                                                   forward
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
+##                                                                                                   reverse
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
 ##      id injection_order lane
 ## 1: F3D0             188    1
 ## 2: F3D1             189    1
@@ -153,7 +152,7 @@
 ## [1] TRUE
 ## 
 ## $out_dir
-## [1] "/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//Rtmp88w3wI"
+## [1] "/tmp/RtmpDal5bk"
 ## 
 ## $trimLeft
 ## [1] 10
@@ -162,7 +161,13 @@
 ## [1] 240 200
 ## 
 ## $maxEE
-## [1] 2</code></pre>
+## [1] 2
+## 
+## $truncQ
+## [1] 2
+## 
+## $maxN
+## [1] 0</code></pre>
 <p>We can see that there are some more parameters that we could specify.</p>
 </div>
 <div id="running-the-preprocessing-step" class="section level2">
@@ -170,8 +175,8 @@
 <a href="#running-the-preprocessing-step" class="anchor"></a>Running the preprocessing step</h2>
 <p>We can now run our preprocessing step.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">filtered &lt;-<span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(files, config)</a></code></pre></div>
-<pre><code>## INFO [2019-03-08 16:39:33] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-03-08 16:39:39] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
+<pre><code>## INFO [2019-04-06 20:17:18] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-04-06 20:17:25] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
 <p>This will report the percentage of passed reads on the logging interface but you can also inspect that in detail by</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">filtered<span class="op">$</span>passed</a></code></pre></div>
 <pre><code>##      raw preprocessed   id
