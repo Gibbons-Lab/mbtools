@@ -1,4 +1,4 @@
-<img src="inst/extdata/logo.png" width="25%" align="right">
+<img src="https://github.com/Gibbons-Lab/mbtools/raw/master/inst/extdata/logo.png" width="25%" align="right">
 
 [![Build Status](https://travis-ci.org/Gibbons-Lab/mbtools.svg?branch=master)](https://travis-ci.org/Gibbons-Lab/mbtools)
 
