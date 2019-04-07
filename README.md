@@ -1,7 +1,6 @@
 <img src="inst/extdata/logo.png" width="25%" align="right">
-[![Build Status](https://travis-ci.org/Gibbons-Lab/mbtools.svg?branch=master)](https://travis-ci.org/Gibbons-Lab/mbtools)
 
-# :poop: :leaves: :earth_americas: mbtools
+[![Build Status](https://travis-ci.org/Gibbons-Lab/mbtools.svg?branch=master)](https://travis-ci.org/Gibbons-Lab/mbtools)
 
 `mbtools` is a collection of helpers that we use to analyze microbiome
 data. It makes it easier to run some common analyses and is pretty
