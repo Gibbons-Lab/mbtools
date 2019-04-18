@@ -42,7 +42,7 @@ count_alns <- function(alignments, txlengths, file, method = "em",
     } else {
         libsize <-  aln[, uniqueN(qname)]  # return counts
     }
-    ecs <- NULL
+    equiv_classes <- NULL
     if (method == "naive") {
         aln <- aln[order(-mapq), .SD[1], by="qname"]
         counts <- aln[, .(counts = .N), by="seqnames"]
@@ -63,7 +63,7 @@ count_alns <- function(alignments, txlengths, file, method = "em",
                         "Last max. abs. change was %.2g."),
                   file, em_result$iterations, length(em_result$ecs),
                   max(em_result$change))
-        ecs <- em_result$ecs
+        equiv_classes <- em_result$ecs
         counts <- data.table(transcript = txnames,
                              counts = em_result$p,
                              effective_length = efflengths)
@@ -77,7 +77,7 @@ count_alns <- function(alignments, txlengths, file, method = "em",
         counts <- counts[counts > 0]
     }
     if (ecs) {
-        list(counts = counts, ecs = ecs)
+        list(counts = counts, ecs = equiv_classes)
     } else {
         return(counts)
     }
