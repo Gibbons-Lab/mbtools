@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.27.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.28.1</span>
       </span>
     </div>
 
@@ -107,17 +107,19 @@
 <h2 class="hasAnchor">
 <a href="#workflow-steps" class="anchor"></a>Workflow steps</h2>
 <p>For <code>mbtools</code> a workflow step is based on input data and a configuration, thus having the function signature <code><a href="https://www.rdocumentation.org/packages/stats/topics/step">step(object, config)</a></code>. Most steps can be chained with the pipe operator to yield workflows. For instance, the following is a possible workflow with <code>mbtools</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(</a>
-<a class="sourceLine" id="cb1-2" title="2">    <span class="dt">demultiplex =</span> <span class="kw"><a href="reference/config_demultiplex.html">config_demultiplex</a></span>(<span class="dt">barcodes =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"ACGTA"</span>, <span class="st">"AGCTT"</span>)),</a>
-<a class="sourceLine" id="cb1-3" title="3">    <span class="dt">preprocess =</span> <span class="kw"><a href="reference/config_preprocess.html">config_preprocess</a></span>(<span class="dt">truncLen =</span> <span class="dv">200</span>),</a>
-<a class="sourceLine" id="cb1-4" title="4">    <span class="dt">denoise =</span> <span class="kw"><a href="reference/config_denoise.html">config_denoise</a></span>()</a>
-<a class="sourceLine" id="cb1-5" title="5">)</a>
-<a class="sourceLine" id="cb1-6" title="6"></a>
-<a class="sourceLine" id="cb1-7" title="7">output &lt;-<span class="st"> </span><span class="kw"><a href="reference/find_read_files.html">find_read_files</a></span>(<span class="st">"raw"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="st">          </span><span class="kw"><a href="reference/demultiplex.html">demultiplex</a></span>(config<span class="op">$</span>demultiplex) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="st">          </span><span class="kw"><a href="reference/quality_control.html">quality_control</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="st">          </span><span class="kw"><a href="reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="st">          </span><span class="kw"><a href="reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3">config &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(</a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="dt">demultiplex =</span> <span class="kw"><a href="reference/config_demultiplex.html">config_demultiplex</a></span>(<span class="dt">barcodes =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"ACGTA"</span>, <span class="st">"AGCTT"</span>)),</a>
+<a class="sourceLine" id="cb1-5" title="5">    <span class="dt">preprocess =</span> <span class="kw"><a href="reference/config_preprocess.html">config_preprocess</a></span>(<span class="dt">truncLen =</span> <span class="dv">200</span>),</a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="dt">denoise =</span> <span class="kw"><a href="reference/config_denoise.html">config_denoise</a></span>()</a>
+<a class="sourceLine" id="cb1-7" title="7">)</a>
+<a class="sourceLine" id="cb1-8" title="8"></a>
+<a class="sourceLine" id="cb1-9" title="9">output &lt;-<span class="st"> </span><span class="kw"><a href="reference/find_read_files.html">find_read_files</a></span>(<span class="st">"raw"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="st">          </span><span class="kw"><a href="reference/demultiplex.html">demultiplex</a></span>(config<span class="op">$</span>demultiplex) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="st">          </span><span class="kw"><a href="reference/quality_control.html">quality_control</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="st">          </span><span class="kw"><a href="reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="st">          </span><span class="kw"><a href="reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
 <p>This clearly logs the used workflow and the configuration. The configuration can also be saved and read in many formats, for instance yaml.</p>
 <p>config.yaml:</p>
 <pre><code>preprocess:

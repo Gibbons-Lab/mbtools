@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.27.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.28.1</span>
       </span>
     </div>
 
@@ -102,15 +102,16 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</a></code></pre></div>
 <pre><code>## Also loading:</code></pre>
 <pre><code>##   - dada2=1.10.1
-##   - data.table=1.12.0
-##   - ggplot2=3.1.0
+##   - data.table=1.12.2
+##   - ggplot2=3.1.1
 ##   - magrittr=1.5
 ##   - phyloseq=1.26.1
 ##   - ShortRead=1.40.0
 ##   - yaml=2.2.0</code></pre>
 <pre><code>## Found tools:</code></pre>
-<pre><code>##   - bowtie2=2.3.4.3
-##   - minimap2=2.15-r905
+<pre><code>##   - bowtie2=2.3.5
+##   - minimap2=2.16-r922
+##   - slimm=0.3.4
 ##   - samtools=1.9</code></pre>
 <pre><code>## 
 ## Attaching package: 'mbtools'</code></pre>
@@ -124,18 +125,18 @@
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/example"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
 <a class="sourceLine" id="cb8-2" title="2">files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</a>
 <a class="sourceLine" id="cb8-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
-<pre><code>##                                                                                                   forward
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
-##                                                                                                   reverse
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.5/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
+<pre><code>##                                                                                                                  forward
+## 1: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
+## 2: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
+## 3: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
+## 4: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
+## 5: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
+##                                                                                                                  reverse
+## 1: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
+## 2: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
+## 3: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
+## 4: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
+## 5: /Library/Frameworks/R.framework/Versions/3.5/Resources/library/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
 ##      id injection_order lane
 ## 1: F3D0             188    1
 ## 2: F3D1             189    1
@@ -149,14 +150,14 @@
 <a href="#running-quality-assesment" class="anchor"></a>Running Quality assesment</h2>
 <p>Now we can run the quality assessment workflow step. This step does not take a configuration since it does not require that much prior information. It does take additional arguments to specify the maximum number of sampled reads and a quality cutoff that you consider sufficient. The default is a quality score of 10 which is the average for nanopore reads for instance. This corresponds to a per-base error of about 10%. We can be a bit more stringent here and use a cutoff of 1% error (quality score 20).</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">quals &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(<span class="dt">min_score =</span> <span class="dv">20</span>)</a></code></pre></div>
-<pre><code>## INFO [2019-04-06 20:17:46] Running quality assay for forward reads from 5 files.
-## INFO [2019-04-06 20:17:48] Average per base error is 0.026% (mean score = 35.79).
-## INFO [2019-04-06 20:17:48] Mean per cycle entropy is 0.809 (in [0, 2]).
-## INFO [2019-04-06 20:17:48] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-04-06 20:17:48] Running quality assay for reverse reads from 5 files.
-## INFO [2019-04-06 20:17:50] Average per base error is 0.043% (mean score = 33.67).
-## INFO [2019-04-06 20:17:50] Mean per cycle entropy is 0.731 (in [0, 2]).
-## INFO [2019-04-06 20:17:50] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<pre><code>## INFO [2019-04-17 18:59:57] Running quality assay for forward reads from 5 files.
+## INFO [2019-04-17 19:00:00] Average per base error is 0.026% (mean score = 35.80).
+## INFO [2019-04-17 19:00:00] Mean per cycle entropy is 0.809 (in [0, 2]).
+## INFO [2019-04-17 19:00:00] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-04-17 19:00:00] Running quality assay for reverse reads from 5 files.
+## INFO [2019-04-17 19:00:02] Average per base error is 0.043% (mean score = 33.69).
+## INFO [2019-04-17 19:00:02] Mean per cycle entropy is 0.731 (in [0, 2]).
+## INFO [2019-04-17 19:00:02] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
 <p>This runs in parallel and will report global quality metrics on the logging interface. We see that we have relatively shallow sequencing data, but the average quality and entropy is pretty good.</p>
 <div id="quality-plots" class="section level3">
 <h3 class="hasAnchor">
