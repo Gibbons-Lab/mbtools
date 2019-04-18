@@ -30,6 +30,8 @@ Most steps can be chained with the pipe operator to yield workflows.
 For instance, the following is a possible workflow with `mbtools`:
 
 ```r
+library(mbtools)
+
 config <- list(
     demultiplex = config_demultiplex(barcodes = c("ACGTA", "AGCTT")),
     preprocess = config_preprocess(truncLen = 200),
