@@ -62,7 +62,8 @@ align_long_reads <- function(object, config) {
         if (config$use_existing && file.exists(out_path)) {
             flog.info("Found existing alignment for %s. Will use that one.",
                       file$id)
-            return(data.table(id = file$id, alignment = out_path, success = 0))
+            return(data.table(id = file$id, alignment = out_path,
+                              success = TRUE))
         }
 
         args <- c("-acx", "map-ont", "-t", config$threads, "-N",
@@ -70,7 +71,7 @@ align_long_reads <- function(object, config) {
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
         success <- system2("minimap2", args = args)
-        if (success) {
+        if (success == 0) {
             flog.info("Finished aligning %s.", file$id)
         } else {
             flog.error("Failed aligning %s.", file$id)
@@ -88,9 +89,6 @@ align_long_reads <- function(object, config) {
         return(content)
     })
     alns <- rbindlist(alns)
-    if (alns[, any(!success)]) {
-        flog.error("%d alignments failed!", alns[, sum(!success)])
-    }
     artifact <- list(
         alignments = alns,
         logs = logs,
