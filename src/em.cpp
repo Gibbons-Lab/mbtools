@@ -141,5 +141,5 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
     return List::create(_["p"] = pnew,
                         _["iterations"] = k,
                         _["change"] = change,
-                        _["num_ecs"] = ecs.size());
+                        _["ecs"] = ecs);
 }

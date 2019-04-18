@@ -18,8 +18,8 @@ read_bam <- function(path, tags = character(0)) {
 #' @useDynLib mbtools, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importFrom stats quantile
-count_alns <- function(alignments, txlengths, file, method="em",
-                       maxit=1000, cutoff=0.01, tpm=FALSE) {
+count_alns <- function(alignments, txlengths, file, method = "em",
+                       maxit = 1000, cutoff = 0.01, tpm = FALSE, ecs = FALSE) {
     aln <- as.data.table(alignments)
     aln[, seqnames := factor(as.character(seqnames))]
     if (is.null(txlengths)) {
@@ -42,6 +42,7 @@ count_alns <- function(alignments, txlengths, file, method="em",
     } else {
         libsize <-  aln[, uniqueN(qname)]  # return counts
     }
+    ecs <- NULL
     if (method == "naive") {
         aln <- aln[order(-mapq), .SD[1], by="qname"]
         counts <- aln[, .(counts = .N), by="seqnames"]
@@ -60,18 +61,25 @@ count_alns <- function(alignments, txlengths, file, method="em",
                               cutoff, cutoff)
         flog.info(paste("[%s] Used %d EM iterations on %d equivalence classes.",
                         "Last max. abs. change was %.2g."),
-                  file, em_result$iterations, em_result$num_ecs,
+                  file, em_result$iterations, length(em_result$ecs),
                   max(em_result$change))
+        ecs <- em_result$ecs
         counts <- data.table(transcript = txnames,
                              counts = em_result$p,
                              effective_length = efflengths)
         if (tpm) {
-            counts[, counts := em_result$p / (max(rids) + 1) * libsize]
+            counts[, counts := em_result$p]
+            print(libsize == max(rids) + 1)
             counts[counts < 1e-8, counts := 0]
         } else {
             counts[counts < cutoff, counts := 0]
         }
         counts <- counts[counts > 0]
+    }
+    if (ecs) {
+        list(counts = counts, ecs = ecs)
+    } else {
+        return(counts)
     }
     return(counts)
 }
