@@ -106,7 +106,8 @@ plot_qualities <- function(qp, min_score = 10) {
     pl <- ggplot(mean_scores, aes(x = cycle, y = quality)) +
             geom_hline(yintercept = min_score, col = "blue") +
             geom_bin2d(bins = 50) +
-            geom_smooth(col = "tomato", fill = "tomato", method = "gam") +
+            geom_smooth(col = "tomato", fill = "tomato", method = "gam",
+                        formula = y ~ s(x, bs = "cs")) +
             scale_fill_viridis_c(limits = c(0, NA)) +
             labs(x = "read position / cycle [bps]",
                  y = "quality score [mean per sample]")
@@ -160,7 +161,8 @@ plot_entropy <- function(qp) {
             geom_hline(yintercept = 2, col = "blue") +
             geom_bin2d(bins = 50) +
             scale_fill_viridis_c(limits = c(0, NA)) +
-            stat_smooth(col = "tomato", fill = "tomato", method = "gam") +
+            stat_smooth(col = "tomato", fill = "tomato", method = "gam",
+                        formula = y ~ s(x, bs = "cs")) +
             labs(x = "read position / cycle [bps]", y = "entropy [bits]")
     n <- qp$bases[, uniqueN(direction)]
     if (n > 1) {
