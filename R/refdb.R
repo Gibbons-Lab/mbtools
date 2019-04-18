@@ -218,3 +218,23 @@ annotate_contigs <- function(matches, reference=NA) {
     merged <- anns[align, on = c(id = "reference")]
     return(merged)
 }
+
+
+#' Annotate the sequences in the SILVA database file.
+#'
+#' @param reference The reference fasta.
+#' @return The id and taxonomy of the sequences as a data table.
+#' @importFrom Biostrings fasta.index
+#' @export
+annotate_silva <- function(reference) {
+    flog.info("Reading reference database (%.2f GiB).",
+              file.info(reference)$size / (1024^3))
+    ids <- fasta.index(reference)$desc
+
+    flog.info("Parsing annotations for %d sequences...", length(ids))
+    anns <- data.table(id = tstrsplit(ids, " ", fixed = TRUE)[[1]])
+    anns[, c("kingdom", "phylum", "class", "order",
+             "family", "genus", "species") :=
+             tstrsplit(ids, "(\\w+\\.\\d+\\.\\d+\\s+)|;")[2:8]]
+    return(anns)
+}
