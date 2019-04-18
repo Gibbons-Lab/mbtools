@@ -77,7 +77,7 @@ count_alns <- function(alignments, txlengths, file, method = "em",
         counts <- counts[counts > 0]
     }
     if (ecs) {
-        list(counts = counts, ecs = equiv_classes) %>% return()
+        return(list(counts = counts, ecs = equiv_classes))
     }
     return(counts)
 }
