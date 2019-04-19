@@ -105,16 +105,16 @@ align_short_reads <- function(object, config) {
         read <- as.list(read)
         log_file <- file.path(config$alignment_dir, paste0(read$id, ".log"))
 
+        if (config$bam) {
+            out_path <- file.path(config$alignment_dir,
+                                    paste0(read$id, ".bam"))
+        } else {
+            out_path <- file.path(config$alignment_dir,
+                                    paste0(read$id, ".sam"))
+        }
+
         if (file.exists(log_file)) {
             rate <- alignment_rate(log_file)
-
-            if (config$bam) {
-                out_path <- file.path(config$alignment_dir,
-                                      paste0(read$id, ".bam"))
-            } else {
-                out_path <- file.path(config$alignment_dir,
-                                      paste0(read$id, ".sam"))
-            }
             if (!is.null(rate) && file.exists(out_path)) {
                 return(data.table(id = read$id, success = TRUE,
                        log = log_file, alignment = out_path, reads = rate[1],
@@ -130,11 +130,11 @@ align_short_reads <- function(object, config) {
         }
         args <- append(args, c("-q", "--no-unal", "--mm", "-p", config$threads,
                                "-k", config$max_hits))
-
-
-        out_path <- file.path(config$alignment_dir,
-                                  paste0(read$id, ".sam"))
         args <- append(args, c("-S", out_path, "2>", log_file))
+        if (config$bam) {
+            args <- append(args, c("|", "samtools", "view", "-bS",
+                                   "-", ">", out_path))
+        }
         success <- system2("bowtie2", args = args, env = env)
         rate <- c(NA, NA)
         if (success == 0) {
