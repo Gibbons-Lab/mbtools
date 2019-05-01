@@ -4,22 +4,14 @@
 \alias{read_slimm}
 \title{Reads SLIMM output to a data table.}
 \usage{
-read_slimm(reports)
+read_slimm(profile)
 }
 \arguments{
 \item{reports}{Where the slimm output is stored.}
 }
 \value{
 A data table counting reads and relative abundances for all found
- bacteria for several taxonomic ranks. It will contain the following columns:
- \itemize{
- \item{id}{id of the sample}
- \item{rank}{the name of the taxonomic rank, for instance "genus"}
- \item{name}{the value of the rank, for instance "Escherichia"}
- \item{reads}{the number of reads in that rank}
- \item{relative}{the relative abundance of the rank in [0,1]}
- \item{coverage}{the coverage of the rank}
- }
+ bacteria for several taxonomic ranks.
 }
 \description{
 Reads SLIMM output to a data table.

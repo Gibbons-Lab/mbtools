@@ -19,7 +19,6 @@ config_ptr <- config_builder(list(
     threads = FALSE
 ))
 
-#' @importFrom stats loess predict.loess
 #' @importFrom mgcv gam s
 ptr <- function(profile, conf) {
     profile <- copy(profile)
@@ -55,6 +54,17 @@ ptr <- function(profile, conf) {
     return(res)
 }
 
+#' Estimate replication rates by the peak-to-through ratio.
+#'
+#' Implements the method from Korem et. al. (DOI: 10.1126/science.aac4812).
+#'
+#' @param object An artifact containing a coverage map as returned by
+#' \code{link{slimm}}.
+#' @param ... Additional configuration parameters or a config object as
+#' returned by \link{\code{config_ptr}}.
+#' @return An artifact containing the peak-to-through ratios as well as the
+#'  smoothed coverage profiles.
+#' @export
 peak_to_through <- function(object, ...) {
     if (!"coverage" %in% names(object)) {
         stop("Need `coverage` in artifacts!")

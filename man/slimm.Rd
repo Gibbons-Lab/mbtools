@@ -2,23 +2,23 @@
 % Please edit documentation in R/lineage.R
 \name{slimm}
 \alias{slimm}
-\title{Quantifies abundances for the bacteria using SLIMM}
+\title{Quantifies abundances  and coverage using SLIMM.}
 \usage{
-slimm(alignments, slimm_db, reports = NULL)
+slimm(object, ...)
 }
 \arguments{
-\item{alignments}{A data frame as output by \code{\link{align_short_reads}}}
+\item{object}{An alignment table or workflow artifact that includes
+alignments.}
 
-\item{slimm_db}{Path for the SLIMM data base.}
-
-\item{reports}{Path where to save the SLIMM reports. Uses a temporary
-directory by default.}
+\item{...}{Either additional arguments specifying a config or a config
+created with \code{\link{config_slimm}}.}
 }
 \value{
-Path to the slimm output.
+A SLIMM artifact containing the lineage calls for each sample and
+ taxon and the coverage.
 }
 \description{
-Quantifies abundances for the bacteria using SLIMM
+Quantifies abundances  and coverage using SLIMM.
 }
 \examples{
  NULL
