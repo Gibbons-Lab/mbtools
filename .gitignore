@@ -46,3 +46,4 @@ filtered
 split
 gg*.fa.gz
 .Rproj.user
+.vscode
