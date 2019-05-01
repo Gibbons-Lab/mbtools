@@ -50,7 +50,7 @@ get_files <- function(obj) {
 
 get_alignments <- function(obj) {
     if ("data.table" %in% class(obj) &&
-        all(c("alignments", "id") %in% names(obj))) {
+        all(c("alignment", "id") %in% names(obj))) {
             return(obj)
     } else if ("list" %in% class(obj) && "alignments" %in% names(obj)) {
         return(obj[["alignments"]])
