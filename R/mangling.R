@@ -14,7 +14,7 @@
 #' @importFrom phyloseq otu_table tax_table
 #' @importFrom data.table dcast rbindlist as.data.table melt
 as.matrix.mbquant <- function(x, ...) {
-    mat <- dcast(x, sample ~ taxa, value.var = "reads")
+    mat <- dcast(x, sample ~ taxa, value.var = "reads", fill = 0)
     samples <- mat[, sample]
     mat <- as.matrix(mat[, !"sample"])
     rownames(mat) <- samples
