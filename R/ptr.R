@@ -96,7 +96,8 @@ peak_to_through <- function(object, ...) {
     })
     profiles <- lapply(ptrs, "[[", "profile") %>% rbindlist()
     ptrs <- lapply(ptrs, "[[", "ptr") %>% rbindlist()
-    flog.info("Finished. Could get PTRs for %d genomes.",
+    flog.info(paste("Finished. %d genomes had sufficient coverage",
+                    "for obtaining PTRs."),
               ptrs[, sum(!is.na(ptr))])
 
     artifact <- list(

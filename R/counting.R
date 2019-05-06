@@ -18,24 +18,24 @@ read_bam <- function(path, tags = character(0)) {
 #' @useDynLib mbtools, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importFrom stats quantile
-count_alns <- function(alignments, txlengths, file, method = "em",
+count_alns <- function(alignments, reflengths, file, method = "em",
                        maxit = 1000, cutoff = 0.01, tpm = FALSE, ecs = FALSE) {
     aln <- as.data.table(alignments)
-    aln[, seqnames := factor(as.character(seqnames))]
-    if (is.null(txlengths)) {
+    aln[, "seqnames" := factor(as.character(seqnames))]
+    if (is.null(reflengths)) {
         efflengths <- rep(1, aln[, length(levels(seqnames))])
     } else {
         efflengths <- effective_lengths(aln[, txlengths[levels(seqnames)]],
                                         aln[, width])
     }
     names(efflengths) <- aln[, txlengths[levels(seqnames)]]
-    flog.info(paste("[%s] %d transcripts. Confidence interval for effective",
+    flog.info(paste("[%s] %d reference seqs. Confidence interval for effective",
                     "lengths: [%.2f, %.2f]."),
               file, aln[, length(levels(seqnames))],
               quantile(efflengths, 0.025), quantile(efflengths, 0.975))
     if (nrow(aln) == 0) {
-        return(data.table(transcript=character(), counts=integer(),
-                          effective_length=integer()))
+        return(data.table(reference = character(), counts = integer(),
+                          effective_length = integer()))
     }
     if (tpm) {
         libsize <- 1e6
@@ -44,35 +44,35 @@ count_alns <- function(alignments, txlengths, file, method = "em",
     }
     equiv_classes <- NULL
     if (method == "naive") {
-        aln <- aln[order(-mapq), .SD[1], by="qname"]
-        counts <- aln[, .(counts = .N), by="seqnames"]
-        names(counts)[1] <- "transcript"
-        counts[, counts := counts / efflengths[transcript]]
-        counts[, counts := counts / sum(counts) * libsize]
-        counts[, effective_length := efflengths[transcript]]
+        aln <- aln[order(-mapq), .SD[1], by = "qname"]
+        counts <- aln[, .(counts = .N), by = "seqnames"]
+        names(counts)[1] <- "reference"
+        counts[, "counts" := counts / efflengths[reference]]
+        counts[, "counts" := counts / sum(counts) * libsize]
+        counts[, "effective_length" := efflengths[reference]]
     } else {
         aln[, seqnames := factor(seqnames)]
         aln[, qname := factor(qname)]
-        txids <- aln[, as.integer(seqnames) - 1]
-        txnames <- aln[, levels(seqnames)]
+        refids <- aln[, as.integer(seqnames) - 1]
+        refnames <- aln[, levels(seqnames)]
         rids <- aln[, as.integer(qname) - 1]
-        em_result <- em_count(cbind(txids, rids), efflengths,
-                              length(txnames), max(rids) + 1, maxit,
+        em_result <- em_count(cbind(refids, rids), efflengths,
+                              length(refnames), max(rids) + 1, maxit,
                               cutoff, cutoff)
         flog.info(paste("[%s] Used %d EM iterations on %d equivalence classes.",
                         "Last max. abs. change was %.2g."),
                   file, em_result$iterations, length(em_result$ecs),
                   max(em_result$change))
         equiv_classes <- em_result$ecs
-        counts <- data.table(transcript = txnames,
+        counts <- data.table(reference = refnames,
                              counts = em_result$p,
                              effective_length = efflengths)
         if (tpm) {
             counts[, counts := em_result$p]
             print(libsize == max(rids) + 1)
-            counts[counts < 1e-8, counts := 0]
+            counts[counts < 1e-8, "counts" := 0]
         } else {
-            counts[counts < cutoff, counts := 0]
+            counts[counts < cutoff, "counts" := 0]
         }
         counts <- counts[counts > 0]
     }
@@ -111,10 +111,10 @@ config_count <- function(...) {
 
 #' Count alignment hits to a reference database.
 #'
-#' This will correct for effective transcript lengths as done by almost any
+#' This will correct for effective treference lengths as done by almost any
 #' good tool those days. So the returned counts are not correlated with
-#' transcript lengths. By default an expectation maximization algorithm is
-#' used to resolve multiple mappings of one read to many transcripts which
+#' feature lengths. By default an expectation maximization algorithm is
+#' used to resolve multiple mappings of one read to many references which
 #' pretty much always happens in metagenomics data sets. The optimized
 #' likelihodd function is very similar to the one in kallisto
 #' (https://doi.org/10.1038/nbt.3519).
@@ -127,22 +127,22 @@ config_count <- function(...) {
 #'
 #' @export
 #' @importFrom data.table tstrsplit
-count_transcripts <- function(object, config) {
+count_references <- function(object, config) {
     if (is.na(config$reference)) {
         flog.info(paste("No reference given so assuming constant length",
-                        "transcripts. Starting counting..."))
-        txlengths <- NULL
+                        "sequences. Starting counting..."))
+        reflengths <- NULL
     } else {
-        flog.info("Getting transcript lengths from %s...", config$reference)
+        flog.info("Getting reference lengths from %s...", config$reference)
         fasta_index <- fasta.index(config$reference)[, c("desc", "seqlength")]
-        txlengths <- fasta_index$seqlength
-        names(txlengths) <- gsub("\\s.+", "", fasta_index$desc)
+        reflengths <- fasta_index$seqlength
+        names(reflengths) <- gsub("\\s.+", "", fasta_index$desc)
         flog.info("Normalized IDs. Starting counting...")
     }
     counts <- mclapply(object$alignments$alignment, function(file) {
         bam <- read_bam(file)
         flog.info("[%s] Read %d alignments.", file, length(bam))
-        cn <- count_alns(bam, txlengths, file = file)
+        cn <- count_alns(bam, reflengths, file = file)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
     }, mc.cores = config$threads)
@@ -150,7 +150,7 @@ count_transcripts <- function(object, config) {
     artifact <- list(
         alignments = object$alignments,
         counts = rbindlist(counts),
-        steps = c(object[["steps"]], "count_transcripts")
+        steps = c(object[["steps"]], "count_references")
     )
     return(artifact)
 }
