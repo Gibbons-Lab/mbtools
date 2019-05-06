@@ -28,7 +28,8 @@ Imports:
     magrittr,
     futile.logger,
     digest,
-    Rcpp
+    Rcpp,
+    mgcv
 License: Apache License (== 2.0)
 URL: https://github.com/Gibbons-Lab/mbtools
 BugReports: https://github.com/Gibbons-Lab/mbtools/issues
