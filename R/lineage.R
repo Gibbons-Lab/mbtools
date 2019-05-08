@@ -91,7 +91,7 @@ slimm <- function(object, ...) {
 
 #' Reads SLIMM output to a data table.
 #'
-#' @param reports Where the slimm output is stored.
+#' @param profile Where the slimm output is stored.
 #' @return A data table counting reads and relative abundances for all found
 #'  bacteria for several taxonomic ranks.
 #' @examples

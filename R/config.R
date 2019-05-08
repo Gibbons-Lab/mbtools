@@ -1,7 +1,5 @@
 # Helpers to manage workflow step configurations
 
-#' Builds a new config function
-#' @export
 config_builder <- function(default_parms) {
     proto <- function(...) {
         config <- default_parms

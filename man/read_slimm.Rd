@@ -7,7 +7,7 @@
 read_slimm(profile)
 }
 \arguments{
-\item{reports}{Where the slimm output is stored.}
+\item{profile}{Where the slimm output is stored.}
 }
 \value{
 A data table counting reads and relative abundances for all found
