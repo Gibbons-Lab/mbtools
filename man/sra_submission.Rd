@@ -4,7 +4,7 @@
 \alias{sra_submission}
 \title{Prepare submission files for the NCBI sequence read archive (SRA).}
 \usage{
-sra_submission(object, config)
+sra_submission(object, ...)
 }
 \arguments{
 \item{object}{An experiment data table as returned by any alignment method

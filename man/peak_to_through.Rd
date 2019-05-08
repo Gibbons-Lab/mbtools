@@ -11,7 +11,7 @@ peak_to_through(object, ...)
 \code{link{slimm}}.}
 
 \item{...}{Additional configuration parameters or a config object as
-returned by \link{\code{config_ptr}}.}
+returned by \code{\link{config_ptr}}.}
 }
 \value{
 An artifact containing the peak-to-through ratios as well as the

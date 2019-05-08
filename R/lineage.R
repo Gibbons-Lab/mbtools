@@ -133,5 +133,6 @@ read_slimm_coverage <- function(cofile, bin_width) {
                "order", "class", "phylum", "kingdom") := as.list(anns)]
     }) %>% rbindlist()
     co[, "id" := strsplit(basename(cofile), "_")[[1]][1]]
+    co[, "length" := .N * bin_width, by = "genbank"]
     return(co)
 }

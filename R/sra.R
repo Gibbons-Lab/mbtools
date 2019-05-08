@@ -225,29 +225,21 @@ validate <- function(config) {
 #' @export
 #' @examples
 #'  config <- config_sra(date_col = "collection_date")
-config_sra <- function(...) {
-    config <- list(
-        metadata = NULL,
-        id_col = "id",
-        date_col = "date",
-        country = "USA",
-        preset = "human gut 16S",
-        out_dir = "sra",
-        title = NULL,
-        platform = "ILLUMINA",
-        instrument_model = "Illumina MiSeq",
-        bioproject = NULL,
-        country = "USA",
-        latitude = 42.36,
-        longitude = -71.0941,
-        make_package = TRUE
-    )
-    args <- list(...)
-    for (arg in names(args)) {
-        config[[arg]] <- args[[arg]]
-    }
-    return(config)
-}
+config_sra <- config_builder(list(
+    metadata = NULL,
+    id_col = "id",
+    date_col = "date",
+    country = "USA",
+    preset = "human gut 16S",
+    out_dir = "sra",
+    title = NULL,
+    platform = "ILLUMINA",
+    instrument_model = "Illumina MiSeq",
+    bioproject = NULL,
+    latitude = 42.36,
+    longitude = -71.0941,
+    make_package = TRUE
+))
 
 
 #' Prepare submission files for the NCBI sequence read archive (SRA).
@@ -261,8 +253,9 @@ config_sra <- function(...) {
 #' @export
 #' @importFrom utils tar
 #' @importFrom stringr str_replace_all
-sra_submission <- function(object, config) {
+sra_submission <- function(object, ...) {
     files <- get_files(object)
+    config <- config_parser(list(...), config_sra)
     validate(config)
     if (!dir.exists(config$out_dir)) {
         dir.create(config$out_dir, recursive = TRUE)
@@ -322,7 +315,7 @@ sra_submission <- function(object, config) {
         sample_data[, "bioproject_accession" := config$bioproject]
         sra_metadata[, "bioproject_accession" := config$bioproject]
     }
-    upload = files$forward
+    upload <- files$forward
     if ("reverse" %in% names(files)) {
         sra_metadata[, "filename2" := basename(files$reverse)]
         upload <- c(upload, files$reverse)

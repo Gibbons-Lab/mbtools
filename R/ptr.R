@@ -61,7 +61,7 @@ ptr <- function(profile, conf) {
 #' @param object An artifact containing a coverage map as returned by
 #' \code{link{slimm}}.
 #' @param ... Additional configuration parameters or a config object as
-#' returned by \link{\code{config_ptr}}.
+#' returned by \code{\link{config_ptr}}.
 #' @return An artifact containing the peak-to-through ratios as well as the
 #'  smoothed coverage profiles.
 #' @export
