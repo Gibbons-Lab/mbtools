@@ -87,7 +87,7 @@ select <- function(object, entry) {
 }
 
 #' @importFrom parallel detectCores mclapply
-parse_threads <- function(th) {
+parse_threads <- function(th, return_fun = TRUE) {
     if (is.logical(th) & th) {
         threads <- detectCores()
     } else if (th > 1) {
@@ -99,7 +99,11 @@ parse_threads <- function(th) {
         apfun <- function(...) mclapply(..., mc.cores = threads)
     } else {
         apfun <- lapply
+        threads <- 1
     }
 
-    return(apfun)
+    if (return_fun) {
+        return(apfun)
+    }
+    return(threads)
 }

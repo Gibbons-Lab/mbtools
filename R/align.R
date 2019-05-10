@@ -16,23 +16,23 @@ config_align <- config_builder(list(
     threads = 1,
     alignment_dir = "alignments",
     max_hits = 100,
-    progress = TRUE,
     use_existing = TRUE
 ))
 
 align <- function(object, config) {
     files <- get_files(object)
     if (is.null(config$reference)) {
-        stop("must specify a reference genome in configuration :/")
+        stop("must specify a reference in configuration :/")
     }
     if (!dir.exists(config$alignment_dir)) {
         flog.info("Creating output directory %s.", config$alignment_dir)
         dir.create(config$alignment_dir, recursive = TRUE)
     }
     paired <- "reverse" %in% names(files)
+    threads <- parse_threads(config$threads, FALSE)
     flog.info(paste("Aligning %d samples on %d threads.",
                     "Keeping up to %d secondary alignments."),
-                    nrow(files), config$threads, config$max_hits)
+                    nrow(files), threads, config$max_hits)
     alns <- apply(files, 1, function(file) {
         file <- as.list(file)
         reads <- file$forward
@@ -49,7 +49,7 @@ align <- function(object, config) {
                               success = TRUE))
         }
 
-        args <- c("-acx", config$preset, "-t", config$threads, "-N",
+        args <- c("-acx", config$preset, "-t", threads, "-N",
                   config$max_hits, config$reference, reads)
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))

@@ -52,21 +52,25 @@ slimm <- function(object, ...) {
     ecodes <- apfun(as.character(alignments$alignment), function(al) {
         id <- strsplit(basename(al), ".", fixed = TRUE)[[1]]
         flog.info("[%s] Starting SLIMM...", id)
+        repdir <- file.path(reports, id, "")
+        if (!file.exists(repdir)) {
+            dir.create(repdir)
+        }
         ecode <- system2(
             "slimm",
             args = c("-w", conf$bin_width,
                      "-r", conf$rank,
                      "-ac", conf$relative_cutoff, "-co",
-                     "-o", file.path(reports, ""), conf$database, al),
-            stdout = file.path(reports, "slimm.log"),
-            stderr = file.path(reports, "slimm.log"))
+                     "-o", repdir, conf$database, al),
+            stdout = file.path(repdir, "slimm.log"),
+            stderr = file.path(repdir, "slimm.log"))
         flog.info("[%s] Finished running SLIMM.", id)
         return(ecode)
     })
 
     if (any(ecodes != 0)) {
         paste0("slimm terminated with an error, logs can be found in ",
-               file.path(reports, "slimm.log")) %>% stop()
+               file.path(reports, "[ID]", "slimm.log")) %>% stop()
     }
 
     flog.info("Parsing abundances on rank `%s`.", conf$rank)
