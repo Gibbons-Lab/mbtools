@@ -12,9 +12,8 @@
 #' @examples
 #'  config <- config_ptr(span=0.5)
 config_ptr <- config_builder(list(
-    read_length = 250,
     max_median_fold = 8,
-    min_coverage = 3,
+    min_coverage = 2,
     min_covered = 0.6,
     threads = FALSE
 ))
@@ -23,24 +22,24 @@ config_ptr <- config_builder(list(
 ptr <- function(profile, conf) {
     profile <- copy(profile)
     w <- profile[, start[2] - start[1] + 1]
-    profile <- profile[, reads := reads * conf$read_length / w]
-    profile[reads <= conf$min_coverage, reads := NA]
+    profile <- profile[, coverage := reads * conf$read_length / w]
+    profile[coverage <= conf$min_coverage, coverage := NA]
     profile[abs(log(reads + 1) - log(median(reads + 1, na.rm = TRUE))) >
-            log(conf$max_median_fold), reads := NA]
-    if (profile[, (sum(!is.na(reads)) / .N) < conf$min_covered]) {
+            log(conf$max_median_fold), coverage := NA]
+    if (profile[, (sum(!is.na(coverage)) / .N) < conf$min_covered]) {
         return(list(
             ptr = NULL,
             profile = profile[, "smooth" := NA]
         ))
     }
-    reads <- profile[!is.na(reads), reads]
-    pos <- profile[!is.na(reads), start]
+    coverage <- profile[!is.na(coverage), coverage]
+    pos <- profile[!is.na(coverage), start]
     data <- data.table(
-        coverage = c(reads[1:(length(reads) - 1)],
-                     reads, reads[2:length(reads)]),
+        coverage = c(coverage[1:(length(coverage) - 1)],
+                     coverage, coverage[2:length(coverage)]),
         start = c(-rev(pos[2:length(pos)]), pos, max(pos) + pos[2:length(pos)])
     )
-    fit <- gam(coverage ~ s(start), data = data)
+    fit <- gam(coverage ~ s(start, bs = "tp", k = 18), data = data)
     profile$smooth <- predict(fit, data.frame(start = profile$start))
     m <- profile[which.max(smooth)]
     ptr <- profile[, max(smooth) / min(smooth)]
@@ -73,6 +72,11 @@ peak_to_through <- function(object, ...) {
     config <- config_parser(list(...), config_ptr)
     apfun <- parse_threads(config$threads)
 
+    aln <- get_alignments(object)$alignment[1]
+    bam <- read_bam(aln)
+    config$read_length <- median(width(bam))
+    flog.info("Using a median read length of %d.", config$read_length)
+
     genbank_id <- unique(co[, list(genbank, id)])
     genbank_id <- lapply(1:nrow(genbank_id),
                          function(i) as.character(genbank_id[i]))
@@ -96,13 +100,13 @@ peak_to_through <- function(object, ...) {
     })
     profiles <- lapply(ptrs, "[[", "profile") %>% rbindlist()
     ptrs <- lapply(ptrs, "[[", "ptr") %>% rbindlist()
-    flog.info(paste("Finished. %d genomes had sufficient coverage",
-                    "for obtaining PTRs."),
+    flog.info(paste("Finished. %d genome-sample combinations had sufficient",
+                    "coverage for obtaining PTRs."),
               ptrs[, sum(!is.na(ptr))])
 
     artifact <- list(
         ptr = ptrs,
-        coverage = profiles,
+        coverage = profiles[genbank %in% ptrs$genbank],
         steps = c(object[["steps"]], "peak_to_through")
     )
 }

@@ -2,14 +2,15 @@
 % Please edit documentation in R/shotgun.R
 \name{align_short_reads}
 \alias{align_short_reads}
-\title{Aligns metagenomic shotgun sample against a reference}
+\title{Aligns metagenomic shotgun reads against a reference.}
 \usage{
-align_short_reads(object, config)
+align_short_reads(object, ...)
 }
 \arguments{
 \item{object}{An artifact or list of files.}
 
-\item{config}{A configuration as obtained by \code{\link{config_align_short}}.}
+\item{...}{Configuration arguments or a configuration object as obtained by
+\code{\link{config_align}}.}
 }
 \value{
 A list with the generated alignments and some general diagnostics.

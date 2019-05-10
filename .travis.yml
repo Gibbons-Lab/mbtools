@@ -9,7 +9,6 @@ addons:
   apt:
     packages:
       - libxml2-dev
-      - bowtie2
       - samtools
 
 # Don't build vignettes

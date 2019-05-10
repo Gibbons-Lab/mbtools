@@ -5,12 +5,13 @@
 \title{Align long reads (for instance from nanopore sequencing) to a reference
 database.}
 \usage{
-align_long_reads(object, config)
+align_long_reads(object, ...)
 }
 \arguments{
 \item{object}{An artifact or list of files.}
 
-\item{config}{A configuration as obtained by \code{\link{config_align_short}}.}
+\item{...}{Configuration arguments or a configuration object as obtained by
+\code{\link{config_align}}.}
 }
 \value{
 A list with the generated alignments and some general diagnostics.

@@ -4,7 +4,7 @@
 \alias{read_bam}
 \title{Read alignments from a BAM file.}
 \usage{
-read_bam(path, tags = character(0))
+read_bam(path, tags = c("AS", "de"))
 }
 \arguments{
 \item{path}{The file path to the BAM.}

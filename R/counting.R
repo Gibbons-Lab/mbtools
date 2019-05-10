@@ -9,7 +9,7 @@
 #' @export
 #' @importFrom GenomicAlignments readGAlignments
 #' @importFrom Rsamtools ScanBamParam
-read_bam <- function(path, tags = character(0)) {
+read_bam <- function(path, tags = c("AS", "de")) {
     bam <- readGAlignments(path, param=ScanBamParam(
         what=c("qname", "mapq"), tag=tags))
     return(bam)
@@ -25,10 +25,10 @@ count_alns <- function(alignments, reflengths, file, method = "em",
     if (is.null(reflengths)) {
         efflengths <- rep(1, aln[, length(levels(seqnames))])
     } else {
-        efflengths <- effective_lengths(aln[, txlengths[levels(seqnames)]],
+        efflengths <- effective_lengths(aln[, reflengths[levels(seqnames)]],
                                         aln[, width])
     }
-    names(efflengths) <- aln[, txlengths[levels(seqnames)]]
+    names(efflengths) <- aln[, reflengths[levels(seqnames)]]
     flog.info(paste("[%s] %d reference seqs. Confidence interval for effective",
                     "lengths: [%.2f, %.2f]."),
               file, aln[, length(levels(seqnames))],
@@ -44,7 +44,11 @@ count_alns <- function(alignments, reflengths, file, method = "em",
     }
     equiv_classes <- NULL
     if (method == "naive") {
-        aln <- aln[order(-mapq), .SD[1], by = "qname"]
+        if (aln[, !any(is.na(AS))]) {
+            aln <- aln[order(-AS, -mapq), .SD[1], by = "qname"]
+        } else {
+            aln <- aln[order(-mapq), .SD[1], by = "qname"]
+        }
         counts <- aln[, .(counts = .N), by = "seqnames"]
         names(counts)[1] <- "reference"
         counts[, "counts" := counts / efflengths[reference]]
@@ -56,7 +60,7 @@ count_alns <- function(alignments, reflengths, file, method = "em",
         refids <- aln[, as.integer(seqnames) - 1]
         refnames <- aln[, levels(seqnames)]
         rids <- aln[, as.integer(qname) - 1]
-        em_result <- em_count(cbind(refids, rids), efflengths,
+        em_result <- em_count(unique(cbind(refids, rids)), efflengths,
                               length(refnames), max(rids) + 1, maxit,
                               cutoff, cutoff)
         flog.info(paste("[%s] Used %d EM iterations on %d equivalence classes.",
@@ -77,6 +81,12 @@ count_alns <- function(alignments, reflengths, file, method = "em",
         counts <- counts[counts > 0]
     }
     if (ecs) {
+        equiv_classes <- lapply(equiv_classes, function(ec) {
+            list(
+                count = ec[1],
+                references = refnames[ec[2:length(ec)] + 1]
+            )
+        })
         return(list(counts = counts, ecs = equiv_classes))
     }
     return(counts)
