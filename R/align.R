@@ -49,7 +49,8 @@ align <- function(object, config) {
                               success = TRUE))
         }
 
-        args <- c("-acx", config$preset, "-t", threads, "-I", "64G",
+        args <- c("-acx", config$preset, "-t", threads,
+                  "-I", "64G",, "--secondary", "yes",
                   "-N", config$max_hits, config$reference, reads)
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
