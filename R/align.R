@@ -13,7 +13,7 @@
 #'  config <- config_align(reference = "refs/mouse.fna.gz")
 config_align <- config_builder(list(
     reference = NULL,
-    threads = 1,
+    threads = TRUE,
     alignment_dir = "alignments",
     max_hits = 100,
     use_existing = TRUE
@@ -49,8 +49,8 @@ align <- function(object, config) {
                               success = TRUE))
         }
 
-        args <- c("-acx", config$preset, "-t", threads, "-N",
-                  config$max_hits, config$reference, reads)
+        args <- c("-acx", config$preset, "-t", threads, "-I", "64G",
+                  "-N", config$max_hits, config$reference, reads)
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
         success <- system2("minimap2", args = args)
