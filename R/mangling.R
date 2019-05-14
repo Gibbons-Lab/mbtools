@@ -45,12 +45,13 @@ species_names <- function(taxonomy) {
 #' @param ps A phyloseq object.
 #' @param lev The taxonomy level at which to count. If NA uses the finest level
 #'  available (individual sequences).
+#' @param zeros Whether to explicitly track zero counts.
 #' @return A mbquant data table containing the counts in "long" format.
 #' @examples
 #'  NULL
 #'
 #' @export
-taxa_count <- function(ps, lev = "Genus") {
+taxa_count <- function(ps, lev = "Genus", zeros = FALSE) {
     otus <- as(otu_table(ps), "matrix")
     if (taxa_are_rows(ps)) {
         otus <- t(otus)
@@ -73,9 +74,13 @@ taxa_count <- function(ps, lev = "Genus") {
 
         counts <- tapply(1:length(taxa), taxa, function(idx) {
             sums <- rowSums(otus[, idx, drop = FALSE])
-            data.table(sample = sample_names(ps),
-                    taxa = taxa[idx[1]],
-                    reads = sums)[reads > 0]
+            dt <- data.table(sample = sample_names(ps),
+                             taxa = taxa[idx[1]],
+                             reads = sums)
+            if (zeros) {
+                return(dt)
+            }
+            return(dt[reads > 0])
         }, simplify = FALSE)
         counts <- rbindlist(counts)
     }
