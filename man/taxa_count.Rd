@@ -4,13 +4,15 @@
 \alias{taxa_count}
 \title{Counts the reads for a specific taxonomy level.}
 \usage{
-taxa_count(ps, lev = "Genus")
+taxa_count(ps, lev = "Genus", zeros = FALSE)
 }
 \arguments{
 \item{ps}{A phyloseq object.}
 
 \item{lev}{The taxonomy level at which to count. If NA uses the finest level
 available (individual sequences).}
+
+\item{zeros}{Whether to explicitly track zero counts.}
 }
 \value{
 A mbquant data table containing the counts in "long" format.

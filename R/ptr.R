@@ -19,10 +19,10 @@ config_ptr <- config_builder(list(
 ))
 
 #' @importFrom mgcv gam s
-ptr <- function(profile, conf) {
+ptr <- function(profile, conf, rlen) {
     profile <- copy(profile)
     w <- profile[, start[2] - start[1] + 1]
-    profile <- profile[, coverage := reads * conf$read_length / w]
+    profile <- profile[, coverage := reads * rlen / w]
     profile[coverage <= conf$min_coverage, coverage := NA]
     profile[abs(log(reads + 1) - log(median(reads + 1, na.rm = TRUE))) >
             log(conf$max_median_fold), coverage := NA]
@@ -72,10 +72,13 @@ peak_to_through <- function(object, ...) {
     config <- config_parser(list(...), config_ptr)
     apfun <- parse_threads(config$threads)
 
-    aln <- get_alignments(object)$alignment[1]
-    bam <- read_bam(aln)
-    config$read_length <- median(width(bam))
-    flog.info("Using a median read length of %d.", config$read_length)
+    flog.info(paste("Estimating read lengths from a sample of",
+                    "100 reads per alignment."))
+    alns <- get_alignments(object)
+    rlens <- sapply(alns$alignment, read_length)
+    names(rlens) <- alns$id
+    flog.info("Estimated median read length is %d, range is [%d, %d].",
+              median(rlens), min(rlens), max(rlens))
 
     genbank_id <- unique(co[, list(genbank, id)])
     genbank_id <- lapply(1:nrow(genbank_id),
@@ -85,7 +88,7 @@ peak_to_through <- function(object, ...) {
                     co[, uniqueN(id)])
     ptrs <- apfun(genbank_id, function(row) {
         profile <- co[genbank == row[1] & id == row[2]]
-        res <- ptr(profile, config)
+        res <- ptr(profile, config, rlens[row[2]])
         res$profile[, "genbank" := row[1]]
         res$profile[, "id" := row[2]]
         if (!is.null(res$ptr)) {

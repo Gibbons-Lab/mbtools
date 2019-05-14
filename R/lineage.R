@@ -47,10 +47,13 @@ slimm <- function(object, ...) {
     }
     apfun <- parse_threads(conf$threads)
 
+    alignments[, "id" := tstrsplit(basename(alignment),
+                                  ".", fixed = TRUE)[[1]]]
     flog.info("running SLIMM on %d alignments with database %s.",
               nrow(alignments), conf$database)
-    ecodes <- apfun(as.character(alignments$alignment), function(al) {
-        id <- strsplit(basename(al), ".", fixed = TRUE)[[1]]
+    ecodes <- apfun(1:nrow(alignments), function(row) {
+        al <- alignments$alignment[row]
+        id <- alignments$id[row]
         flog.info("[%s] Starting SLIMM...", id)
         repdir <- file.path(reports, id, "")
         if (!file.exists(repdir)) {
@@ -75,13 +78,15 @@ slimm <- function(object, ...) {
 
     flog.info("Parsing abundances on rank `%s`.", conf$rank)
     abundance <- apfun(
-        file.path(reports, paste0(alignments$id, "_profile.tsv")),
+        file.path(reports, alignments$id,
+                  paste0(alignments$id, "_profile.tsv")),
         read_slimm) %>% rbindlist()
 
     flog.info("Parsing coverage profiles with bin width of %dbp.",
               conf$bin_width)
     coverage <- apfun(
-        file.path(reports, paste0(alignments$id, "_uniq_coverage2.tsv")),
+        file.path(reports, alignments$id,
+                  paste0(alignments$id, "_uniq_coverage2.tsv")),
         read_slimm_coverage, conf$bin_width) %>% rbindlist()
     artifact <- list(
         alignments = alignments,

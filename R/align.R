@@ -20,6 +20,23 @@ config_align <- config_builder(list(
     limited_memory = FALSE
 ))
 
+#' Heuristic to get the median read length from a BAM file.access
+#'
+#' @param bam_file Path to a bam file.
+#' @param n How many alignments to use.
+#' @return The median read length in the file.
+#' @importFrom Rsamtools BamFile yieldSize scanBam
+read_length <- function(bam_file, n = 100) {
+    bam <- BamFile(bam_file)
+    yieldSize(bam) <- n
+    open(bam)
+    alns <- scanBam(bam)
+    close(bam)
+    l <- sapply(alns, "[[", "qwidth")
+    return(median(l))
+}
+
+
 align <- function(object, config) {
     files <- get_files(object)
     if (is.null(config$reference)) {
