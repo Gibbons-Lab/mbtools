@@ -51,14 +51,14 @@ align <- function(object, config) {
         }
 
         args <- c("-acx", config$preset, "-t", threads,
-                  "--secondary", "yes", "-N", config$max_hits,
-                  config$reference, reads)
+                  "--secondary", "yes", "-N", config$max_hits)
         if (config$limited_memory) {
-            args <- append(args, "--split-prefix",
-                           file.path(config$alignment_dir, "prefix"))
+            args <- append(args, c("--split-prefix",
+                                   file.path(config$alignment_dir, "prefix")))
         } else {
-            args <- append(args, "-I", "100G")
+            args <- append(args, c("-I", "100G"))
         }
+        args <- append(args, c(config$reference, reads))
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
         success <- system2("minimap2", args = args)
