@@ -51,7 +51,7 @@ align <- function(object, config) {
         }
 
         args <- c("-acx", config$preset, "-t", threads,
-                  "--secondary", "yes", "-N", config$max_hits)
+                  "--secondary=yes", "-N", config$max_hits)
         if (config$limited_memory) {
             args <- append(args, c("--split-prefix",
                                    file.path(config$alignment_dir, "prefix")))
