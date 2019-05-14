@@ -16,7 +16,8 @@ config_align <- config_builder(list(
     threads = TRUE,
     alignment_dir = "alignments",
     max_hits = 100,
-    use_existing = TRUE
+    use_existing = TRUE,
+    limited_memory = FALSE
 ))
 
 align <- function(object, config) {
@@ -50,8 +51,14 @@ align <- function(object, config) {
         }
 
         args <- c("-acx", config$preset, "-t", threads,
-                  "-I", "64G",, "--secondary", "yes",
-                  "-N", config$max_hits, config$reference, reads)
+                  "--secondary", "yes", "-N", config$max_hits,
+                  config$reference, reads)
+        if (config$limited_memory) {
+            args <- append(args, "--split-prefix",
+                           file.path(config$alignment_dir, "prefix"))
+        } else {
+            args <- append(args, "-I", "100G")
+        }
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
         success <- system2("minimap2", args = args)
@@ -72,6 +79,9 @@ align <- function(object, config) {
         file.remove(log_file)
         return(content)
     })
+    if (config$limited_memory) {
+        unlink(file.path(config$alignment_dir, "prefix"), recursive = TRUE)
+    }
     alns <- rbindlist(alns)
     artifact <- list(
         alignments = alns,
