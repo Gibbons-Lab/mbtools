@@ -68,10 +68,6 @@ align_short_reads <- function(object, ...) {
                     nrow(files), threads, config$max_hits)
     alns <- apply(files, 1, function(file) {
         file <- as.list(file)
-        reads <- file$forward
-        if (paired) {
-            reads <- c(reads, file$reverse)
-        }
         out_path <- file.path(config$alignment_dir, paste0(file$id, ".bam"))
         log_file <- file.path(config$alignment_dir, paste0(file$id, ".log"))
 
@@ -81,7 +77,7 @@ align_short_reads <- function(object, ...) {
             if (!is.null(rate)) {
                 flog.info("Found existing alignment for %s. Will use that one.",
                           file$id)
-                return(data.table(id = read$id, success = TRUE,
+                return(data.table(id = file$id, success = TRUE,
                        log = log_file, alignment = out_path, reads = rate[1],
                        aligned = rate[2], rate = rate[2] / rate[1]))
             }
@@ -89,9 +85,9 @@ align_short_reads <- function(object, ...) {
 
         args <- c("-x", index)
         if (paired) {
-            args <- append(args, c("-1", read$forward, "-2", read$reverse))
+            args <- append(args, c("-1", file$forward, "-2", file$reverse))
         } else {
-            args <- append(args, c("-U", read$forward))
+            args <- append(args, c("-U", file$forward))
         }
         args <- append(args, c("-q", "--no-unal", "--mm", "-p", config$threads,
                                "-k", config$max_hits, "-S", out_path,
@@ -105,7 +101,7 @@ align_short_reads <- function(object, ...) {
         } else {
             flog.error("Failed aligning %s.", file$id)
         }
-        return(data.table(id = read$id, success = success == 0,
+        return(data.table(id = file$id, success = success == 0,
                           alignment = out_path, reads = rate[1],
                           aligned = rate[2], rate = rate[2] / rate[1]))
     })
