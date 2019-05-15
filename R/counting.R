@@ -156,7 +156,7 @@ count_references <- function(object, ...) {
     counts <- mclapply(object$alignments$alignment, function(file) {
         bam <- read_bam(file)
         flog.info("[%s] Read %d alignments.", file, length(bam))
-        cn <- count_alns(bam, reflengths, file = file, config$method)
+        cn <- count_alns(bam, reflengths, file = file, method = config$method)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
     }, mc.cores = config$threads)
