@@ -13,6 +13,7 @@
 #'  config <- config_align(reference = "refs/mouse.fna.gz")
 config_align <- config_builder(list(
     reference = NULL,
+    build_index = FALSE,
     threads = TRUE,
     alignment_dir = "alignments",
     max_hits = 100,
@@ -48,6 +49,18 @@ align <- function(object, config) {
     }
     paired <- "reverse" %in% names(files)
     threads <- parse_threads(config$threads, FALSE)
+
+    if (config$build_index) {
+        index <- file.path(config$alignment_dir, "index",
+                           paste0(basename(reference), ".mmi"))
+        args <- c("-x", config$preset, "--secondary=yes",
+                  "-t", threads, "-d", index, config$reference)
+        flog.info("Building index in %s.", index)
+        ec <- system2("minimap2", args)
+    } else {
+        index <- config$reference
+    }
+
     flog.info(paste("Aligning %d samples on %d threads.",
                     "Keeping up to %d secondary alignments."),
                     nrow(files), threads, config$max_hits)
@@ -75,7 +88,7 @@ align <- function(object, config) {
         } else {
             args <- append(args, c("-I", "100G"))
         }
-        args <- append(args, c(config$reference, reads))
+        args <- append(args, c(index, reads))
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
                             "view", "-bS", "-", ">", out_path))
         success <- system2("minimap2", args = args)
