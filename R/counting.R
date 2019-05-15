@@ -46,8 +46,10 @@ count_alns <- function(alignments, reflengths, file, method = "em",
     if (method == "naive") {
         if (aln[, !any(is.na(AS))]) {
             aln <- aln[order(-AS, -mapq), .SD[1], by = "qname"]
+            flog.info("Assigning reads by alignment score and mapping quality.")
         } else {
             aln <- aln[order(-mapq), .SD[1], by = "qname"]
+            flog.info("Assigning reads by mapping quality.")
         }
         counts <- aln[, .(counts = .N), by = "seqnames"]
         names(counts)[1] <- "reference"
@@ -153,7 +155,7 @@ count_references <- function(object, ...) {
     counts <- mclapply(object$alignments$alignment, function(file) {
         bam <- read_bam(file)
         flog.info("[%s] Read %d alignments.", file, length(bam))
-        cn <- count_alns(bam, reflengths, file = file)
+        cn <- count_alns(bam, reflengths, file = file, config$method)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
     }, mc.cores = config$threads)
