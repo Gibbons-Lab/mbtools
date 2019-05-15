@@ -153,13 +153,16 @@ count_references <- function(object, ...) {
         names(reflengths) <- gsub("\\s.+", "", fasta_index$desc)
         flog.info("Normalized IDs. Starting counting...")
     }
-    counts <- mclapply(object$alignments$alignment, function(file) {
+    alignments <- get_alignments(object)
+
+    apfun <- parse_threads(config$threads)
+    counts <- apfun(alignments$alignment, function(file) {
         bam <- read_bam(file)
         flog.info("[%s] Read %d alignments.", file, length(bam))
         cn <- count_alns(bam, reflengths, file = file, method = config$method)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
-    }, mc.cores = config$threads)
+    })
 
     artifact <- list(
         alignments = object$alignments,
