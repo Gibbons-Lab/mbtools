@@ -46,7 +46,7 @@ count_alns <- function(alignments, reflengths, file, method = "em",
     if (method == "naive") {
         if (aln[, !any(is.na(AS))]) {
             aln <- aln[order(-AS, -mapq), .SD[1], by = "qname"]
-            flog.info(paste("[%s] Assigning reads by alignment score"
+            flog.info(paste("[%s] Assigning reads by alignment score",
                             "and mapping quality."), file)
         } else {
             aln <- aln[order(-mapq), .SD[1], by = "qname"]
