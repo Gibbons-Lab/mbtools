@@ -89,7 +89,7 @@ align_short_reads <- function(object, ...) {
         } else {
             args <- append(args, c("-U", file$forward))
         }
-        args <- append(args, c("-q", "--no-unal", "--mm", "-p", config$threads,
+        args <- append(args, c("-q", "--no-unal", "--mm", "-p", threads,
                                "-k", config$max_hits, "-S", out_path,
                                "2>", log_file, "|", "samtools", "view",
                                "-bS", "-", ">", out_path))
