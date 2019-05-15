@@ -52,7 +52,7 @@ align <- function(object, config) {
 
     if (config$build_index) {
         index <- file.path(config$alignment_dir, "index",
-                           paste0(basename(reference), ".mmi"))
+                           paste0(basename(config$reference), ".mmi"))
         args <- c("-x", config$preset, "--secondary=yes",
                   "-t", threads, "-d", index, config$reference)
         flog.info("Building index in %s.", index)
