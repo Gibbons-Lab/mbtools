@@ -4,8 +4,8 @@
 \alias{em_count}
 \title{Count transcripts using an Expectation Maximization (EM) algorithm.}
 \usage{
-em_count(txreads, txlengths, ntx, nr, maxit = 1000L, reltol = 0.01,
-  abstol = 0.01)
+em_count(txreads, txlengths, weights, ntx, nr, maxit = 1000L,
+  reltol = 0.01, abstol = 0.01)
 }
 \arguments{
 \item{txreads}{A minimal matrix where each row corresponds to an
@@ -15,6 +15,8 @@ the second column denotes read indices in [0, nr -1].}
 \item{txlengths}{The sequence lengths for each transcript. Ideally those
 should be the effective transcript lengths meaning the overall number
 of possible alignment start positions in a transcript.}
+
+\item{weights}{Weights for individual alignments.}
 
 \item{ntx}{The total number of unique transcripts.}
 

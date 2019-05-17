@@ -46,11 +46,10 @@ count_alns <- function(alignments, reflengths, file, method = "em",
     if (method == "naive") {
         if (aln[, !any(is.na(AS))]) {
             aln <- aln[order(-AS, -mapq), .SD[1], by = "qname"]
-            flog.info(paste("[%s] Assigning reads by alignment score",
-                            "and mapping quality."), file)
         } else {
             aln <- aln[order(-mapq), .SD[1], by = "qname"]
-            flog.info("[%s] Assigning reads by mapping quality.", file)
+            flog.info(paste("[%s] Missing or uncomplete alignments score.",
+                            "Assigning reads by mapping quality only."), file)
         }
         counts <- aln[, .(counts = .N), by = "seqnames"]
         names(counts)[1] <- "reference"
@@ -63,9 +62,16 @@ count_alns <- function(alignments, reflengths, file, method = "em",
         refids <- aln[, as.integer(seqnames) - 1]
         refnames <- aln[, levels(seqnames)]
         rids <- aln[, as.integer(qname) - 1]
-        em_result <- em_count(unique(cbind(refids, rids)), efflengths,
+        if (aln[, !any(is.na(AS))]) {
+            weights <- aln[, AS - min(AS) + 1]
+        } else {
+            weights <- rep(1, nrow(aln))
+            flog.info(paste("[%s] Missing or incomplete alignment score.",
+                            "Not using weighting."), file)
+        }
+        em_result <- em_count(unique(cbind(refids, rids)), efflengths, weights,
                               length(refnames), max(rids) + 1, maxit,
-                              cutoff, cutoff)
+                              cutoff, cutoff ^ 2)
         flog.info(paste("[%s] Used %d EM iterations on %d equivalence classes.",
                         "Last max. abs. change was %.2g."),
                   file, em_result$iterations, length(em_result$ecs),

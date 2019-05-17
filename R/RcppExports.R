@@ -20,6 +20,7 @@ effective_lengths <- function(txlengths, rdlengths) {
 #' @param txlengths The sequence lengths for each transcript. Ideally those
 #'   should be the effective transcript lengths meaning the overall number
 #'   of possible alignment start positions in a transcript.
+#' @param weights Weights for individual alignments.
 #' @param ntx The total number of unique transcripts.
 #' @param nr The total number of unique reads.
 #' @param maxit Maximum number of EM iterations.
@@ -32,7 +33,7 @@ effective_lengths <- function(txlengths, rdlengths) {
 #'      \item{num_ecs}{The number of equivalence classes}
 #'      \item{change}{The last osbserved absolute change in transcript counts}
 #'     }
-em_count <- function(txreads, txlengths, ntx, nr, maxit = 1000L, reltol = 0.01, abstol = 0.01) {
-    .Call(`_mbtools_em_count`, txreads, txlengths, ntx, nr, maxit, reltol, abstol)
+em_count <- function(txreads, txlengths, weights, ntx, nr, maxit = 1000L, reltol = 0.01, abstol = 0.01) {
+    .Call(`_mbtools_em_count`, txreads, txlengths, weights, ntx, nr, maxit, reltol, abstol)
 }
 
