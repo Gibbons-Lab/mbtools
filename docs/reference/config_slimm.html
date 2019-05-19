@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Build a configuration for the reference removal workflow. — config_reference • mbtools</title>
+<title>Build a configuration for the SLIMM workflow. — config_slimm • mbtools</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Build a configuration for the reference removal workflow. — config_reference" />
+<meta property="og:title" content="Build a configuration for the SLIMM workflow. — config_slimm" />
 
 <meta property="og:description" content="This can be saved and passed on to others to ensure reproducibility." />
 <meta name="twitter:card" content="summary" />
@@ -117,9 +117,9 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Build a configuration for the reference removal workflow.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/remove_ref.R'><code>R/remove_ref.R</code></a></small>
-    <div class="hidden name"><code>config_reference.Rd</code></div>
+    <h1>Build a configuration for the SLIMM workflow.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/lineage.R'><code>R/lineage.R</code></a></small>
+    <div class="hidden name"><code>config_slimm.Rd</code></div>
     </div>
 
     <div class="ref-description">
@@ -128,7 +128,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>config_reference</span>(<span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>config_slimm</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,11 +142,12 @@ the example below. Optional.</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with the parameters used in the DADA2 workflow.</p>
+    <p>A list with the parameters used in the long read alignment
+ workflow.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='no'>config</span> <span class='kw'>&lt;-</span> <span class='fu'>config_reference</span>(<span class='kw'>reference</span> <span class='kw'>=</span> <span class='st'>"refs/mouse.fna.gz"</span>)</div></pre>
+    <pre class="examples"><div class='input'> <span class='no'>config</span> <span class='kw'>&lt;-</span> <span class='fu'>config_slimm</span>(<span class='kw'>bin_width</span> <span class='kw'>=</span> <span class='fl'>2000</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

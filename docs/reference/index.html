@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.28.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.34.2</span>
       </span>
     </div>
 
@@ -144,13 +144,19 @@ database.</p></td>
         <td>
           <p><code><a href="align_short_reads.html">align_short_reads()</a></code> </p>
         </td>
-        <td><p>Aligns metagenomic shotgun sample against a reference</p></td>
+        <td><p>Aligns metagenomic shotgun reads against a reference.</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="annotate_contigs.html">annotate_contigs()</a></code> </p>
         </td>
         <td><p>Annotate diamond database hits with transcript info.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="annotate_silva.html">annotate_silva()</a></code> </p>
+        </td>
+        <td><p>Annotate the sequences in the SILVA database file.</p></td>
       </tr><tr>
         
         <td>
@@ -186,15 +192,9 @@ factor variable. Can be used as post-hoc test for regression.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="config_align_long.html">config_align_long()</a></code> </p>
+          <p><code><a href="config_align.html">config_align()</a></code> </p>
         </td>
-        <td><p>Build a configuration for the long read alignment workflow.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="config_align_short.html">config_align_short()</a></code> </p>
-        </td>
-        <td><p>Build a configuration for the short read alignment workflow.</p></td>
+        <td><p>Build a configuration for the alignment workflows.</p></td>
       </tr><tr>
         
         <td>
@@ -222,9 +222,21 @@ factor variable. Can be used as post-hoc test for regression.</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="config_ptr.html">config_ptr()</a></code> </p>
+        </td>
+        <td><p>Build a configuration for the PTR workflow.</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="config_reference.html">config_reference()</a></code> </p>
         </td>
         <td><p>Build a configuration for the reference removal workflow.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="config_slimm.html">config_slimm()</a></code> </p>
+        </td>
+        <td><p>Build a configuration for the SLIMM workflow.</p></td>
       </tr><tr>
         
         <td>
@@ -234,7 +246,7 @@ factor variable. Can be used as post-hoc test for regression.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="count_transcripts.html">count_transcripts()</a></code> </p>
+          <p><code><a href="count_references.html">count_references()</a></code> </p>
         </td>
         <td><p>Count alignment hits to a reference database.</p></td>
       </tr><tr>
@@ -355,6 +367,12 @@ positions in the transcript the fragment could map to.</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="peak_to_through.html">peak_to_through()</a></code> </p>
+        </td>
+        <td><p>Estimate replication rates by the peak-to-through ratio.</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="plot_counts.html">plot_counts()</a></code> </p>
         </td>
         <td><p>Plots counts for several taxa across a co-variable</p></td>
@@ -416,9 +434,21 @@ input files.</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="read_length.html">read_length()</a></code> </p>
+        </td>
+        <td><p>Heuristic to get the median read length from a BAM file.access</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="read_slimm.html">read_slimm()</a></code> </p>
         </td>
         <td><p>Reads SLIMM output to a data table.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_slimm_coverage.html">read_slimm_coverage()</a></code> </p>
+        </td>
+        <td><p>Reads SLIMM coverage to a data table.</p></td>
       </tr><tr>
         
         <td>
@@ -442,7 +472,7 @@ input files.</p></td>
         <td>
           <p><code><a href="slimm.html">slimm()</a></code> </p>
         </td>
-        <td><p>Quantifies abundances for the bacteria using SLIMM</p></td>
+        <td><p>Quantifies abundances  and coverage using SLIMM.</p></td>
       </tr><tr>
         
         <td>

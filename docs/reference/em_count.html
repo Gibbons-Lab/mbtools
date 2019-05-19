@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.28.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.34.2</span>
       </span>
     </div>
 
@@ -128,8 +128,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>em_count</span>(<span class='no'>txreads</span>, <span class='no'>txlengths</span>, <span class='no'>ntx</span>, <span class='no'>nr</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>1000L</span>, <span class='kw'>reltol</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
-  <span class='kw'>abstol</span> <span class='kw'>=</span> <span class='fl'>0.01</span>)</pre>
+    <pre class="usage"><span class='fu'>em_count</span>(<span class='no'>txreads</span>, <span class='no'>txlengths</span>, <span class='no'>weights</span>, <span class='no'>ntx</span>, <span class='no'>nr</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>1000L</span>,
+  <span class='kw'>reltol</span> <span class='kw'>=</span> <span class='fl'>0.01</span>, <span class='kw'>abstol</span> <span class='kw'>=</span> <span class='fl'>0.01</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -145,6 +145,10 @@ the second column denotes read indices in [0, nr -1].</p></td>
       <td><p>The sequence lengths for each transcript. Ideally those
 should be the effective transcript lengths meaning the overall number
 of possible alignment start positions in a transcript.</p></td>
+    </tr>
+    <tr>
+      <th>weights</th>
+      <td><p>Weights for individual alignments.</p></td>
     </tr>
     <tr>
       <th>ntx</th>

@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.28.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.34.2</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>taxa_count</span>(<span class='no'>ps</span>, <span class='kw'>lev</span> <span class='kw'>=</span> <span class='st'>"Genus"</span>)</pre>
+    <pre class="usage"><span class='fu'>taxa_count</span>(<span class='no'>ps</span>, <span class='kw'>lev</span> <span class='kw'>=</span> <span class='st'>"Genus"</span>, <span class='kw'>zeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -141,6 +141,10 @@
       <th>lev</th>
       <td><p>The taxonomy level at which to count. If NA uses the finest level
 available (individual sequences).</p></td>
+    </tr>
+    <tr>
+      <th>zeros</th>
+      <td><p>Whether to explicitly track zero counts.</p></td>
     </tr>
     </table>
     
