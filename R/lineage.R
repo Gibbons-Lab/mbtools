@@ -56,7 +56,7 @@ slimm <- function(object, ...) {
         id <- alignments$id[row]
         flog.info("[%s] Starting SLIMM...", id)
         repdir <- file.path(reports, id, "")
-        if (!file.exists(repdir)) {
+        if (!dir.exists(repdir)) {
             dir.create(repdir)
         }
         ecode <- system2(
@@ -71,7 +71,7 @@ slimm <- function(object, ...) {
         return(ecode)
     })
 
-    if (any(ecodes != 0)) {
+    if (any(unlist(ecodes) != 0)) {
         paste0("slimm terminated with an error, logs can be found in ",
                file.path(reports, "[ID]", "slimm.log")) %>% stop()
     }
