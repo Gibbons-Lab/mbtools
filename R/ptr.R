@@ -78,7 +78,8 @@ peak_to_through <- function(object, ...) {
     rlens <- sapply(alns$alignment, read_length)
     names(rlens) <- alns$id
     flog.info("Estimated median read length is %d, range is [%d, %d].",
-              median(rlens), min(rlens), max(rlens))
+              median(rlens, na.rm = TRUE), min(rlens, na.rm = TRUE),
+              max(rlens, na.rm = TRUE))
 
     genbank_id <- unique(co[, list(genbank, id)])
     genbank_id <- lapply(1:nrow(genbank_id),
