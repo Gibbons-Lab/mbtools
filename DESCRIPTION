@@ -3,7 +3,7 @@ Title: Provides helper functions for microbiome preprocessing and analysis
 <<<<<<< HEAD
 Version: 0.33.4
 =======
-Version: 0.34.2
+Version: 0.34.3
 >>>>>>> 90a99cfad90db5905de96ef0d2f90303b01cd9c1
 Authors@R: c(person("Christian", "Diener", email = "mail@cdiener.com", role = c("aut", "cre")),
              person("Osbaldo", "Resendis-Antonio", email = "resendis@inmegen.gob.mx", role = "ctb"),
