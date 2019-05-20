@@ -33,8 +33,8 @@ read_length <- function(bam_file, n = 100) {
     open(bam)
     alns <- scanBam(bam)
     close(bam)
-    l <- sapply(alns, "[[", "qwidth")
-    return(median(l))
+    l <- alns[[1]]$qwidth
+    return(median(l, na.rm = TRUE))
 }
 
 
