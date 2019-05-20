@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.28.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.34.2</span>
       </span>
     </div>
 
@@ -128,13 +128,13 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>read_slimm</span>(<span class='no'>reports</span>)</pre>
+    <pre class="usage"><span class='fu'>read_slimm</span>(<span class='no'>profile</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>reports</th>
+      <th>profile</th>
       <td><p>Where the slimm output is stored.</p></td>
     </tr>
     </table>
@@ -142,15 +142,7 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data table counting reads and relative abundances for all found
- bacteria for several taxonomic ranks. It will contain the following columns:</p><ul>
-<li><p>idid of the sample</p></li>
-<li><p>rankthe name of the taxonomic rank, for instance "genus"</p></li>
-<li><p>namethe value of the rank, for instance "Escherichia"</p></li>
-<li><p>readsthe number of reads in that rank</p></li>
-<li><p>relativethe relative abundance of the rank in [0,1]</p></li>
-<li><p>coveragethe coverage of the rank</p></li>
-</ul>
-
+ bacteria for several taxonomic ranks.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Quantifies abundances for the bacteria using SLIMM — slimm • mbtools</title>
+<title>Quantifies abundances  and coverage using SLIMM. — slimm • mbtools</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Quantifies abundances for the bacteria using SLIMM — slimm" />
+<meta property="og:title" content="Quantifies abundances  and coverage using SLIMM. — slimm" />
 
-<meta property="og:description" content="Quantifies abundances for the bacteria using SLIMM" />
+<meta property="og:description" content="Quantifies abundances  and coverage using SLIMM." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.28.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.34.2</span>
       </span>
     </div>
 
@@ -117,40 +117,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Quantifies abundances for the bacteria using SLIMM</h1>
+    <h1>Quantifies abundances  and coverage using SLIMM.</h1>
     <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/lineage.R'><code>R/lineage.R</code></a></small>
     <div class="hidden name"><code>slimm.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Quantifies abundances for the bacteria using SLIMM</p>
+    <p>Quantifies abundances  and coverage using SLIMM.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>slimm</span>(<span class='no'>alignments</span>, <span class='no'>slimm_db</span>, <span class='kw'>reports</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>slimm</span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>alignments</th>
-      <td><p>A data frame as output by <code><a href='align_short_reads.html'>align_short_reads</a></code></p></td>
+      <th>object</th>
+      <td><p>An alignment table or workflow artifact that includes
+alignments.</p></td>
     </tr>
     <tr>
-      <th>slimm_db</th>
-      <td><p>Path for the SLIMM data base.</p></td>
-    </tr>
-    <tr>
-      <th>reports</th>
-      <td><p>Path where to save the SLIMM reports. Uses a temporary
-directory by default.</p></td>
+      <th>...</th>
+      <td><p>Either additional arguments specifying a config or a config
+created with <code><a href='config_slimm.html'>config_slimm</a></code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Path to the slimm output.</p>
+    <p>A SLIMM artifact containing the lineage calls for each sample and
+ taxon and the coverage.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

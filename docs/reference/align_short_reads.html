@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Aligns metagenomic shotgun sample against a reference — align_short_reads • mbtools</title>
+<title>Aligns metagenomic shotgun reads against a reference. — align_short_reads • mbtools</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Aligns metagenomic shotgun sample against a reference — align_short_reads" />
+<meta property="og:title" content="Aligns metagenomic shotgun reads against a reference. — align_short_reads" />
 
 <meta property="og:description" content="This method uses bowtie2 and should not be too sensitive to the used pre-
 processing." />
@@ -64,7 +64,7 @@ processing." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.28.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.34.2</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@ processing." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Aligns metagenomic shotgun sample against a reference</h1>
+    <h1>Aligns metagenomic shotgun reads against a reference.</h1>
     <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/shotgun.R'><code>R/shotgun.R</code></a></small>
     <div class="hidden name"><code>align_short_reads.Rd</code></div>
     </div>
@@ -130,7 +130,7 @@ processing.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>align_short_reads</span>(<span class='no'>object</span>, <span class='no'>config</span>)</pre>
+    <pre class="usage"><span class='fu'>align_short_reads</span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,8 +140,9 @@ processing.</p>
       <td><p>An artifact or list of files.</p></td>
     </tr>
     <tr>
-      <th>config</th>
-      <td><p>A configuration as obtained by <code><a href='config_align_short.html'>config_align_short</a></code>.</p></td>
+      <th>...</th>
+      <td><p>Configuration arguments or a configuration object as obtained by
+<code><a href='config_align.html'>config_align</a></code>.</p></td>
     </tr>
     </table>
     
