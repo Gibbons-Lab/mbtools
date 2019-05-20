@@ -2,15 +2,20 @@
 #
 # Apache license 2.0. See LICENSE for more information.
 
+count_med <- function(vals, counts) {
+    o <- order(vals)
+    cum <- cumsum(counts[o])
+    idx <- which(cum > 0.5 * sum(counts))[1]
+    return(vals[o][idx])
+}
 
 qualities <- function(srqa) {
     cycles <- srqa[["perCycle"]]$quality %>% as.data.table
     names(cycles) <- c("cycle", "quality_symbol", "quality",
                        "count", "file")
-    avg_score <- cycles[, sum(as.numeric(quality * count), na.rm = T) /
-                          sum(as.numeric(count), na.rm = T)]
-    flog.info("Average per base error is %.3f%% (mean score = %.2f).",
-              10 ^ (-avg_score / 10 + 2), avg_score)
+    med_score <- cycles[, count_med(quality, count)]
+    flog.info("Median per base error is %.3f%% (median score = %.2f).",
+              10 ^ (-med_score / 10 + 2), med_score)
     return(cycles)
 }
 
