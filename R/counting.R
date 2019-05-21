@@ -19,7 +19,8 @@ read_bam <- function(path, tags = c("AS", "de")) {
 #' @importFrom Rcpp sourceCpp
 #' @importFrom stats quantile
 count_alns <- function(alignments, reflengths, file, method = "em",
-                       maxit = 1000, cutoff = 0.01, tpm = FALSE, ecs = FALSE) {
+                       maxit = 1000, cutoff = 0.01, tpm = FALSE,
+                       ecs = FALSE, weighting = FALSE) {
     aln <- as.data.table(alignments)
     aln[, "seqnames" := factor(as.character(seqnames))]
     if (is.null(reflengths)) {
@@ -62,12 +63,14 @@ count_alns <- function(alignments, reflengths, file, method = "em",
         refids <- aln[, as.integer(seqnames) - 1]
         refnames <- aln[, levels(seqnames)]
         rids <- aln[, as.integer(qname) - 1]
-        if (aln[, !any(is.na(AS))]) {
+        if (weighting & aln[, !any(is.na(AS))]) {
             weights <- aln[, AS - min(AS) + 1]
         } else {
             weights <- rep(1, nrow(aln))
-            flog.info(paste("[%s] Missing or incomplete alignment score.",
-                            "Not using weighting."), file)
+            if (weighting) {
+                flog.info(paste("[%s] Missing or incomplete alignment score.",
+                                "Not using weighting."), file)
+            }
         }
         em_result <- em_count(unique(cbind(refids, rids)), efflengths, weights,
                               length(refnames), max(rids) + 1, maxit,
@@ -119,7 +122,8 @@ config_count <- function(...) {
         method = "em",
         maxit = 1000,
         cutoff = 0.01,
-        tpm = FALSE
+        tpm = FALSE,
+        weights = FALSE
     )
     args <- list(...)
     for (arg in names(args)) {
@@ -165,7 +169,8 @@ count_references <- function(object, ...) {
     counts <- apfun(alignments$alignment, function(file) {
         bam <- read_bam(file)
         flog.info("[%s] Read %d alignments.", file, length(bam))
-        cn <- count_alns(bam, reflengths, file = file, method = config$method)
+        cn <- count_alns(bam, reflengths, file = file, method = config$method,
+                         weighting = config$weights)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
     })
