@@ -26,7 +26,9 @@ ptr <- function(profile, conf, rlen) {
     profile[coverage <= conf$min_coverage, coverage := NA]
     profile[abs(log(reads + 1) - log(median(reads + 1, na.rm = TRUE))) >
             log(conf$max_median_fold), coverage := NA]
-    if (profile[, (sum(!is.na(coverage)) / .N) < conf$min_covered]) {
+    sufficient <- profile[, (sum(!is.na(coverage)) / .N) > conf$min_covered] &
+                  profile[, sum(!is.na(coverage)) > 50]
+    if (!sufficient) {
         return(list(
             ptr = NULL,
             profile = profile[, "smooth" := NA]
