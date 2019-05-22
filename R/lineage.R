@@ -44,6 +44,8 @@ slimm <- function(object, ...) {
     } else if (!dir.exists(conf$reports)) {
         dir.create(conf$reports)
         reports <- conf$reports
+    } else {
+        reports <- conf$reports
     }
     apfun <- parse_threads(conf$threads)
 
