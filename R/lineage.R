@@ -44,8 +44,6 @@ slimm <- function(object, ...) {
     } else if (!dir.exists(conf$reports)) {
         dir.create(conf$reports)
         reports <- conf$reports
-    } else {
-        reports <- conf$reports
     }
     apfun <- parse_threads(conf$threads)
 
@@ -58,7 +56,7 @@ slimm <- function(object, ...) {
         id <- alignments$id[row]
         flog.info("[%s] Starting SLIMM...", id)
         repdir <- file.path(reports, id, "")
-        if (!dir.exists(repdir)) {
+        if (!file.exists(repdir)) {
             dir.create(repdir)
         }
         ecode <- system2(
@@ -73,7 +71,7 @@ slimm <- function(object, ...) {
         return(ecode)
     })
 
-    if (any(unlist(ecodes) != 0)) {
+    if (any(ecodes != 0)) {
         paste0("slimm terminated with an error, logs can be found in ",
                file.path(reports, "[ID]", "slimm.log")) %>% stop()
     }
@@ -137,13 +135,12 @@ read_slimm_coverage <- function(cofile, bin_width) {
         anns <- l[1:9]
         cv <- as.numeric(l[10:length(l)])
         dt <- data.table()
-        dt[, "start" := bin_width * (seq_along(cv) - 1) + 1]
-        dt[, "end" := bin_width * seq_along(cv)]
-        dt[, "reads" := cv]
+        dt[, "bin_width" := bin_width]
+        dt[, "reads" := list(list(reads = cv))]
         dt[, c("genbank", "strain", "species", "genus", "family",
                "order", "class", "phylum", "kingdom") := as.list(anns)]
     }) %>% rbindlist()
     co[, "id" := strsplit(basename(cofile), "_")[[1]][1]]
-    co[, "length" := .N * bin_width, by = "genbank"]
+    co[, "length" := length(reads[[1]]) * bin_width, by = "genbank"]
     return(co)
 }

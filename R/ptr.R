@@ -21,33 +21,36 @@ config_ptr <- config_builder(list(
 #' @importFrom mgcv gam s
 ptr <- function(profile, conf, rlen) {
     profile <- copy(profile)
-    w <- profile[, start[2] - start[1] + 1]
-    profile <- profile[, coverage := reads * rlen / w]
-    profile[coverage <= conf$min_coverage, coverage := NA]
-    profile[abs(log(reads + 1) - log(median(reads + 1, na.rm = TRUE))) >
-            log(conf$max_median_fold), coverage := NA]
-    sufficient <- profile[, (sum(!is.na(coverage)) / .N) > conf$min_covered] &
-                  profile[, sum(!is.na(coverage)) > 50]
+    w <- profile$bin_width
+    reads <- profile$reads[[1]]
+    profile[, "reads" := NULL]
+    co <- reads * rlen / w
+    co[co <= conf$min_coverage] <- NA
+    co[abs(log(reads + 1) - log(median(reads + 1, na.rm = TRUE))) >
+       log(conf$max_median_fold)] <- NA
+    sufficient <- ((sum(!is.na(co)) / length(co)) > conf$min_covered &
+                   sum(!is.na(co)) > 50)
     if (!sufficient) {
         return(list(
             ptr = NULL,
-            profile = profile[, "smooth" := NA]
+            profile = NULL
         ))
     }
-    coverage <- profile[!is.na(coverage), coverage]
-    pos <- profile[!is.na(coverage), start]
+    pos <- seq_along(co)[!is.na(co)]
+    coverage <- co[!is.na(co)]
     data <- data.table(
-        coverage = c(coverage[1:(length(coverage) - 1)],
-                     coverage, coverage[2:length(coverage)]),
+        coverage = c(coverage[1:(length(coverage) - 1)], coverage,
+                     coverage[2:length(coverage)]),
         start = c(-rev(pos[2:length(pos)]), pos, max(pos) + pos[2:length(pos)])
     )
     fit <- gam(coverage ~ s(start, bs = "tp", k = 18), data = data)
-    profile$smooth <- predict(fit, data.frame(start = profile$start))
-    m <- profile[which.max(smooth)]
+    smooth <- predict(fit, data.frame(start = seq_along(co)))
+    m <- which.max(smooth)
     ptr <- profile[, max(smooth) / min(smooth)]
-
+    profile[, "smooth" := list(list(smooth = smooth))]
+    profile[, "coverage" := list(list(coverage = co))]
     res <- list(
-        ptr = data.table(start = m$start, end = m$end, ptr = ptr,
+        ptr = data.table(start = (m - 1) * w + 1, end = m * w, ptr = ptr,
                          rsquared = summary(fit)$r.sq,
                          pval = summary(fit)$s.pv),
         profile = profile
@@ -83,20 +86,17 @@ peak_to_through <- function(object, ...) {
               median(rlens, na.rm = TRUE), min(rlens, na.rm = TRUE),
               max(rlens, na.rm = TRUE))
 
-    genbank_id <- unique(co[, list(genbank, id)])
-    genbank_id <- lapply(1:nrow(genbank_id),
-                         function(i) as.character(genbank_id[i]))
     flog.info(paste("Calculating smoothed coverage and PTR for %d genomes",
                     "and %d samples."), co[, uniqueN(genbank)],
                     co[, uniqueN(id)])
-    ptrs <- apfun(genbank_id, function(row) {
-        profile <- co[genbank == row[1] & id == row[2]]
-        res <- ptr(profile, config, rlens[row[2]])
-        res$profile[, "genbank" := row[1]]
-        res$profile[, "id" := row[2]]
+    ptrs <- apfun(1:nrow(co), function(i) {
+        row <- co[i]
+        res <- ptr(row, config, rlens[row$id])
         if (!is.null(res$ptr)) {
-            res$ptr[, "genbank" := row[1]]
-            res$ptr[, "id" := row[2]]
+            res$profile[, "genbank" := row$genbank]
+            res$profile[, "id" := row$id]
+            res$ptr[, "genbank" := row$genbank]
+            res$ptr[, "id" := row$id]
             taxmap <- unique(res$profile[, .(strain, species, genus, family,
                                              order, class, phylum, kingdom,
                                              id, genbank)])
@@ -104,7 +104,17 @@ peak_to_through <- function(object, ...) {
         }
         return(res)
     })
-    profiles <- lapply(ptrs, "[[", "profile") %>% rbindlist()
+    profiles <- lapply(ptrs, function(l) {
+        pro <- l$profile
+        if (is.null(pro)) return(NULL)
+        co <- data.table(start = (seq_along(pro$coverage[[1]]) - 1) *
+                                 pro$bin_width + 1,
+                         coverage = pro$coverage[[1]],
+                         smooth = pro$smooth[[1]])
+        pro[, smooth := NULL]
+        pro[, coverage := NULL]
+        cbind(pro, co)
+    }) %>% rbindlist()
     ptrs <- lapply(ptrs, "[[", "ptr") %>% rbindlist()
     flog.info(paste("Finished. %d genome-sample combinations had sufficient",
                     "coverage for obtaining PTRs."),
