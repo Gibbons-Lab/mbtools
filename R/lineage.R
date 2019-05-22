@@ -71,7 +71,7 @@ slimm <- function(object, ...) {
         return(ecode)
     })
 
-    if (any(ecodes != 0)) {
+    if (any(unlist(ecodes) != 0)) {
         paste0("slimm terminated with an error, logs can be found in ",
                file.path(reports, "[ID]", "slimm.log")) %>% stop()
     }
