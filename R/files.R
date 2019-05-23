@@ -19,7 +19,7 @@ annotate_files <- function(dir, pattern, annotations) {
     } else {
         anns[, direction := 1]
     }
-    matchcols <- names(anns)[names(anns) %in% c("file", "direction")]
+    matchcols <- names(anns)[!names(anns) %in% c("file", "direction")]
     anns$file <- files
     names(anns)[1] <- "forward"
     dupes <- duplicated(anns)
@@ -33,7 +33,8 @@ annotate_files <- function(dir, pattern, annotations) {
     if (anns[, uniqueN(direction)] == 2) {
         fwd <- anns[direction == 1]
         bwd <- anns[direction == 2]
-        anns <- fwd[bwd[, .(reverse = forward, id)], on = matchcols]
+        names(bwd)[1] <- "reverse"
+        anns <- fwd[bwd, on = matchcols]
         other_cols <- names(anns)[!names(anns) %in% c("forward", "reverse")]
         anns <- anns[, c("forward", "reverse", other_cols), with = FALSE]
     }
