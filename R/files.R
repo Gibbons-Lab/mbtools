@@ -1,6 +1,6 @@
 # Helpers to manage read files
 
-illumina_pattern <- "([A-Za-z0-9\\-]+)_S(\\d+)(?:_L(\\d+))*_R(\\d+)_001.fastq"
+illumina_pattern <- "([A-Za-z0-9\\-]+)_S(\\d+)(?:_trimmed)*(?:_L(\\d+))*_R(\\d+)_001.fastq"
 illumina_annotations <- c("id", "injection_order", "lane", "direction")
 
 sra_pattern <- "([A-Za-z0-9\\-]+)_(\\d).fastq"
@@ -19,12 +19,21 @@ annotate_files <- function(dir, pattern, annotations) {
     } else {
         anns[, direction := 1]
     }
+    matchcols <- names(anns)[names(anns) != "direction"]
     anns$file <- files
     names(anns)[1] <- "forward"
+    dupes <- duplicated(anns)
+    if (any(dupes)) {
+        flog.error(paste("Some files have duplicated metadata. Please fix",
+                        "the filenames or your pattern.",
+                        "Duplicated files: %s"),
+                   paste(unique(anns$file[dupes])))
+        stop("Duplicated file information. Can not continue :(")
+    }
     if (anns[, uniqueN(direction)] == 2) {
         fwd <- anns[direction == 1]
         bwd <- anns[direction == 2]
-        anns <- fwd[bwd[, .(reverse = forward, id)], on = "id"]
+        anns <- fwd[bwd[, .(reverse = forward, id)], on = matchcols]
         other_cols <- names(anns)[!names(anns) %in% c("forward", "reverse")]
         anns <- anns[, c("forward", "reverse", other_cols), with = FALSE]
     }

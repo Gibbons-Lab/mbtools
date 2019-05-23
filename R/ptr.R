@@ -12,7 +12,7 @@
 #' @examples
 #'  config <- config_ptr(span=0.5)
 config_ptr <- config_builder(list(
-    max_median_fold = 8,
+    max_median_dev = 4,
     min_coverage = 2,
     min_covered = 0.6,
     threads = FALSE
@@ -26,8 +26,9 @@ ptr <- function(profile, conf, rlen) {
     profile[, "reads" := NULL]
     co <- reads * rlen / w
     co[co <= conf$min_coverage] <- NA
-    co[abs(log(reads + 1) - log(median(reads + 1, na.rm = TRUE))) >
-       log(conf$max_median_fold)] <- NA
+    iqr_range <- median(co, na.rm = TRUE) +
+                 c(-1, 1) * mad(co, na.rm = TRUE) * conf$max_median_dev
+    co[!between(co, iqr_range[1], iqr_range[2])] <- NA
     sufficient <- ((sum(!is.na(co)) / length(co)) > conf$min_covered &
                    sum(!is.na(co)) > 50)
     if (!sufficient) {
@@ -43,7 +44,7 @@ ptr <- function(profile, conf, rlen) {
                      coverage[2:length(coverage)]),
         start = c(-rev(pos[2:length(pos)]), pos, max(pos) + pos[2:length(pos)])
     )
-    fit <- gam(coverage ~ s(start, bs = "tp", k = 18), data = data)
+    fit <- gam(coverage ~ s(start, bs = "gp"), data = data)
     smooth <- predict(fit, data.frame(start = seq_along(co)))
     m <- which.max(smooth)
     ptr <- profile[, max(smooth) / min(smooth)]
