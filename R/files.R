@@ -37,7 +37,7 @@ annotate_files <- function(dir, pattern, annotations) {
         anns <- fwd[bwd, on = matchcols]
         other_cols <- names(anns)[
             !names(anns) %in% c("forward", "reverse") &
-            !grepl("i.", names(anns))]
+            !grepl("i\\.", names(anns))]
         anns <- anns[, c("forward", "reverse", other_cols), with = FALSE]
     }
     anns[, direction := NULL]
