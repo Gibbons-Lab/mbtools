@@ -19,7 +19,7 @@ annotate_files <- function(dir, pattern, annotations) {
     } else {
         anns[, direction := 1]
     }
-    matchcols <- names(anns)[names(anns) != "direction"]
+    matchcols <- names(anns)[names(anns) %in% c("file", "direction")]
     anns$file <- files
     names(anns)[1] <- "forward"
     dupes <- duplicated(anns)
@@ -27,7 +27,7 @@ annotate_files <- function(dir, pattern, annotations) {
         flog.error(paste("Some files have duplicated metadata. Please fix",
                         "the filenames or your pattern.",
                         "Duplicated files: %s"),
-                   paste(unique(anns$file[dupes])))
+                   paste(unique(anns$forward[dupes])))
         stop("Duplicated file information. Can not continue :(")
     }
     if (anns[, uniqueN(direction)] == 2) {
