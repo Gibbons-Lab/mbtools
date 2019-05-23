@@ -4,8 +4,8 @@
 
 count_med <- function(vals, counts) {
     o <- order(vals)
-    cum <- cumsum(counts[o])
-    idx <- which(cum > 0.5 * sum(counts))[1]
+    cum <- cumsum(as.numeric(counts[o]))
+    idx <- which(cum > 0.5 * sum(as.numeric(counts)))[1]
     return(vals[o][idx])
 }
 
