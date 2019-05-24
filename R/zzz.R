@@ -14,7 +14,7 @@ pkgs <- c("ggplot2", "dada2", "phyloseq", "ShortRead",
 
 tools <- c("minimap2", "slimm", "samtools")
 
-silent_lib <- function(...) suppressMessages(library(...))
+silent_lib <- function(...) suppressPackageStartupMessages(library(...))
 
 #' @importFrom stringr str_split_fixed
 tool_version <- function(command) {

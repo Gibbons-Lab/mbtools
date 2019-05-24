@@ -84,12 +84,21 @@ slimm <- function(object, ...) {
                   paste0(alignments$id, "_profile.tsv")),
         read_slimm) %>% rbindlist()
 
+    flog.info(paste("Estimating read lengths from a sample of",
+                    "100 reads per alignment."))
+    rlens <- apfun(alignments$alignment, read_length) %>% as.numeric()
+    names(rlens) <- alns$id
+    flog.info("Estimated median read length is %d, range is [%d, %d].",
+              median(rlens, na.rm = TRUE), min(rlens, na.rm = TRUE),
+              max(rlens, na.rm = TRUE))
+
     flog.info("Parsing coverage profiles with bin width of %dbp.",
               conf$bin_width)
     coverage <- apfun(
         file.path(reports, alignments$id,
                   paste0(alignments$id, "_uniq_coverage2.tsv")),
         read_slimm_coverage, conf$bin_width) %>% rbindlist()
+    coverage[, "read_length" := rlens[id]]
     artifact <- list(
         alignments = alignments,
         abundance = abundance,
