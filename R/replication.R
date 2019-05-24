@@ -67,7 +67,7 @@ irep <- function(profile, conf) {
 #' @param object An artifact containing a coverage map as returned by
 #' \code{link{slimm}}.
 #' @param ... Additional configuration parameters or a config object as
-#' returned by \code{\link{config_rate}}.
+#' returned by \code{\link{config_rep}}.
 #' @return An artifact containing the peak-to-through ratios as well as the
 #'  smoothed coverage profiles.
 #' @export
