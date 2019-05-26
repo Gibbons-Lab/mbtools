@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.2</span>
       </span>
     </div>
 
@@ -68,7 +68,7 @@
       <a href="../articles/04_long_align.html">Long read data - alignments</a>
     </li>
     <li>
-      <a href="../articles/05_lineage.html">Long read data - alignments</a>
+      <a href="../articles/05_lineage.html">Lineage calling with SLIMM</a>
     </li>
     <li>
       <a href="../articles/06_counting.html">Reference counting</a>
@@ -169,14 +169,14 @@
 <a href="#running-quality-assesment" class="anchor"></a>Running Quality assesment</h2>
 <p>Now we can run the quality assessment workflow step. This step does not take a configuration since it does not require that much prior information. It does take additional arguments to specify the maximum number of sampled reads and a quality cutoff that you consider sufficient. The default is a quality score of 10 which is the average for nanopore reads for instance. This corresponds to a per-base error of about 10%. We can be a bit more stringent here and use a cutoff of 1% error (quality score 20).</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">quals &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(<span class="dt">min_score =</span> <span class="dv">20</span>)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 21:46:50] Running quality assay for forward reads from 5 files.
-## INFO [2019-05-25 21:46:53] Median per base error is 0.016% (median score = 38.00).
-## INFO [2019-05-25 21:46:53] Mean per cycle entropy is 0.810 (in [0, 2]).
-## INFO [2019-05-25 21:46:53] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-05-25 21:46:53] Running quality assay for reverse reads from 5 files.
-## INFO [2019-05-25 21:46:56] Median per base error is 0.020% (median score = 37.00).
-## INFO [2019-05-25 21:46:56] Mean per cycle entropy is 0.730 (in [0, 2]).
-## INFO [2019-05-25 21:46:56] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<pre><code>## INFO [2019-05-25 22:09:53] Running quality assay for forward reads from 5 files.
+## INFO [2019-05-25 22:09:56] Median per base error is 0.016% (median score = 38.00).
+## INFO [2019-05-25 22:09:56] Mean per cycle entropy is 0.809 (in [0, 2]).
+## INFO [2019-05-25 22:09:56] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-05-25 22:09:56] Running quality assay for reverse reads from 5 files.
+## INFO [2019-05-25 22:09:59] Median per base error is 0.020% (median score = 37.00).
+## INFO [2019-05-25 22:09:59] Mean per cycle entropy is 0.731 (in [0, 2]).
+## INFO [2019-05-25 22:09:59] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
 <p>This runs in parallel and will report global quality metrics on the logging interface. We see that we have relatively shallow sequencing data, but the average quality and entropy is pretty good.</p>
 <div id="quality-plots" class="section level3">
 <h3 class="hasAnchor">

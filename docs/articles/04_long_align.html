@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.2</span>
       </span>
     </div>
 
@@ -68,7 +68,7 @@
       <a href="../articles/04_long_align.html">Long read data - alignments</a>
     </li>
     <li>
-      <a href="../articles/05_lineage.html">Long read data - alignments</a>
+      <a href="../articles/05_lineage.html">Lineage calling with SLIMM</a>
     </li>
     <li>
       <a href="../articles/06_counting.html">Reference counting</a>
@@ -163,10 +163,10 @@
 ## [1] "config"</code></pre>
 <p>This will be sufficient to align reads. As always the first argument can also be an artifact from <code>quality_control</code> or <code>preprocess</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">alns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/align_short_reads.html">align_short_reads</a></span>(fi, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 21:57:12] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-25 21:57:17] Finished aligning even1.
-## INFO [2019-05-25 21:57:24] Finished aligning even2.
-## INFO [2019-05-25 21:57:30] Finished aligning even3.</code></pre>
+<pre><code>## INFO [2019-05-25 22:20:11] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-05-25 22:20:16] Finished aligning even1.
+## INFO [2019-05-25 22:20:23] Finished aligning even2.
+## INFO [2019-05-25 22:20:29] Finished aligning even3.</code></pre>
 <p>You will get an output artifact that logs the created alignments…</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">alns<span class="op">$</span>alignments</a></code></pre></div>
 <pre><code>##       id            alignment success
@@ -178,16 +178,16 @@
 <pre><code>## 13 Mb</code></pre>
 <p>…and the logs in case something goes wrong.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(alns<span class="op">$</span>logs[[<span class="dv">1</span>]])</a></code></pre></div>
-<pre><code>## [M::mm_idx_gen::1.622*1.25] collected minimizers
-## [M::mm_idx_gen::1.919*1.51] sorted minimizers
-## [M::main::1.919*1.51] loaded/built the index for 10 target sequence(s)
-## [M::mm_mapopt_update::1.921*1.51] mid_occ = 1000
+<pre><code>## [M::mm_idx_gen::1.577*1.22] collected minimizers
+## [M::mm_idx_gen::1.872*1.50] sorted minimizers
+## [M::main::1.872*1.50] loaded/built the index for 10 target sequence(s)
+## [M::mm_mapopt_update::1.872*1.50] mid_occ = 1000
 ## [M::mm_idx_stat] kmer size: 21; skip: 11; is_hpc: 0; #seq: 10
-## [M::mm_idx_stat::2.000*1.49] distinct minimizers: 10112254 (98.45% are singletons); average occurrences: 1.040; average spacing: 5.997
-## [M::worker_pipeline::5.705*2.35] mapped 1000 sequences
+## [M::mm_idx_stat::1.954*1.48] distinct minimizers: 10112254 (98.45% are singletons); average occurrences: 1.040; average spacing: 5.997
+## [M::worker_pipeline::5.651*2.35] mapped 1000 sequences
 ## [M::main] Version: 2.15-r905
 ## [M::main] CMD: minimap2 -acx sr -t 3 --secondary=yes -N 100 -I 100G /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/nanopore/even1_S1_L001_R1_001.fastq.gz
-## [M::main] Real time: 5.716 sec; CPU: 13.417 sec; Peak RSS: 0.517 GB</code></pre>
+## [M::main] Real time: 5.662 sec; CPU: 13.275 sec; Peak RSS: 0.518 GB</code></pre>
 </div>
 </div>
   </div>

@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.2</span>
       </span>
     </div>
 
@@ -68,7 +68,7 @@
       <a href="../articles/04_long_align.html">Long read data - alignments</a>
     </li>
     <li>
-      <a href="../articles/05_lineage.html">Long read data - alignments</a>
+      <a href="../articles/05_lineage.html">Lineage calling with SLIMM</a>
     </li>
     <li>
       <a href="../articles/06_counting.html">Reference counting</a>
@@ -172,7 +172,7 @@
 ## [1] TRUE
 ## 
 ## $out_dir
-## [1] "/tmp/RtmppJwOk1"
+## [1] "/tmp/RtmpCy149r"
 ## 
 ## $trimLeft
 ## [1] 10
@@ -195,8 +195,8 @@
 <a href="#running-the-preprocessing-step" class="anchor"></a>Running the preprocessing step</h2>
 <p>We can now run our preprocessing step.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">filtered &lt;-<span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(files, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 21:47:17] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-25 21:47:23] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
+<pre><code>## INFO [2019-05-25 22:10:20] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-05-25 22:10:26] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
 <p>This will report the percentage of passed reads on the logging interface but you can also inspect that in detail by</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">filtered<span class="op">$</span>passed</a></code></pre></div>
 <pre><code>##      raw preprocessed   id

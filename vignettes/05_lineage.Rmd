@@ -1,6 +1,6 @@
 ---
-title: "Long read data - alignments"
-output: 
+title: "Lineage calling with SLIMM"
+output:
     rmarkdown::html_vignette:
         toc: true
         toc_depth: 3
@@ -14,10 +14,10 @@ vignette: >
 
 One thing you might want to do with metagenomics data is to identify the species
 present in your sample. Here we will use [SLIMM](https://github.com/seqan/slimm)
-which is a binning based classifier similar to Kraken. 
+which is a binning based classifier similar to Kraken.
 
 The reason we often use SLIMM is that it generates cleaned species-level coverage
-maps as a side effect which we use extensively. 
+maps as a side effect which we use extensively.
 
 ```{r}
 library(mbtools)
@@ -27,7 +27,7 @@ library(mbtools)
 
 We will use our shotgun data again since the reference genomes are also included
 in the SLIMM database. For real data you will want to align against the full
-SLIMM database of ~15K genomes. 
+SLIMM database of ~15K genomes.
 
 *Download instructions will come soon :/*
 
@@ -35,7 +35,7 @@ For now we will only use the SLIMM taxonomy mapping database which is delivered 
 mbtools as well.
 
 ```{r}
-slimm_db <- system.file("extdata/ABVF_SP_CMP_genomes.sldb", 
+slimm_db <- system.file("extdata/ABVF_SP_CMP_genomes.sldb",
                         package = "mbtools")
 ```
 
@@ -47,9 +47,9 @@ One advantage of SLIMM is that it is relatively agnostic to the alignment progra
 we can use our normal alignment workflow.
 
 ```{r}
-fi <- system.file("extdata/shotgun", package = "mbtools") %>% 
+fi <- system.file("extdata/shotgun", package = "mbtools") %>%
       find_read_files()
-ref <- system.file("extdata/genomes/zymo_mock.fna.gz", 
+ref <- system.file("extdata/genomes/zymo_mock.fna.gz",
                    package = "mbtools")
 
 alns <- align_short_reads(
