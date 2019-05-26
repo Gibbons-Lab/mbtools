@@ -1,0 +1,145 @@
+---
+title: "Amplicon sequencing analysis"
+author: "Christian Diener"
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{pkgdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Amplicon sequencing data analysis
+
+We can combine what we have seen in the quality assessment and preprocessing
+tutoarials with specific workflow steps for amplicon sequencing, for instance
+16S rRNA gene sequencing.
+
+As before we will load `mbtools` and use our example data:
+
+```{r}
+library(mbtools)
+path <- system.file("extdata/16S", package = "mbtools")
+```
+
+## Quality assessment
+
+As before a good first step is to look at the qualities of the raw data.
+
+```{r}
+quals <- find_read_files(path) %>% quality_control()
+quals$quality_plot
+```
+
+Again we see that we might want to truncate the reads a bit on the 3' ends
+to avoid the dip in quality. Depending on your amplified fragment make sure
+that this leaves sufficient overlap for merging (requires >20bp).
+
+## Denoise
+
+We can now perform our preprocessing and denoise workflow to obtain the
+amplicon sequence variants (ASVs) in our samples. We can chain our
+preprocessing and denoise workflows from our original quality assessment.
+For clarity we will define the confguration for the analysis on top.
+
+```{r}
+config <- list(
+    preprocess = config_preprocess(
+        trimLeft = 10,  # this is the default
+        trunLen = c(240, 180),  # forward and reverse truncation
+        out_dir = tempdir()  # will store filtered files in a temporary dir
+    ),
+    denoise = config_denoise()  # will only use defaults
+)
+
+denoised <- quals %>% preprocess(config$preprocess) %>% denoise(config$denoise)
+```
+
+This will run both workflow steps sequentially and will use all available CPUs
+by default. You will get some disgnostic output on the logging interface but
+you can also inspect those in the returned artifact.
+
+For instance to see how many reads were conserved in each processing step:
+
+```{r}
+denoised$passed_reads
+```
+
+We see that most samples were conserved (as reported in the logging).
+
+The abundance of each sequence variant is saved in `denoised$feature_tables`
+which contains abundances for samples x ASVs. The ASVs here have been named
+by their md5 hash value and you can get the taxonomy and original sequence
+from `denoised$taxonomy`:
+
+```{r}
+denoised$taxonomy[1, , drop = FALSE]
+```
+
+To see all steps run to obatin that output you can check the provenance:
+
+```{r}
+denoised$steps
+```
+
+## Managing several sequencing runs
+
+The `denoise` workflow step supports multiple sequencing runs in the same
+experiment. This requires that your files data table has a "run" column.
+If you sequencing files are organized such that every subfolder is a run you
+can simply use `find_read_files(path, dirs_are_runs = TRUE)`. Otherwise, you
+have to specify the run by hand. We will do so for our files here:
+
+```{r}
+files <- quals$files
+files[, run := rep(1:3, times = c(2, 2, 1))]
+print(files)
+```
+
+Rerunning the previous workflow with this file list will now give a slightly
+different output:
+
+```{r}
+byrun <- files %>% preprocess(config$preprocess) %>%
+         denoise(config$denoise)
+```
+
+Error profiles will now be estimated for each run individually and final tables
+will be merged at the end. This is slower than having all files in one run so
+you should always try to distribute your samples across as few sequencing runs
+as possible.
+
+## Converting to phyloseq
+
+For all further analyses you might want to work with a data type which is more
+suited for amplicon abundance data. You can directly obtain a phyloseq object
+with
+
+```{r}
+ps <- as_phyloseq(denoised)
+```
+
+It is possible to pass in metadata as a data frame with
+`to_phyloseq(object, metadata = df)`.
+
+You can now use all additional functions from `mbtools` on that. For instance
+we can get the ASV counts in a tidy data table:
+
+```{r}
+asv_counts <- taxa_count(ps, lev = NA)
+asv_counts[sample == "Mock" & reads > 0]
+```
+
+Here we see that we have identified 10 ASVs in the Mock sample.
+The exact number of strains in that sample is 20, which we don't find since
+we don't have enough reads available to learn a perfect error model. This
+is not surprising since those are only a few files from that particular study.
+
+We could also plot the phyla distribution across the samples:
+
+```{r}
+plot_taxa(ps)
+```
+

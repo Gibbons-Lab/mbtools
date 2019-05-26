@@ -115,8 +115,7 @@ count_alns <- function(alignments, reflengths, file, method = "em",
 #' @export
 #' @examples
 #'  config <- config_count(reference = "refs/mouse.fna.gz")
-config_count <- function(...) {
-    config <- list(
+config_count <- config_builder(list(
         reference = NA,
         threads = 1,
         method = "em",
@@ -124,13 +123,7 @@ config_count <- function(...) {
         cutoff = 0.01,
         tpm = FALSE,
         weights = FALSE
-    )
-    args <- list(...)
-    for (arg in names(args)) {
-        config[[arg]] <- args[[arg]]
-    }
-    return(config)
-}
+    ))
 
 #' Count alignment hits to a reference database.
 #'

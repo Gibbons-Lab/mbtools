@@ -39,7 +39,7 @@
 <li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -48,7 +48,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -68,7 +68,7 @@
 <li>
   <a href="https://github.com/Gibbons-Lab/mbtools">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -79,33 +79,33 @@
 </div>
 <!--/.navbar -->
 
-      
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Preprocessing of sequencing data</h1>
                         <h4 class="author">Christian Diener</h4>
-            
-      
+
+
       <small class="dont-index">Source: <a href="https://github.com/Gibbons-Lab/mbtools/blob/master/vignettes/preprocessing.Rmd"><code>vignettes/preprocessing.Rmd</code></a></small>
       <div class="hidden name"><code>preprocessing.Rmd</code></div>
 
     </div>
 
-    
-    
+
+
 <div id="preprocessing-of-raw-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#preprocessing-of-raw-data" class="anchor"></a>Preprocessing of raw data</h1>
 <p>For filtering and trimming of the raw reads we usually use the DADA2 functions but wrap them in a reproducible workflow step.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</a></code></pre></div>
 <pre><code>## Registered S3 methods overwritten by 'ggplot2':
-##   method         from 
+##   method         from
 ##   [.quosures     rlang
 ##   c.quosures     rlang
 ##   print.quosures rlang</code></pre>
 <pre><code>## Registered S3 method overwritten by 'R.oo':
-##   method        from       
+##   method        from
 ##   throw.default R.methodsS3</code></pre>
 <pre><code>## Also loading:</code></pre>
 <pre><code>##   - dada2=1.12.1
@@ -117,30 +117,30 @@
 ##   - yaml=2.2.0</code></pre>
 <pre><code>## Found tools:</code></pre>
 <pre><code>##   - minimap2=2.15-r905</code></pre>
-<pre><code>## 
+<pre><code>##
 ## Attaching package: 'mbtools'</code></pre>
 <pre><code>## The following object is masked _by_ 'package:BiocGenerics':
-## 
+##
 ##     normalize</code></pre>
 <div id="finding-your-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#finding-your-files" class="anchor"></a>Finding your files</h2>
 <p>We will again use our helper function to get a list of sequencing files.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/example"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
 <a class="sourceLine" id="cb10-2" title="2">files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</a>
 <a class="sourceLine" id="cb10-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
 <pre><code>##                                                                                                   forward
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D2_S190_L001_R1_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D3_S191_L001_R1_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/Mock_S280_L001_R1_001.fastq.gz
 ##                                                                                                   reverse
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R2_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R2_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D2_S190_L001_R2_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D3_S191_L001_R2_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/Mock_S280_L001_R2_001.fastq.gz
 ##      id injection_order lane
 ## 1: F3D0             188    1
 ## 2: F3D1             189    1
@@ -156,22 +156,22 @@
 <a class="sourceLine" id="cb12-2" title="2">config</a></code></pre></div>
 <pre><code>## $threads
 ## [1] TRUE
-## 
+##
 ## $out_dir
 ## [1] "/tmp/RtmpLSLeLV"
-## 
+##
 ## $trimLeft
 ## [1] 10
-## 
+##
 ## $truncLen
 ## [1] 240 200
-## 
+##
 ## $maxEE
 ## [1] 2
-## 
+##
 ## $truncQ
 ## [1] 2
-## 
+##
 ## $maxN
 ## [1] 0</code></pre>
 <p>We can see that there are some more parameters that we could specify.</p>
@@ -224,7 +224,7 @@
       </footer>
 </div>
 
-  
+
 
   </body>
 </html>

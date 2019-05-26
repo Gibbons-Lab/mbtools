@@ -39,7 +39,7 @@
 <li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -48,7 +48,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -68,7 +68,7 @@
 <li>
   <a href="https://github.com/Gibbons-Lab/mbtools">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -79,21 +79,21 @@
 </div>
 <!--/.navbar -->
 
-      
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Amplicon sequencing analysis</h1>
                         <h4 class="author">Christian Diener</h4>
-            
-      
+
+
       <small class="dont-index">Source: <a href="https://github.com/Gibbons-Lab/mbtools/blob/master/vignettes/amplicon_sequencing.Rmd"><code>vignettes/amplicon_sequencing.Rmd</code></a></small>
       <div class="hidden name"><code>amplicon_sequencing.Rmd</code></div>
 
     </div>
 
-    
-    
+
+
 <div id="amplicon-sequencing-data-analysis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#amplicon-sequencing-data-analysis" class="anchor"></a>Amplicon sequencing data analysis</h1>
@@ -101,12 +101,12 @@
 <p>As before we will load <code>mbtools</code> and use our example data:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</a></code></pre></div>
 <pre><code>## Registered S3 methods overwritten by 'ggplot2':
-##   method         from 
+##   method         from
 ##   [.quosures     rlang
 ##   c.quosures     rlang
 ##   print.quosures rlang</code></pre>
 <pre><code>## Registered S3 method overwritten by 'R.oo':
-##   method        from       
+##   method        from
 ##   throw.default R.methodsS3</code></pre>
 <pre><code>## Also loading:</code></pre>
 <pre><code>##   - dada2=1.12.1
@@ -118,12 +118,12 @@
 ##   - yaml=2.2.0</code></pre>
 <pre><code>## Found tools:</code></pre>
 <pre><code>##   - minimap2=2.15-r905</code></pre>
-<pre><code>## 
+<pre><code>##
 ## Attaching package: 'mbtools'</code></pre>
 <pre><code>## The following object is masked _by_ 'package:BiocGenerics':
-## 
+##
 ##     normalize</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/example"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a></code></pre></div>
 <div id="quality-assessment" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quality-assessment" class="anchor"></a>Quality assessment</h2>
@@ -187,13 +187,13 @@
 <p>We see that most samples were conserved (as reported in the logging).</p>
 <p>The abundance of each sequence variant is saved in <code>denoised$feature_tables</code> which contains abundances for samples x ASVs. The ASVs here have been named by their md5 hash value and you can get the taxonomy and original sequence from <code>denoised$taxonomy</code>:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">denoised<span class="op">$</span>taxonomy[<span class="dv">1</span>, , drop =<span class="st"> </span><span class="ot">FALSE</span>]</a></code></pre></div>
-<pre><code>##                                  Kingdom    Phylum          Class        
+<pre><code>##                                  Kingdom    Phylum          Class
 ## c69a3db92e1dcdebb01dfaa5b5795559 "Bacteria" "Bacteroidetes" "Bacteroidia"
 ##                                  Order           Family           Genus
-## c69a3db92e1dcdebb01dfaa5b5795559 "Bacteroidales" "Muribaculaceae" NA   
+## c69a3db92e1dcdebb01dfaa5b5795559 "Bacteroidales" "Muribaculaceae" NA
 ##                                  Species
-## c69a3db92e1dcdebb01dfaa5b5795559 NA     
-##                                  sequence                                                                                                                                                                                                                                                    
+## c69a3db92e1dcdebb01dfaa5b5795559 NA
+##                                  sequence
 ## c69a3db92e1dcdebb01dfaa5b5795559 "ACGGAGGATGCGAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGCAGGCGGAAGATCAAGTCAGCGGTAAAATTGAGAGGCTCAACCTCTTCGAGCCGTTGAAACTGGTTTTCTTGAGTGAGCGAGAAGTATGCGGAATGCGTGGTGTAGCGGTGAAATGCATAGATATCACGCAGAACTCCGATTGCGAAGGCAGCATACCGGCGCTCAACTGACGCTCATGCACGAAAGTGTGGGTATCGAACAG"</code></pre>
 <p>To see all steps run to obatin that output you can check the provenance:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">denoised<span class="op">$</span>steps</a></code></pre></div>
@@ -207,17 +207,17 @@
 <a class="sourceLine" id="cb22-2" title="2">files[, run <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">times =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>))]</a>
 <a class="sourceLine" id="cb22-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
 <pre><code>##                                                                                                   forward
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D0_S188_L001_R1_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D1_S189_L001_R1_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D2_S190_L001_R1_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D3_S191_L001_R1_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/Mock_S280_L001_R1_001.fastq.gz
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D2_S190_L001_R1_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D3_S191_L001_R1_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/Mock_S280_L001_R1_001.fastq.gz
 ##                                                                                                   reverse
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D0_S188_L001_R2_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D1_S189_L001_R2_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D2_S190_L001_R2_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/F3D3_S191_L001_R2_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/example/Mock_S280_L001_R2_001.fastq.gz
+## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R2_001.fastq.gz
+## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R2_001.fastq.gz
+## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D2_S190_L001_R2_001.fastq.gz
+## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D3_S191_L001_R2_001.fastq.gz
+## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/Mock_S280_L001_R2_001.fastq.gz
 ##      id injection_order lane run
 ## 1: F3D0             188    1   1
 ## 2: F3D1             189    1   1
@@ -347,7 +347,7 @@
       </footer>
 </div>
 
-  
+
 
   </body>
 </html>

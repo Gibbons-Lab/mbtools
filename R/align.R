@@ -113,11 +113,13 @@ align <- function(object, config) {
         unlink(file.path(config$alignment_dir, "prefix"), recursive = TRUE)
     }
     alns <- rbindlist(alns)
+    disk_size = sum(sapply(alns$alignment,
+                           function(f) file.info(f)$size))
+    class(disk_size) <- "object_size"
     artifact <- list(
         alignments = alns,
         logs = logs,
-        disk_size = sum(sapply(alns$alignment,
-                               function(f) file.info(f)$size))
+        disk_size = disk_size
     )
     return(artifact)
 }

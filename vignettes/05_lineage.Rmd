@@ -1,0 +1,104 @@
+---
+title: "Long read data - alignments"
+output: 
+    rmarkdown::html_vignette:
+        toc: true
+        toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{pkgdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Lineage calling
+
+One thing you might want to do with metagenomics data is to identify the species
+present in your sample. Here we will use [SLIMM](https://github.com/seqan/slimm)
+which is a binning based classifier similar to Kraken. 
+
+The reason we often use SLIMM is that it generates cleaned species-level coverage
+maps as a side effect which we use extensively. 
+
+```{r}
+library(mbtools)
+```
+
+## Getting the SLIMM DB
+
+We will use our shotgun data again since the reference genomes are also included
+in the SLIMM database. For real data you will want to align against the full
+SLIMM database of ~15K genomes. 
+
+*Download instructions will come soon :/*
+
+For now we will only use the SLIMM taxonomy mapping database which is delivered with
+mbtools as well.
+
+```{r}
+slimm_db <- system.file("extdata/ABVF_SP_CMP_genomes.sldb", 
+                        package = "mbtools")
+```
+
+which will save the db in the folder `refs`.
+
+## Aligning shotgun reads
+
+One advantage of SLIMM is that it is relatively agnostic to the alignment program. So
+we can use our normal alignment workflow.
+
+```{r}
+fi <- system.file("extdata/shotgun", package = "mbtools") %>% 
+      find_read_files()
+ref <- system.file("extdata/genomes/zymo_mock.fna.gz", 
+                   package = "mbtools")
+
+alns <- align_short_reads(
+    fi,
+    threads = 3,
+    reference = ref,
+    use_existing = FALSE)
+```
+
+## Using SLIMM
+
+SLIMM is again wrapped by a workflow so we can use it passing in an alignment
+artifact and a configuration.
+
+```{r}
+config <- config_slimm(
+    threads = 3,
+    database = slimm_db
+)
+
+config
+```
+
+With this we can perform the SLIMM workflow.
+
+```{r}
+sl <- slimm(alns, config)
+```
+
+The artifact now contains the species level lineage calls...
+
+```{r}
+sl$abundance
+```
+
+Where we see no successful calls since our coverage is way to low for the example data.
+
+However we can investigate which strains the data aligned to.
+
+```{r}
+sl$coverage[, uniqueN(strain)] %>% print()
+sl$coverage
+```
+
+Where we see we actually identified the correct 10 strains. Just the coverage
+is really low.
+
+```{r}
+hist(sl$coverage$reads[1][[1]])
+```
+
+Where we see that the majority of that genome has not been mapped.

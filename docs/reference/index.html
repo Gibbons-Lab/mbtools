@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.34.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.1</span>
       </span>
     </div>
 
@@ -83,13 +83,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/amplicon_sequencing.html">Amplicon sequencing analysis</a>
+      <a href="../articles/00_qa.html">Quality control of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/preprocessing.html">Preprocessing of sequencing data</a>
+      <a href="../articles/01_preprocessing.html">Preprocessing of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/qa.html">Quality control of sequencing data</a>
+      <a href="../articles/02_amplicon_sequencing.html">Amplicon sequencing analysis</a>
+    </li>
+    <li>
+      <a href="../articles/03_shotgun_align.html">Shotgun data - alignments</a>
+    </li>
+    <li>
+      <a href="../articles/04_long_align.html">Long read data - alignments</a>
+    </li>
+    <li>
+      <a href="../articles/05_lineage.html">Long read data - alignments</a>
+    </li>
+    <li>
+      <a href="../articles/06_counting.html">Reference counting</a>
     </li>
   </ul>
 </li>
@@ -222,15 +234,15 @@ factor variable. Can be used as post-hoc test for regression.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="config_ptr.html">config_ptr()</a></code> </p>
-        </td>
-        <td><p>Build a configuration for the PTR workflow.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="config_reference.html">config_reference()</a></code> </p>
         </td>
         <td><p>Build a configuration for the reference removal workflow.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="config_rep.html">config_rep()</a></code> </p>
+        </td>
+        <td><p>Build a configuration for the rate workflow.</p></td>
       </tr><tr>
         
         <td>
@@ -367,12 +379,6 @@ positions in the transcript the fragment could map to.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="peak_to_through.html">peak_to_through()</a></code> </p>
-        </td>
-        <td><p>Estimate replication rates by the peak-to-through ratio.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="plot_counts.html">plot_counts()</a></code> </p>
         </td>
         <td><p>Plots counts for several taxa across a co-variable</p></td>
@@ -458,6 +464,12 @@ input files.</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="replication_rates.html">replication_rates()</a></code> </p>
+        </td>
+        <td><p>Estimate replication rates by the iRep method.</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="select.html">select()</a></code> </p>
         </td>
         <td><p>Very simple select for mbtools artifacts. Just gets a particular entry.</p></td>
@@ -473,6 +485,12 @@ input files.</p></td>
           <p><code><a href="slimm.html">slimm()</a></code> </p>
         </td>
         <td><p>Quantifies abundances  and coverage using SLIMM.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="slimm_files.html">slimm_files</a></code> </p>
+        </td>
+        <td><p>The SLIMM taxonomy databases</p></td>
       </tr><tr>
         
         <td>

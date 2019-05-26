@@ -1,0 +1,98 @@
+---
+title: "Reference counting"
+output: 
+    rmarkdown::html_vignette:
+        toc: true
+        toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{pkgdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Reference counting
+
+One basic anaylisis we want to perform is to count the abundance of some references
+in our data. Here reference is a broad term and may refer to transcripts, genomes,
+or amplicon sequences contained in a reference database.
+
+For this `mbtools` implements a general purpose expectation maximization (EM) counter.
+It is implemented in C++ to perform fast and usually reading the alignment file takes
+longer than the actual analysis.
+
+```{r}
+library(mbtools)
+```
+
+## Alignment
+
+Let's start by aligning our short read data to a reference database of 10 microbial
+genomes. 
+
+```{r}
+fi <- system.file("extdata/shotgun", package = "mbtools") %>% 
+      find_read_files()
+ref <- system.file("extdata/genomes/zymo_mock.fna.gz", 
+                   package = "mbtools")
+
+alns <- align_short_reads(
+    fi,
+    threads = 3,
+    reference = ref,
+    use_existing = FALSE)
+```
+
+## EM counting
+
+Counting is yet again a workflow and requires an alignment artifact and a configuration.
+
+```{r}
+config <- config_count(
+    reference = system.file("extdata/genomes/zymo_mock.fna.gz", 
+                            package = "mbtools"),
+    threads = 1,
+    weights = TRUE
+)
+
+config
+```
+
+And we can proceed to counting:
+
+```{r}
+cn <- count_references(alns, config)
+```
+
+This creates a count artifact which contains the counts.
+
+```{r}
+cn$counts
+```
+
+In each sample we have 8 microbes with an abundance of 12% and 2 with an abundance
+of 2%. We can look at the data to confirm that:
+
+```{r}
+ggplot(cn$counts, aes(x=counts, y=reference)) + 
+    geom_point() +
+    facet_wrap(~ sample) + theme_minimal()
+```
+
+Looks ok, but there is a lot of noise since we have very low depth.
+
+We could also compare that with a naive counting method that just uses the best
+alignment score. In our case that will perform equally since we have little
+multi-mapping here.
+
+```{r}
+config$method <- "naive"
+cn2 <- count_references(alns, config)
+
+counts <- cn$counts[cn2$counts, on = c("sample", "reference", "effective_length")]
+
+ggplot(counts, aes(x = counts, y = i.counts)) + 
+    geom_point() + geom_smooth(method = "lm") +
+    labs(x = "em", y = "naive") + theme_classic()
+```
+
+As we see they both give the same results for that simple case.

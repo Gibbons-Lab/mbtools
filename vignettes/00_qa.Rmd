@@ -1,0 +1,102 @@
+---
+title: "Quality control of sequencing data"
+author: "Christian Diener"
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{pkgdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Quality assessment of you raw data
+
+One of the first steps after sequencing is usually assessing the overall
+quality of your sequencing experiment. Most tools specialize on a
+per-sample workflow for that which has not worked well for me since we
+usually analyze medium to large batches of samples. The functions here
+are meant to facilitate this particular workflow.
+
+First start by loading mbtools:
+
+```{r}
+library(mbtools)
+```
+
+## Finding your files
+
+`mbtools` includes helpers to find your sequencing files. It works out
+of the box for normal Illumina file names (the ones you get from basespace).
+There is a small example data set in our package which we can use to
+illustrate that.
+
+```{r}
+path <- system.file("extdata/16S", package = "mbtools")
+files <- find_read_files(path)
+print(files)
+```
+
+As you can see this will try to infer the id and read directions.
+
+## Running Quality assesment
+
+Now we can run the quality assessment workflow step. This step does not
+take a configuration since it does not require that much prior information.
+It does take additional arguments to specify the maximum number of sampled
+reads and a quality cutoff that you consider sufficient. The default is a
+quality score of 10 which is the average for nanopore reads for instance.
+This corresponds to a per-base error of about 10%. We can be a bit more
+stringent here and use a cutoff of 1% error (quality score 20).
+
+```{r}
+quals <- files %>% quality_control(min_score = 20)
+```
+
+This runs in parallel and will report global quality metrics on the logging interface. We see
+that we have relatively shallow sequencing data, but the average quality
+and entropy is pretty good.
+
+### Quality plots
+
+In order to indentify points where the quality tanks we can have a look
+at the average quality profile.
+
+```{r}
+quals$quality_plot
+```
+
+This is a quick global plot giving us the overall average quality per sample.
+The 5' (first 10bp) qualities are usually artificially lowered by Illumina sequencers and
+have some lower confidence. We also see some declining qualities on the 3' of the
+reverse reads. This is all pretty typical for MiSeq data.
+
+### Length plots
+
+One additional questions is if we have samples were reads are shorter of have
+strongly declining qualities compared to other samples. This can be evaluated
+by the length plot.
+
+```{r}
+quals$length_plot
+```
+
+You usually want to see horizontal bands of a single color. If the colors become
+lighter towards the right that means that some samples have shorter reads after
+trimming which could complicate some workflows.
+
+### Entropy plots
+
+We can also check how heterogenous the reads positions are. This is quantified
+by the entropy which tells us how varying a single position is. Any value
+appreciably larger than 0 is usually fine.
+
+```{r}
+quals$entropy_plot
+```
+
+16S amplified regions tend to have some lower variability on the ends which
+is what we see by the lower entropy on the beginning of the forward and
+reverse reads (the ends of the amplicon).
+
