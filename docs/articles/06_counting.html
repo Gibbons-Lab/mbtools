@@ -150,10 +150,10 @@
 <a class="sourceLine" id="cb10-8" title="8">    <span class="dt">threads =</span> <span class="dv">3</span>,</a>
 <a class="sourceLine" id="cb10-9" title="9">    <span class="dt">reference =</span> ref,</a>
 <a class="sourceLine" id="cb10-10" title="10">    <span class="dt">use_existing =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:21:04] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-25 22:21:06] Finished aligning even1.
-## INFO [2019-05-25 22:21:08] Finished aligning even2.
-## INFO [2019-05-25 22:21:10] Finished aligning even3.</code></pre>
+<pre><code>## INFO [2019-05-25 22:28:23] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-05-25 22:28:25] Finished aligning even1.
+## INFO [2019-05-25 22:28:27] Finished aligning even2.
+## INFO [2019-05-25 22:28:30] Finished aligning even3.</code></pre>
 </div>
 <div id="em-counting" class="section level2">
 <h2 class="hasAnchor">
@@ -192,17 +192,17 @@
 ## [1] "config"</code></pre>
 <p>And we can proceed to counting:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">cn &lt;-<span class="st"> </span><span class="kw"><a href="../reference/count_references.html">count_references</a></span>(alns, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:21:11] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
-## INFO [2019-05-25 22:21:11] Normalized IDs. Starting counting...
-## INFO [2019-05-25 22:21:12] [alignments/even1.bam] Read 16941 alignments.
-## INFO [2019-05-25 22:21:12] [alignments/even1.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:21:12] [alignments/even1.bam] Used 20 EM iterations on 16 equivalence classes. Last max. abs. change was 0.
-## INFO [2019-05-25 22:21:12] [alignments/even2.bam] Read 16804 alignments.
-## INFO [2019-05-25 22:21:12] [alignments/even2.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:21:12] [alignments/even2.bam] Used 20 EM iterations on 12 equivalence classes. Last max. abs. change was 1.1e-13.
-## INFO [2019-05-25 22:21:12] [alignments/even3.bam] Read 17518 alignments.
-## INFO [2019-05-25 22:21:12] [alignments/even3.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:21:12] [alignments/even3.bam] Used 20 EM iterations on 20 equivalence classes. Last max. abs. change was 0.</code></pre>
+<pre><code>## INFO [2019-05-25 22:28:30] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
+## INFO [2019-05-25 22:28:31] Normalized IDs. Starting counting...
+## INFO [2019-05-25 22:28:31] [alignments/even1.bam] Read 16941 alignments.
+## INFO [2019-05-25 22:28:31] [alignments/even1.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-25 22:28:31] [alignments/even1.bam] Used 20 EM iterations on 16 equivalence classes. Last max. abs. change was 0.
+## INFO [2019-05-25 22:28:31] [alignments/even2.bam] Read 16804 alignments.
+## INFO [2019-05-25 22:28:31] [alignments/even2.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-25 22:28:31] [alignments/even2.bam] Used 20 EM iterations on 12 equivalence classes. Last max. abs. change was 1.1e-13.
+## INFO [2019-05-25 22:28:31] [alignments/even3.bam] Read 17518 alignments.
+## INFO [2019-05-25 22:28:31] [alignments/even3.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-25 22:28:31] [alignments/even3.bam] Used 20 EM iterations on 20 equivalence classes. Last max. abs. change was 0.</code></pre>
 <p>This creates a count artifact which contains the counts.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">cn<span class="op">$</span>counts</a></code></pre></div>
 <pre><code>##      reference   counts effective_length sample
@@ -246,14 +246,14 @@
 <p>We could also compare that with a naive counting method that just uses the best alignment score. In our case that will perform equally since we have little multi-mapping here.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">config<span class="op">$</span>method &lt;-<span class="st"> "naive"</span></a>
 <a class="sourceLine" id="cb19-2" title="2">cn2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/count_references.html">count_references</a></span>(alns, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:21:12] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
-## INFO [2019-05-25 22:21:13] Normalized IDs. Starting counting...
-## INFO [2019-05-25 22:21:13] [alignments/even1.bam] Read 16941 alignments.
-## INFO [2019-05-25 22:21:13] [alignments/even1.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:21:13] [alignments/even2.bam] Read 16804 alignments.
-## INFO [2019-05-25 22:21:13] [alignments/even2.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:21:13] [alignments/even3.bam] Read 17518 alignments.
-## INFO [2019-05-25 22:21:13] [alignments/even3.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].</code></pre>
+<pre><code>## INFO [2019-05-25 22:28:32] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
+## INFO [2019-05-25 22:28:32] Normalized IDs. Starting counting...
+## INFO [2019-05-25 22:28:32] [alignments/even1.bam] Read 16941 alignments.
+## INFO [2019-05-25 22:28:32] [alignments/even1.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-25 22:28:32] [alignments/even2.bam] Read 16804 alignments.
+## INFO [2019-05-25 22:28:32] [alignments/even2.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-25 22:28:32] [alignments/even3.bam] Read 17518 alignments.
+## INFO [2019-05-25 22:28:32] [alignments/even3.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].</code></pre>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">counts &lt;-<span class="st"> </span>cn<span class="op">$</span>counts[cn2<span class="op">$</span>counts, on =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"sample"</span>, <span class="st">"reference"</span>, <span class="st">"effective_length"</span>)]</a>
 <a class="sourceLine" id="cb21-2" title="2"></a>
 <a class="sourceLine" id="cb21-3" title="3"><span class="kw">ggplot</span>(counts, <span class="kw">aes</span>(<span class="dt">x =</span> counts, <span class="dt">y =</span> i.counts)) <span class="op">+</span><span class="st"> </span></a>
