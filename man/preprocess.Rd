@@ -4,13 +4,13 @@
 \alias{preprocess}
 \title{Runs preprocessing of sequencing reads.}
 \usage{
-preprocess(object, config)
+preprocess(object, ...)
 }
 \arguments{
 \item{object}{An experiment data table as returned by
 \code{\link{find_read_files}} or a worflow object.}
 
-\item{config}{A configuration file as returned by
+\item{...}{A configuration as returned by
 \code{\link{config_preprocess}}.}
 }
 \value{
