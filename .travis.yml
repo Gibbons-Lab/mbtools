@@ -6,7 +6,7 @@ cache: packages
 r: bioc-release
 
 env:
-  - CXX=g++-6
+  - CXX=g++-5
 
 addons:
   apt:
@@ -14,8 +14,8 @@ addons:
       - libxml2-dev
       - samtools
       - cmake
-      - gcc-6
-      - g++-6
+      - gcc-5
+      - g++-5
 
 # Don't build vignettes
 before_install:
