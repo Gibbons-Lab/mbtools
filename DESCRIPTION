@@ -21,7 +21,6 @@ Imports:
     ggplot2,
     scales,
     stringr,
-    R.utils,
     Hmisc,
     data.table,
     yaml,

@@ -6,7 +6,6 @@
 #' @importFrom utils packageVersion download.file read.table
 #' @importFrom stringr str_match
 #' @importFrom Biostrings BStringSet
-#' @importFrom R.utils gunzip
 NULL
 
 pkgs <- c("ggplot2", "dada2", "phyloseq", "ShortRead",
