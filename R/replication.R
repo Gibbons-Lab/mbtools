@@ -18,7 +18,7 @@ config_rep <- config_builder(list(
     threads = TRUE
 ))
 
-#' @importFrom stats lm anova
+#' @importFrom stats lm anova coef cor median
 irep <- function(profile, conf) {
     profile <- copy(profile)
     w <- profile$bin_width
