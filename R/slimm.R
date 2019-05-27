@@ -29,7 +29,7 @@ config_slimm <- config_builder(list(
     bin_width = 1000,
     relative_cutoff = 0,
     database = "refs/ABVF_SP_CMP_genomes.sldb",
-    threads = TRUE,
+    threads = getOption("mc.cores", 1),
     rank = "species"
 ))
 

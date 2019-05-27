@@ -14,7 +14,7 @@
 config_align <- config_builder(list(
     reference = NULL,
     build_index = FALSE,
-    threads = TRUE,
+    threads = getOption("mc.cores", 1),
     alignment_dir = "alignments",
     max_hits = 100,
     use_existing = TRUE,

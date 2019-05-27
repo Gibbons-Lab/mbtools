@@ -114,9 +114,10 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
     NumericVector change, cutoffs;
     std::vector<int> txs;
     LogicalVector is_large;
-    double read_sum, count;
+    double read_sum, count, ptot;
     std::unordered_map<std::string, std::vector<int> > ecs;
     unsigned int w_start;
+    double noise_w = mean(weights);
 
     for (int i=0; i<txreads.nrow(); ++i) {
         if (txreads(i, 0) >= ntx) stop("wrong number of transcripts");
@@ -136,10 +137,10 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
             pnew[i] = 0.0;
         }
         for (std::pair<std::string, std::vector<int> > el : ecs) {
-            read_sum = 0.0;
             txs = el.second;
             count = (double) txs[0];
             w_start = (txs.size() + 1)/2;
+            read_sum = noise_w;
             for (unsigned int txi=1; txi<w_start; ++txi) {
                 // This is P(txs) * mean_r(weight)
                 read_sum += p[txs[txi]] * txs[txi + w_start - 1] / count;
@@ -152,8 +153,9 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
                                   read_sum;
             }
         }
+        ptot = sum(pnew);
         pnew = (pnew / txlengths);
-        pnew = pnew * nr / sum(pnew);
+        pnew = pnew * ptot / sum(pnew) ;
         change = abs(pnew - p);
         cutoffs = reltol * pnew + abstol;
         if (is_true(all(change < cutoffs)) && k >= miniter) {
@@ -165,5 +167,6 @@ List em_count(NumericMatrix txreads, NumericVector txlengths,
     return List::create(_["p"] = pnew,
                         _["iterations"] = k,
                         _["change"] = change,
-                        _["ecs"] = ecs);
+                        _["ecs"] = ecs,
+                        _["unobserved"] = nr - ptot);
 }

@@ -24,7 +24,7 @@ test_that("EM counting works", {
     expect_named(cn, c("alignments", "counts", "steps"))
     expect_s3_class(cn$counts, "data.table")
     expect_true(cn$counts[, all(counts > 0)])
-    expect_equal(cn$counts[, uniqueN(reference)], 10)
+    expect_equal(cn$counts[, uniqueN(reference, na.rm = TRUE)], 10)
 })
 
 test_that("weighted EM counting works", {
@@ -33,7 +33,7 @@ test_that("weighted EM counting works", {
     expect_named(cn, c("alignments", "counts", "steps"))
     expect_s3_class(cn$counts, "data.table")
     expect_true(cn$counts[, all(counts > 0)])
-    expect_equal(cn$counts[, uniqueN(reference)], 10)
+    expect_equal(cn$counts[, uniqueN(reference, na.rm = TRUE)], 10)
 })
 
 test_that("naive counting works", {
@@ -42,7 +42,7 @@ test_that("naive counting works", {
     expect_named(cn, c("alignments", "counts", "steps"))
     expect_s3_class(cn$counts, "data.table")
     expect_true(cn$counts[, all(counts > 0)])
-    expect_equal(cn$counts[, uniqueN(reference)], 10)
+    expect_equal(cn$counts[, uniqueN(reference, na.rm = TRUE)], 10)
 })
 
 flog.threshold(INFO)

@@ -87,19 +87,12 @@ remove_reference <- function(reads, out, reference, alignments=NA,
 #' @export
 #' @examples
 #'  config <- config_reference(reference = "refs/mouse.fna.gz")
-config_reference <- function(...) {
-    config <- list(
-        threads = TRUE,
+config_reference <- config_builder(list(
+        threads = getOption("mc.cores", 1),
         out_dir = "reference_removed",
         alignment_dir = NA,
         reference = NA
-    )
-    args <- list(...)
-    for (arg in names(args)) {
-        config[[arg]] <- args[[arg]]
-    }
-    return(config)
-}
+))
 
 
 #' Filter a set of reference sequences from the data set.seed
@@ -109,19 +102,21 @@ config_reference <- function(...) {
 #'
 #' @param object An experiment data table as returned by
 #'  \code{\link{find_read_files}} or a worflow object.
-#' @param config A configuration file as returned by
+#' @param ... A configuration as returned by
 #'  \code{\link{config_reference}}.
 #' @return A list with the processed files and removal counts for each sample.
 #' @export
-filter_reference <- function(object, config) {
+filter_reference <- function(object, ...) {
     files <- get_files(object)
+    config <- config_parser(list(...), config_reference)
     if (is.na(config$reference)) {
         stop("Must specify a reference to remove in configuration :/")
     }
     paired <- "reverse" %in% names(files)
     dir.create(config$out_dir, showWarnings = FALSE, recursive = TRUE)
     # we will leave 3 threads for minimap2
-    threads <- ceiling(config$threads / 3)
+    threads <- parse_threads(config$threads, FALSE)
+    threads <- ceiling(threads / 3)
     flog.info("Actually using %d threads to filter and count.", threads * 3)
     counts <- mclapply(1:nrow(files), function(i) {
         row <- files[i]

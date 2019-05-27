@@ -13,7 +13,7 @@
 #' @examples
 #'  config <- config_preprocess(truncLen = c(240, 250))
 config_preprocess <- config_builder(list(
-        threads = TRUE,
+        threads = getOption("mc.cores", 1),
         out_dir = "preprocessed",
         trimLeft = 10,
         truncLen = 0,

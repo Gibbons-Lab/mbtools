@@ -15,7 +15,7 @@ config_rep <- config_builder(list(
     linear_quantile = 0.8,
     min_coverage = 2,
     min_covered = 0.6,
-    threads = TRUE
+    threads = getOption("mc.cores", 1)
 ))
 
 #' @importFrom stats lm anova coef cor median

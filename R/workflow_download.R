@@ -8,7 +8,7 @@
 #' @param threads Maximum number of parallel file downloads.
 #' @return The list of files with indicated download success.
 #' @export
-download_files <- function(files, threads = 1) {
+download_files <- function(files, threads = getOption("mc.cores", 1)) {
     downloaded <- mclapply(1:nrow(files), function(i) {
         meta <- files[i, ]
         if (!dir.exists(dirname(meta$target))) {

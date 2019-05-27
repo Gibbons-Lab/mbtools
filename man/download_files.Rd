@@ -4,7 +4,7 @@
 \alias{download_files}
 \title{Download a list of files.}
 \usage{
-download_files(files, threads = 1)
+download_files(files, threads = getOption("mc.cores", 1))
 }
 \arguments{
 \item{files}{A data frame-like object with three columns: url, target,

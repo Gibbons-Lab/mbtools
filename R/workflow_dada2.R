@@ -26,7 +26,7 @@ classified_taxa <- function(feature_table, tax_table) {
 #' @examples
 #'  config <- config_denoise(nbases = 1e9)
 config_denoise <- config_builder(list(
-        threads = TRUE,
+        threads = getOption("mc.cores", 1),
         nbases = 2.5e8,
         pool = FALSE,
         bootstrap_confidence = 0.5,

@@ -1,6 +1,6 @@
 ---
 title: "Shotgun data - alignments"
-output: 
+output:
     rmarkdown::html_vignette:
         toc: true
         toc_depth: 3
@@ -19,11 +19,11 @@ we recommend you preprocess the reads first as described in an earlier vignette.
 library(mbtools)
 ```
 
-# Aligning reads 
+# Aligning reads
 
 We use [minimap2](https://github.com/lh3/minimap2) for everything since it performs
 as good as other aligners but does not require explicit building of the reference.
-This way your reference database can just be a (compressed) fasta file. 
+This way your reference database can just be a (compressed) fasta file.
 
 As example data we will use 3 samples generated with the polyester read sampler
 from a list of 10 reference genomes in equal abundances.
@@ -33,9 +33,9 @@ from a list of 10 reference genomes in equal abundances.
 Let's create our file list for the example data and reference database:
 
 ```{r}
-fi <- system.file("extdata/shotgun", package = "mbtools") %>% 
+fi <- system.file("extdata/shotgun", package = "mbtools") %>%
       find_read_files()
-ref <- system.file("extdata/genomes/zymo_mock.fna.gz", 
+ref <- system.file("extdata/genomes/zymo_mock.fna.gz",
                    package = "mbtools")
 ```
 

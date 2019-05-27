@@ -69,6 +69,13 @@ This creates a count artifact which contains the counts.
 cn$counts
 ```
 
+Note that there is a NA reference. This is the number of reads likely coming
+from a sequence not contained in the reference.
+
+```{r}
+cn$counts[is.na(reference)]
+```
+
 In each sample we have 10 microbes with the same abundance.
 
 ```{r}

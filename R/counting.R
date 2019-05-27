@@ -76,9 +76,11 @@ count_alns <- function(alignments, reflengths, file, method = "em",
                               length(refnames), max(rids) + 1, maxit,
                               cutoff, cutoff ^ 2)
         flog.info(paste("[%s] Used %d EM iterations on %d equivalence classes.",
-                        "Last max. abs. change was %.2g."),
+                        "Last max. abs. change was %.2g. Database concordance",
+                        "is %.2f%%."),
                   file, em_result$iterations, length(em_result$ecs),
-                  max(em_result$change))
+                  max(em_result$change),
+                  100 * em_result$unobserved / (max(rids) + 1))
         equiv_classes <- em_result$ecs
         counts <- data.table(reference = refnames,
                              counts = em_result$p,
@@ -91,6 +93,9 @@ count_alns <- function(alignments, reflengths, file, method = "em",
             counts[counts < cutoff, "counts" := 0]
         }
         counts <- counts[counts > 0]
+        counts <- rbind(counts, data.table(reference = NA,
+                                           counts = em_result$unobserved,
+                                           effective_length = NA))
     }
     if (ecs) {
         equiv_classes <- lapply(equiv_classes, function(ec) {
@@ -117,7 +122,7 @@ count_alns <- function(alignments, reflengths, file, method = "em",
 #'  config <- config_count(reference = "refs/mouse.fna.gz")
 config_count <- config_builder(list(
         reference = NA,
-        threads = 1,
+        threads = getOption("mc.cores", 1),
         method = "em",
         maxit = 1000,
         cutoff = 0.01,
@@ -127,13 +132,17 @@ config_count <- config_builder(list(
 
 #' Count alignment hits to a reference database.
 #'
-#' This will correct for effective treference lengths as done by almost any
+#' This will correct for effective reference lengths as done by almost any
 #' good tool those days. So the returned counts are not correlated with
 #' feature lengths. By default an expectation maximization algorithm is
 #' used to resolve multiple mappings of one read to many references which
 #' pretty much always happens in metagenomics data sets. The optimized
-#' likelihodd function is very similar to the one in kallisto
+#' likelihood function is very similar to the one in kallisto
 #' (https://doi.org/10.1038/nbt.3519).
+#'
+#' Note that for the EM method there will be a NA reference reported which
+#' corresponds to the approximate abundance of references not contained in the
+#' database.
 #'
 #' @param object An experiment data table as returned by any alignment method
 #'  like \code{\link{align_short_reads}} or \code{\link{align_long_reads}} .
@@ -163,7 +172,8 @@ count_references <- function(object, ...) {
         bam <- read_bam(file)
         flog.info("[%s] Read %d alignments.", file, length(bam))
         cn <- count_alns(bam, reflengths, file = file, method = config$method,
-                         weighting = config$weights)
+                         weighting = config$weights, maxit = config$maxit,
+                         cutoff = config$cutoff)
         cn[, "sample" := strsplit(basename(file), ".bam")[[1]][1]]
         return(cn)
     })
