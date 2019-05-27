@@ -11,6 +11,8 @@ addons:
       - libxml2-dev
       - samtools
       - cmake
+      - gcc-5
+      - g++-5
       - build-essential
 
 # Don't build vignettes
