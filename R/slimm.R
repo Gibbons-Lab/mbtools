@@ -96,7 +96,7 @@ slimm <- function(object, ...) {
     flog.info(paste("Estimating read lengths from a sample of",
                     "100 reads per alignment."))
     rlens <- apfun(alignments$alignment, read_length) %>% as.numeric()
-    names(rlens) <- alns$id
+    names(rlens) <- alignments$id
     flog.info("Estimated median read length is %d, range is [%d, %d].",
               median(rlens, na.rm = TRUE), min(rlens, na.rm = TRUE),
               max(rlens, na.rm = TRUE))

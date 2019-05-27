@@ -110,7 +110,7 @@ replication_rates <- function(object, ...) {
     rates <- lapply(rates, "[[", "rate") %>% rbindlist()
     flog.info(paste("Finished. %d genome-sample combinations had sufficient",
                     "coverage for obtaining replication rates."),
-              rates[, sum(!is.na(rate))])
+              nrow(rates))
 
     artifact <- list(
         rate = rates,

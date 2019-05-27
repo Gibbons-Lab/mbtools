@@ -25,8 +25,7 @@ classified_taxa <- function(feature_table, tax_table) {
 #' @export
 #' @examples
 #'  config <- config_denoise(nbases = 1e9)
-config_denoise <- function(...) {
-    config <- list(
+config_denoise <- config_builder(list(
         threads = TRUE,
         nbases = 2.5e8,
         pool = FALSE,
@@ -36,13 +35,8 @@ config_denoise <- function(...) {
         species_db = paste0("https://zenodo.org/record/1172783/files/",
                             "silva_species_assignment_v132.fa.gz?download=1"),
         hash = TRUE
-    )
-    args <- list(...)
-    for (arg in names(args)) {
-        config[[arg]] <- args[[arg]]
-    }
-    return(config)
-}
+))
+
 
 #' @importFrom dada2 getUniques
 getN <- function(x) {
@@ -71,7 +65,7 @@ getN <- function(x) {
 #'
 #' @param object An experiment data table as returned by
 #'  \code{\link{find_read_files}} or a worflow object.
-#' @param config A configuration file as returned by
+#' @param ... A configuration as returned by
 #'  \code{\link{config_denoise}}.
 #' @return A list containing the workflow results:
 #' \describe{
@@ -93,9 +87,10 @@ getN <- function(x) {
 #' @importFrom dada2 learnErrors dada removeBimeraDenovo
 #'  mergeSequenceTables assignTaxonomy addSpecies plotErrors
 #' @importFrom digest digest
-denoise <- function(object, config) {
+denoise <- function(object, ...) {
     files <- get_files(object)
     files <- copy(files)
+    config <- config_parser(list(...), config_denoise)
     if (!"run" %in% names(files)) {
         files[, "run" := "all"]
     }
@@ -167,15 +162,25 @@ denoise <- function(object, config) {
     tmp <- tempdir()
     if (grepl("tp(s*)://", config$taxa_db)) {
         taxa_db <- file.path(tmp, "taxa.fna.gz")
-        flog.info("Downloading taxa db to %s...", taxa_db)
-        download.file(config$taxa_db, taxa_db)
+        if (!file.exists(taxa_db)) {
+            flog.info("Downloading taxa db to %s...", taxa_db)
+            download.file(config$taxa_db, taxa_db, quiet = TRUE)
+        } else {
+            flog.info("Found existing taxa db `%s`. Using that one.",
+                      taxa_db)
+        }
     } else {
         taxa_db <- config$taxa_db
     }
     if (grepl("tp(s*)://", config$species_db)) {
         species_db <- file.path(tmp, "species.fna.gz")
-        flog.info("Downloading taxa db to %s...", species_db)
-        download.file(config$species_db, species_db)
+        if (!file.exists(species_db)) {
+            flog.info("Downloading species db to %s...", species_db)
+            download.file(config$species_db, species_db, quiet = TRUE)
+        } else {
+            flog.info("Found existing species db `%s`. Using that one.",
+                      species_db)
+        }
     } else {
         species_db <- config$taxa_db
     }

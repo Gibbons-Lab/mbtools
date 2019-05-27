@@ -10,12 +10,17 @@ addons:
     packages:
       - libxml2-dev
       - samtools
+      - cmake
+      - build-essentials
 
 # Don't build vignettes
 before_install:
   - rm -rf vignettes
   - curl -L https://github.com/lh3/minimap2/releases/download/v2.13/minimap2-2.13_x64-linux.tar.bz2 | tar -jxvf -
-  - sudo cp ./minimap2-2.13_x64-linux/minimap2 /usr/bin/minimap2 && rm -rf ./minimap2-*
+  - sudo cp ./minimap2-2.13_x64-linux/minimap2 /usr/bin/ && rm -rf ./minimap2-*
+  - git clone --recursive git@github.com:seqan/slimm
+  - (cd slimm && mkdir build && cd build && cmake .. && make && cp bin/slimm /usr/bin/)
+  - rm -rf slimm
 
 after_success:
   - Rscript -e 'covr::codecov()'

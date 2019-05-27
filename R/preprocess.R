@@ -12,8 +12,7 @@
 #' @export
 #' @examples
 #'  config <- config_preprocess(truncLen = c(240, 250))
-config_preprocess <- function(...) {
-    config <- list(
+config_preprocess <- config_builder(list(
         threads = TRUE,
         out_dir = "preprocessed",
         trimLeft = 10,
@@ -21,19 +20,14 @@ config_preprocess <- function(...) {
         maxEE = 2,
         truncQ = 2,
         maxN = 0
-    )
-    args <- list(...)
-    for (arg in names(args)) {
-        config[[arg]] <- args[[arg]]
-    }
-    return(config)
-}
+))
+
 
 #' Runs preprocessing of sequencing reads.
 #'
 #' @param object An experiment data table as returned by
 #'  \code{\link{find_read_files}} or a worflow object.
-#' @param config A configuration file as returned by
+#' @param ... A configuration as returned by
 #'  \code{\link{config_preprocess}}.
 #' @return A list containing the workflow results:
 #' \describe{
@@ -44,9 +38,10 @@ config_preprocess <- function(...) {
 #' @export
 #'
 #' @importFrom dada2 filterAndTrim
-preprocess <- function(object, config) {
+preprocess <- function(object, ...) {
     files <- get_files(object)
     files <- copy(files)
+    config <- config_parser(list(...), config_preprocess)
     if (!"run" %in% names(files)) {
         files[, "run" := "all"]
     }
