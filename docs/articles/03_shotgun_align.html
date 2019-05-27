@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.4</span>
       </span>
     </div>
 
@@ -163,10 +163,10 @@
 ## [1] "config"</code></pre>
 <p>This will be sufficient to align reads. As always the first argument can also be an artifact from <code>quality_control</code> or <code>preprocess</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">alns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/align_short_reads.html">align_short_reads</a></span>(fi, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:19:55] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-25 22:19:57] Finished aligning even1.
-## INFO [2019-05-25 22:19:59] Finished aligning even2.
-## INFO [2019-05-25 22:20:02] Finished aligning even3.</code></pre>
+<pre><code>## INFO [2019-05-26 22:25:22] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-05-26 22:25:24] Finished aligning even1.
+## INFO [2019-05-26 22:25:27] Finished aligning even2.
+## INFO [2019-05-26 22:25:29] Finished aligning even3.</code></pre>
 <p>You will get an output artifact that logs the created alignments…</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">alns<span class="op">$</span>alignments</a></code></pre></div>
 <pre><code>##       id            alignment success
@@ -178,16 +178,16 @@
 <pre><code>## 2.4 Mb</code></pre>
 <p>…and the logs in case something goes wrong.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(alns<span class="op">$</span>logs[[<span class="dv">1</span>]])</a></code></pre></div>
-<pre><code>## [M::mm_idx_gen::1.571*1.23] collected minimizers
-## [M::mm_idx_gen::1.863*1.50] sorted minimizers
-## [M::main::1.863*1.50] loaded/built the index for 10 target sequence(s)
-## [M::mm_mapopt_update::1.863*1.50] mid_occ = 1000
+<pre><code>## [M::mm_idx_gen::1.749*1.20] collected minimizers
+## [M::mm_idx_gen::2.034*1.45] sorted minimizers
+## [M::main::2.034*1.45] loaded/built the index for 10 target sequence(s)
+## [M::mm_mapopt_update::2.034*1.45] mid_occ = 1000
 ## [M::mm_idx_stat] kmer size: 21; skip: 11; is_hpc: 0; #seq: 10
-## [M::mm_idx_stat::1.942*1.48] distinct minimizers: 10112254 (98.45% are singletons); average occurrences: 1.040; average spacing: 5.997
-## [M::worker_pipeline::2.116*1.51] mapped 12598 sequences
+## [M::mm_idx_stat::2.129*1.43] distinct minimizers: 10112254 (98.45% are singletons); average occurrences: 1.040; average spacing: 5.997
+## [M::worker_pipeline::2.302*1.45] mapped 12598 sequences
 ## [M::main] Version: 2.15-r905
 ## [M::main] CMD: minimap2 -acx sr -t 3 --secondary=yes -N 100 -I 100G /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/shotgun/even1_S1_L001_R1_001.fasta.gz /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/shotgun/even1_S1_L001_R2_001.fasta.gz
-## [M::main] Real time: 2.125 sec; CPU: 3.199 sec; Peak RSS: 0.492 GB</code></pre>
+## [M::main] Real time: 2.313 sec; CPU: 3.354 sec; Peak RSS: 0.494 GB</code></pre>
 </div>
 </div>
   </div>

@@ -1,6 +1,6 @@
 ---
 title: "Long read data - alignments"
-output: 
+output:
     rmarkdown::html_vignette:
         toc: true
         toc_depth: 3
@@ -18,11 +18,11 @@ vignette: >
 library(mbtools)
 ```
 
-# Aligning reads 
+# Aligning reads
 
 We use [minimap2](https://github.com/lh3/minimap2) for everything since it performs
 as good as other aligners but does not require explicit building of the reference.
-This way your reference database can just be a (compressed) fasta file. 
+This way your reference database can just be a (compressed) fasta file.
 
 As example data we will use 3 samples which are subsampled data from MinION sequencing
 for a list of 10 reference genomes in equal abundances.
@@ -32,9 +32,9 @@ for a list of 10 reference genomes in equal abundances.
 Let's create our file list for the example data and reference database:
 
 ```{r}
-fi <- system.file("extdata/nanopore", package = "mbtools") %>% 
+fi <- system.file("extdata/nanopore", package = "mbtools") %>%
       find_read_files()
-ref <- system.file("extdata/genomes/zymo_mock.fna.gz", 
+ref <- system.file("extdata/genomes/zymo_mock.fna.gz",
                    package = "mbtools")
 ```
 
@@ -62,7 +62,7 @@ This will be sufficient to align reads. As always the first argument can also be
 artifact from `quality_control` or `preprocess`.
 
 ```{r}
-alns <- align_short_reads(fi, config)
+alns <- align_long_reads(fi, config)
 ```
 
 You will get an output artifact that logs the created alignments...

@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.4</span>
       </span>
     </div>
 
@@ -160,10 +160,10 @@
 <a class="sourceLine" id="cb11-8" title="8">    <span class="dt">threads =</span> <span class="dv">3</span>,</a>
 <a class="sourceLine" id="cb11-9" title="9">    <span class="dt">reference =</span> ref,</a>
 <a class="sourceLine" id="cb11-10" title="10">    <span class="dt">use_existing =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:20:38] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-25 22:20:40] Finished aligning even1.
-## INFO [2019-05-25 22:20:42] Finished aligning even2.
-## INFO [2019-05-25 22:20:44] Finished aligning even3.</code></pre>
+<pre><code>## INFO [2019-05-26 22:32:55] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-05-26 22:32:58] Finished aligning even1.
+## INFO [2019-05-26 22:33:00] Finished aligning even2.
+## INFO [2019-05-26 22:33:02] Finished aligning even3.</code></pre>
 </div>
 <div id="using-slimm" class="section level2">
 <h2 class="hasAnchor">
@@ -197,11 +197,11 @@
 ## [1] "config"</code></pre>
 <p>With this we can perform the SLIMM workflow.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">sl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/slimm.html">slimm</a></span>(alns, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:20:44] running SLIMM on 3 alignments with database /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/ABVF_SP_CMP_genomes.sldb.
-## INFO [2019-05-25 22:20:45] Parsing abundances on rank `species`.
-## INFO [2019-05-25 22:20:45] Estimating read lengths from a sample of 100 reads per alignment.
-## INFO [2019-05-25 22:20:45] Estimated median read length is 100, range is [100, 100].
-## INFO [2019-05-25 22:20:45] Parsing coverage profiles with bin width of 1000bp.</code></pre>
+<pre><code>## INFO [2019-05-26 22:33:02] running SLIMM on 3 alignments with database /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/ABVF_SP_CMP_genomes.sldb.
+## INFO [2019-05-26 22:33:03] Parsing abundances on rank `species`.
+## INFO [2019-05-26 22:33:03] Estimating read lengths from a sample of 100 reads per alignment.
+## INFO [2019-05-26 22:33:03] Estimated median read length is 100, range is [100, 100].
+## INFO [2019-05-26 22:33:03] Parsing coverage profiles with bin width of 1000bp.</code></pre>
 <p>The artifact now contains the species level lineage calls…</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">sl<span class="op">$</span>abundance</a></code></pre></div>
 <pre><code>##       rank taxa_id relative reads    id              kingdom
@@ -350,40 +350,75 @@
 ## 30:   Pseudomonadales Gammaproteobacteria Proteobacteria  Bacteria even3
 ##                 order               class         phylum   kingdom    id
 ##       length read_length
-##  1: 12073000          NA
-##  2:  3219000          NA
-##  3: 19053000          NA
-##  4:  4216000          NA
-##  5:  4858000          NA
-##  6:  5499000          NA
-##  7:  2099000          NA
-##  8:  2945000          NA
-##  9:  2822000          NA
-## 10:  6265000          NA
-## 11: 12073000          NA
-## 12:  3219000          NA
-## 13: 19053000          NA
-## 14:  4216000          NA
-## 15:  4858000          NA
-## 16:  5499000          NA
-## 17:  2099000          NA
-## 18:  2945000          NA
-## 19:  2822000          NA
-## 20:  6265000          NA
-## 21: 12073000          NA
-## 22:  3219000          NA
-## 23: 19053000          NA
-## 24:  4216000          NA
-## 25:  4858000          NA
-## 26:  5499000          NA
-## 27:  2099000          NA
-## 28:  2945000          NA
-## 29:  2822000          NA
-## 30:  6265000          NA
+##  1: 12073000         100
+##  2:  3219000         100
+##  3: 19053000         100
+##  4:  4216000         100
+##  5:  4858000         100
+##  6:  5499000         100
+##  7:  2099000         100
+##  8:  2945000         100
+##  9:  2822000         100
+## 10:  6265000         100
+## 11: 12073000         100
+## 12:  3219000         100
+## 13: 19053000         100
+## 14:  4216000         100
+## 15:  4858000         100
+## 16:  5499000         100
+## 17:  2099000         100
+## 18:  2945000         100
+## 19:  2822000         100
+## 20:  6265000         100
+## 21: 12073000         100
+## 22:  3219000         100
+## 23: 19053000         100
+## 24:  4216000         100
+## 25:  4858000         100
+## 26:  5499000         100
+## 27:  2099000         100
+## 28:  2945000         100
+## 29:  2822000         100
+## 30:  6265000         100
 ##       length read_length</code></pre>
 <p>Where we see we actually identified the correct 10 strains. Just the coverage is really low.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(sl<span class="op">$</span>coverage<span class="op">$</span>reads[<span class="dv">1</span>][[<span class="dv">1</span>]])</a></code></pre></div>
 <p><img src="05_lineage_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+</div>
+<div id="full-example" class="section level2">
+<h2 class="hasAnchor">
+<a href="#full-example" class="anchor"></a>Full example</h2>
+<p>We can have a look at a precomputed example from a full sample.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(ERR260132)</a>
+<a class="sourceLine" id="cb24-2" title="2"></a>
+<a class="sourceLine" id="cb24-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(ERR260132<span class="op">$</span>abundance)</a></code></pre></div>
+<pre><code>##       rank taxa_id     relative   reads        id  kingdom         phylum
+## 1: species    1681 4.026444e-03   47693 ERR260132 Bacteria Actinobacteria
+## 2: species   39491 4.240407e-01 5022738 ERR260132 Bacteria     Firmicutes
+## 3: species  604330 9.987385e-05    1183 ERR260132 Bacteria Actinobacteria
+## 4: species  166486 1.141956e-02  135264 ERR260132 Bacteria     Firmicutes
+## 5: species     817 2.224578e-03   26350 ERR260132 Bacteria  Bacteroidetes
+## 6: species  397865 2.158727e-04    2557 ERR260132 Bacteria  Bacteroidetes
+##             class             order             family           genus
+## 1: Actinobacteria Bifidobacteriales Bifidobacteriaceae Bifidobacterium
+## 2:     Clostridia     Clostridiales    Lachnospiraceae   unknown_genus
+## 3: Coriobacteriia  Coriobacteriales       Atopobiaceae       Olsenella
+## 4:     Clostridia     Clostridiales    Lachnospiraceae       Roseburia
+## 5:    Bacteroidia     Bacteroidales     Bacteroidaceae     Bacteroides
+## 6:    Bacteroidia     Bacteroidales    Barnesiellaceae     Barnesiella
+##                    species
+## 1: Bifidobacterium bifidum
+## 2:   [Eubacterium] rectale
+## 3:      Olsenella umbonata
+## 4:  Roseburia intestinalis
+## 5:    Bacteroides fragilis
+## 6: Barnesiella viscericola</code></pre>
+<p>This gives us better coverage:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">co &lt;-<span class="st"> </span>ERR260132<span class="op">$</span>coverage</a>
+<a class="sourceLine" id="cb26-2" title="2">co[, mean_coverage <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(reads[[<span class="dv">1</span>]]) <span class="op">/</span><span class="st"> </span>length, by =<span class="st"> "genbank"</span>]</a>
+<a class="sourceLine" id="cb26-3" title="3"></a>
+<a class="sourceLine" id="cb26-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(co[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/order">order</a></span>(<span class="op">-</span>mean_coverage)][<span class="dv">1</span>, reads[[<span class="dv">1</span>]]], <span class="dt">type =</span> <span class="st">"l"</span>)</a></code></pre></div>
+<p><img src="05_lineage_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 <p>Where we see that the majority of that genome has not been mapped.</p>
 </div>
 </div>
@@ -399,6 +434,7 @@
 <li><a href="#getting-the-slimm-db">Getting the SLIMM DB</a></li>
       <li><a href="#aligning-shotgun-reads">Aligning shotgun reads</a></li>
       <li><a href="#using-slimm">Using SLIMM</a></li>
+      <li><a href="#full-example">Full example</a></li>
       </ul>
 </li>
       </ul>

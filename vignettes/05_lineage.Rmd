@@ -101,4 +101,23 @@ is really low.
 hist(sl$coverage$reads[1][[1]])
 ```
 
+## Full example
+
+We can have a look at a precomputed example from a full sample.
+
+```{r}
+data(ERR260132)
+
+head(ERR260132$abundance)
+```
+
+This gives us better coverage:
+
+```{r}
+co <- ERR260132$coverage
+co[, mean_coverage := sum(reads[[1]]) / length, by = "genbank"]
+
+plot(co[order(-mean_coverage)][1, reads[[1]]], type = "l")
+```
+
 Where we see that the majority of that genome has not been mapped.

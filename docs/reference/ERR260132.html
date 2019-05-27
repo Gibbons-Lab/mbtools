@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Counts the reads for a specific taxonomy level. — taxa_count • mbtools</title>
+<title>Precomputed lineage calling and coverage example. — ERR260132 • mbtools</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,11 @@
 
 
 
-<meta property="og:title" content="Counts the reads for a specific taxonomy level. — taxa_count" />
+<meta property="og:title" content="Precomputed lineage calling and coverage example. — ERR260132" />
 
-<meta property="og:description" content="Counts the reads for a specific taxonomy level." />
+<meta property="og:description" content="Generated from aligning SRA sample ERR260132
+ after aligning
+to the SLIMM database of 15K genbank genomes." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -129,55 +131,39 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Counts the reads for a specific taxonomy level.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/mangling.R'><code>R/mangling.R</code></a></small>
-    <div class="hidden name"><code>taxa_count.Rd</code></div>
+    <h1>Precomputed lineage calling and coverage example.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Gibbons-Lab/mbtools/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>ERR260132.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Counts the reads for a specific taxonomy level.</p>
+    <p>Generated from aligning SRA sample ERR260132
+ after aligning
+to the SLIMM database of 15K genbank genomes.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>taxa_count</span>(<span class='no'>ps</span>, <span class='kw'>lev</span> <span class='kw'>=</span> <span class='st'>"Genus"</span>, <span class='kw'>zeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>ps</th>
-      <td><p>A phyloseq object.</p></td>
-    </tr>
-    <tr>
-      <th>lev</th>
-      <td><p>The taxonomy level at which to count. If NA uses the finest level
-available (individual sequences).</p></td>
-    </tr>
-    <tr>
-      <th>zeros</th>
-      <td><p>Whether to explicitly track zero counts.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <pre class="usage"><span class='no'>ERR260132</span></pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A mbquant data table containing the counts in "long" format.</p>
+    <p>A SLIMM artifact.</p>
+    
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p><a href='https://www.ncbi.nlm.nih.gov/sra/?term=ERR260132'>https://www.ncbi.nlm.nih.gov/sra/?term=ERR260132</a></p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='kw'>NULL</span></div><div class='output co'>#&gt; NULL</div><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#source">Source</a></li>
+          </ul>
 
   </div>
 </div>
