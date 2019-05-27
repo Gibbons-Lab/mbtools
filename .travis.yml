@@ -11,7 +11,7 @@ addons:
       - libxml2-dev
       - samtools
       - cmake
-      - build-essentials
+      - build-essential
 
 # Don't build vignettes
 before_install:
