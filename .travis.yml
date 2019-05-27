@@ -5,15 +5,17 @@ sudo: false
 cache: packages
 r: bioc-release
 
+env:
+  - CXX=g++-6
+
 addons:
   apt:
     packages:
       - libxml2-dev
       - samtools
       - cmake
-      - gcc-5
-      - g++-5
-      - build-essential
+      - gcc-6
+      - g++-6
 
 # Don't build vignettes
 before_install:
