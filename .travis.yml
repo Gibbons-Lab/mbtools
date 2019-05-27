@@ -16,6 +16,8 @@ addons:
       - libxml2-dev
       - samtools
       - cmake
+      - gcc-9
+      - g++-9
 
 # Don't build vignettes
 before_install:
