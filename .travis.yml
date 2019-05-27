@@ -27,7 +27,8 @@ before_install:
   - git clone --recursive https://github.com/seqan/slimm
   - (cd slimm && mkdir build && cd build && cmake .. && make && sudo cp bin/slimm /usr/bin/)
   - rm -rf slimm
-  - echo "options(Ncpus = 4)" > $R_PROFILE
+  - echo "options(Ncpus = 4)" >> $R_PROFILE
+  - cat $R_PROFILE
 
 after_success:
   - Rscript -e 'covr::codecov()'
