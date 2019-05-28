@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Long read data - alignments • mbtools</title>
+<title>5- Long read data - alignments • mbtools</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Long read data - alignments">
+<script src="../pkgdown.js"></script><meta property="og:title" content="5- Long read data - alignments">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.6</span>
       </span>
     </div>
 
@@ -53,28 +53,28 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/00_qa.html">Quality control of sequencing data</a>
+      <a href="../articles/00_qa.html">0 - Quality control of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/01_preprocessing.html">Preprocessing of sequencing data</a>
+      <a href="../articles/01_preprocessing.html">1 - Preprocessing of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/02_amplicon_sequencing.html">Amplicon sequencing analysis</a>
+      <a href="../articles/02_amplicon_sequencing.html">2 - Amplicon sequencing analysis</a>
     </li>
     <li>
-      <a href="../articles/03_shotgun_align.html">Shotgun data - alignments</a>
+      <a href="../articles/03_shotgun_align.html">3 - Shotgun data - alignments</a>
     </li>
     <li>
-      <a href="../articles/04_long_align.html">Long read data - alignments</a>
+      <a href="../articles/04_long_align.html">5- Long read data - alignments</a>
     </li>
     <li>
-      <a href="../articles/05_lineage.html">Lineage calling with SLIMM</a>
+      <a href="../articles/05_lineage.html">5 - Lineage calling with SLIMM</a>
     </li>
     <li>
-      <a href="../articles/06_counting.html">Reference counting</a>
+      <a href="../articles/06_counting.html">6- Reference counting</a>
     </li>
     <li>
-      <a href="../articles/07_workflow_management.html">Workflow management</a>
+      <a href="../articles/07_workflow_management.html">7 - Workflow management</a>
     </li>
   </ul>
 </li>
@@ -98,7 +98,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Long read data - alignments</h1>
+      <h1>5- Long read data - alignments</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/Gibbons-Lab/mbtools/blob/master/vignettes/04_long_align.Rmd"><code>vignettes/04_long_align.Rmd</code></a></small>
@@ -142,7 +142,7 @@
 <a class="sourceLine" id="cb4-6" title="6"></a>
 <a class="sourceLine" id="cb4-7" title="7">config</a></code></pre></div>
 <pre><code>## $reference
-## [1] "/home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz"
+## [1] "/Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/genomes/zymo_mock.fna.gz"
 ## 
 ## $build_index
 ## [1] FALSE
@@ -166,10 +166,10 @@
 ## [1] "config"</code></pre>
 <p>This will be sufficient to align reads. As always the first argument can also be an artifact from <code>quality_control</code> or <code>preprocess</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">alns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/align_long_reads.html">align_long_reads</a></span>(fi, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-27 16:35:34] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-27 16:35:37] Finished aligning even1.
-## INFO [2019-05-27 16:35:41] Finished aligning even2.
-## INFO [2019-05-27 16:35:44] Finished aligning even3.</code></pre>
+<pre><code>## INFO [2019-05-28 13:04:51] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-05-28 13:04:54] Finished aligning even1.
+## INFO [2019-05-28 13:04:57] Finished aligning even2.
+## INFO [2019-05-28 13:05:01] Finished aligning even3.</code></pre>
 <p>You will get an output artifact that logs the created alignments…</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">alns<span class="op">$</span>alignments</a></code></pre></div>
 <pre><code>##       id            alignment success
@@ -178,19 +178,19 @@
 ## 3: even3 alignments/even3.bam    TRUE</code></pre>
 <p>…the size of all the alignments on disk…</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(alns<span class="op">$</span>disk_size, <span class="dt">unit =</span> <span class="st">"auto"</span>)</a></code></pre></div>
-<pre><code>## 12.3 Mb</code></pre>
+<pre><code>## 12.4 Mb</code></pre>
 <p>…and the logs in case something goes wrong.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(alns<span class="op">$</span>logs[[<span class="dv">1</span>]])</a></code></pre></div>
-<pre><code>## [M::mm_idx_gen::1.505*1.20] collected minimizers
-## [M::mm_idx_gen::1.818*1.50] sorted minimizers
-## [M::main::1.818*1.50] loaded/built the index for 10 target sequence(s)
-## [M::mm_mapopt_update::1.927*1.47] mid_occ = 25
+<pre><code>## [M::mm_idx_gen::1.954*1.16] collected minimizers
+## [M::mm_idx_gen::2.220*1.38] sorted minimizers
+## [M::main::2.220*1.38] loaded/built the index for 10 target sequence(s)
+## [M::mm_mapopt_update::2.350*1.36] mid_occ = 25
 ## [M::mm_idx_stat] kmer size: 15; skip: 10; is_hpc: 0; #seq: 10
-## [M::mm_idx_stat::2.014*1.45] distinct minimizers: 10418059 (91.27% are singletons); average occurrences: 1.132; average spacing: 5.347
-## [M::worker_pipeline::2.975*1.77] mapped 1000 sequences
-## [M::main] Version: 2.15-r905
-## [M::main] CMD: minimap2 -acx map-ont -t 3 --secondary=yes -N 100 -I 100G /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/nanopore/even1_S1_L001_R1_001.fastq.gz
-## [M::main] Real time: 2.990 sec; CPU: 5.279 sec; Peak RSS: 0.565 GB</code></pre>
+## [M::mm_idx_stat::2.441*1.34] distinct minimizers: 10418059 (91.27% are singletons); average occurrences: 1.132; average spacing: 5.347
+## [M::worker_pipeline::3.209*1.58] mapped 1000 sequences
+## [M::main] Version: 2.17-r941
+## [M::main] CMD: minimap2 -acx map-ont -t 3 --secondary=yes -N 100 -I 100G /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/genomes/zymo_mock.fna.gz /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/nanopore/even1_S1_L001_R1_001.fastq.gz
+## [M::main] Real time: 3.294 sec; CPU: 5.146 sec; Peak RSS: 0.517 GB</code></pre>
 </div>
 </div>
   </div>

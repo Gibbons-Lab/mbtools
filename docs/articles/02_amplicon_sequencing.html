@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amplicon sequencing analysis • mbtools</title>
+<title>2 - Amplicon sequencing analysis • mbtools</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Amplicon sequencing analysis">
+<script src="../pkgdown.js"></script><meta property="og:title" content="2 - Amplicon sequencing analysis">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.6</span>
       </span>
     </div>
 
@@ -53,28 +53,28 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/00_qa.html">Quality control of sequencing data</a>
+      <a href="../articles/00_qa.html">0 - Quality control of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/01_preprocessing.html">Preprocessing of sequencing data</a>
+      <a href="../articles/01_preprocessing.html">1 - Preprocessing of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/02_amplicon_sequencing.html">Amplicon sequencing analysis</a>
+      <a href="../articles/02_amplicon_sequencing.html">2 - Amplicon sequencing analysis</a>
     </li>
     <li>
-      <a href="../articles/03_shotgun_align.html">Shotgun data - alignments</a>
+      <a href="../articles/03_shotgun_align.html">3 - Shotgun data - alignments</a>
     </li>
     <li>
-      <a href="../articles/04_long_align.html">Long read data - alignments</a>
+      <a href="../articles/04_long_align.html">5- Long read data - alignments</a>
     </li>
     <li>
-      <a href="../articles/05_lineage.html">Lineage calling with SLIMM</a>
+      <a href="../articles/05_lineage.html">5 - Lineage calling with SLIMM</a>
     </li>
     <li>
-      <a href="../articles/06_counting.html">Reference counting</a>
+      <a href="../articles/06_counting.html">6- Reference counting</a>
     </li>
     <li>
-      <a href="../articles/07_workflow_management.html">Workflow management</a>
+      <a href="../articles/07_workflow_management.html">7 - Workflow management</a>
     </li>
   </ul>
 </li>
@@ -98,7 +98,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Amplicon sequencing analysis</h1>
+      <h1>2 - Amplicon sequencing analysis</h1>
                         <h4 class="author">Christian Diener</h4>
             
       
@@ -121,7 +121,7 @@
 ##   c.quosures     rlang
 ##   print.quosures rlang</code></pre>
 <pre><code>## Also loading:</code></pre>
-<pre><code>##   - dada2=1.12.1
+<pre><code>##   - dada2=1.12.0
 ##   - data.table=1.12.2
 ##   - ggplot2=3.1.1
 ##   - magrittr=1.5
@@ -129,7 +129,7 @@
 ##   - ShortRead=1.42.0
 ##   - yaml=2.2.0</code></pre>
 <pre><code>## Found tools:</code></pre>
-<pre><code>##   - minimap2=2.15-r905
+<pre><code>##   - minimap2=2.17-r941
 ##   - slimm=0.3.4
 ##   - samtools=1.9</code></pre>
 <pre><code>## 
@@ -143,14 +143,14 @@
 <a href="#quality-assessment" class="anchor"></a>Quality assessment</h2>
 <p>As before a good first step is to look at the qualities of the raw data.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">quals &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>()</a></code></pre></div>
-<pre><code>## INFO [2019-05-27 16:26:47] Running quality assay for forward reads from 5 files.
-## INFO [2019-05-27 16:26:51] Median per base error is 0.016% (median score = 38.00).
-## INFO [2019-05-27 16:26:51] Mean per cycle entropy is 0.809 (in [0, 2]).
-## INFO [2019-05-27 16:26:51] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-05-27 16:26:51] Running quality assay for reverse reads from 5 files.
-## INFO [2019-05-27 16:26:53] Median per base error is 0.020% (median score = 37.00).
-## INFO [2019-05-27 16:26:53] Mean per cycle entropy is 0.731 (in [0, 2]).
-## INFO [2019-05-27 16:26:53] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<pre><code>## INFO [2019-05-28 12:56:27] Running quality assay for forward reads from 5 files.
+## INFO [2019-05-28 12:56:30] Median per base error is 0.016% (median score = 38.00).
+## INFO [2019-05-28 12:56:30] Mean per cycle entropy is 0.809 (in [0, 2]).
+## INFO [2019-05-28 12:56:30] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-05-28 12:56:30] Running quality assay for reverse reads from 5 files.
+## INFO [2019-05-28 12:56:33] Median per base error is 0.020% (median score = 37.00).
+## INFO [2019-05-28 12:56:33] Mean per cycle entropy is 0.730 (in [0, 2]).
+## INFO [2019-05-28 12:56:33] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">quals<span class="op">$</span>quality_plot</a></code></pre></div>
 <p><img src="02_amplicon_sequencing_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <p>Again we see that we might want to truncate the reads a bit on the 3’ ends to avoid the dip in quality. Depending on your amplified fragment make sure that this leaves sufficient overlap for merging (requires &gt;20bp).</p>
@@ -169,20 +169,20 @@
 <a class="sourceLine" id="cb13-8" title="8">)</a>
 <a class="sourceLine" id="cb13-9" title="9"></a>
 <a class="sourceLine" id="cb13-10" title="10">denoised &lt;-<span class="st"> </span>quals <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
-<pre><code>## INFO [2019-05-27 16:26:54] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-27 16:27:02] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
-## INFO [2019-05-27 16:27:02] Running DADA2 on 1 run(s) from a sample of up to 2.5e+08 bases.
-## INFO [2019-05-27 16:27:02] Learning errors for run `all` (5 samples)...
-## INFO [2019-05-27 16:28:19] Dereplicating run `all` (5 samples)...
-## INFO [2019-05-27 16:28:20] Inferring sequence variants for run `all`...
-## INFO [2019-05-27 16:28:39] Finished run `all`.
-## INFO [2019-05-27 16:28:39] Merged sequence tables, now removing chimeras...
-## INFO [2019-05-27 16:28:39] Removed 5/164 sequence variants as chimeric (1.20% of reads)
-## INFO [2019-05-27 16:28:39] Assigning taxonomy to 159 sequences...
-## INFO [2019-05-27 16:28:39] Downloading taxa db to /tmp/RtmpW2Sxk7/taxa.fna.gz...
-## INFO [2019-05-27 16:30:32] Downloading species db to /tmp/RtmpW2Sxk7/species.fna.gz...
-## INFO [2019-05-27 16:31:13] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.9 %,Species = 8.3 %
-## INFO [2019-05-27 16:31:13] Hashing 159 sequence variants.</code></pre>
+<pre><code>## INFO [2019-05-28 12:56:34] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-05-28 12:56:42] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
+## INFO [2019-05-28 12:56:42] Running DADA2 on 1 run(s) from a sample of up to 2.5e+08 bases.
+## INFO [2019-05-28 12:56:42] Learning errors for run `all` (5 samples)...
+## INFO [2019-05-28 12:57:32] Dereplicating run `all` (5 samples)...
+## INFO [2019-05-28 12:57:33] Inferring sequence variants for run `all`...
+## INFO [2019-05-28 12:57:46] Finished run `all`.
+## INFO [2019-05-28 12:57:46] Merged sequence tables, now removing chimeras...
+## INFO [2019-05-28 12:57:46] Removed 5/164 sequence variants as chimeric (1.20% of reads)
+## INFO [2019-05-28 12:57:46] Assigning taxonomy to 159 sequences...
+## INFO [2019-05-28 12:57:46] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpnbhPu4/taxa.fna.gz...
+## INFO [2019-05-28 12:59:49] Downloading species db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpnbhPu4/species.fna.gz...
+## INFO [2019-05-28 13:00:47] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.9 %,Species = 8.3 %
+## INFO [2019-05-28 13:00:47] Hashing 159 sequence variants.</code></pre>
 <p>This will run both workflow steps sequentially and will use all available CPUs by default. You will get some disgnostic output on the logging interface but you can also inspect those in the returned artifact.</p>
 <p>For instance to see how many reads were conserved in each processing step:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">denoised<span class="op">$</span>passed_reads</a></code></pre></div>
@@ -220,18 +220,18 @@
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">files &lt;-<span class="st"> </span>quals<span class="op">$</span>files</a>
 <a class="sourceLine" id="cb21-2" title="2">files[, run <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">times =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>))]</a>
 <a class="sourceLine" id="cb21-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
-<pre><code>##                                                                                               forward
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D2_S190_L001_R1_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D3_S191_L001_R1_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/Mock_S280_L001_R1_001.fastq.gz
-##                                                                                               reverse
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R2_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R2_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D2_S190_L001_R2_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D3_S191_L001_R2_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/Mock_S280_L001_R2_001.fastq.gz
+<pre><code>##                                                                                                              forward
+## 1: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
+## 2: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
+## 3: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D2_S190_L001_R1_001.fastq.gz
+## 4: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D3_S191_L001_R1_001.fastq.gz
+## 5: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/Mock_S280_L001_R1_001.fastq.gz
+##                                                                                                              reverse
+## 1: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D0_S188_L001_R2_001.fastq.gz
+## 2: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D1_S189_L001_R2_001.fastq.gz
+## 3: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D2_S190_L001_R2_001.fastq.gz
+## 4: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D3_S191_L001_R2_001.fastq.gz
+## 5: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/Mock_S280_L001_R2_001.fastq.gz
 ##      id injection_order lane run
 ## 1: F3D0             188    1   1
 ## 2: F3D1             189    1   1
@@ -241,28 +241,28 @@
 <p>Rerunning the previous workflow with this file list will now give a slightly different output:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">byrun &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb23-2" title="2"><span class="st">         </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
-<pre><code>## INFO [2019-05-27 16:31:13] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-27 16:31:20] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
-## INFO [2019-05-27 16:31:20] Running DADA2 on 3 run(s) from a sample of up to 2.5e+08 bases.
-## INFO [2019-05-27 16:31:20] Learning errors for run `1` (2 samples)...
-## INFO [2019-05-27 16:31:49] Dereplicating run `1` (2 samples)...
-## INFO [2019-05-27 16:31:50] Inferring sequence variants for run `1`...
-## INFO [2019-05-27 16:31:57] Finished run `1`.
-## INFO [2019-05-27 16:31:57] Learning errors for run `2` (2 samples)...
-## INFO [2019-05-27 16:32:40] Dereplicating run `2` (2 samples)...
-## INFO [2019-05-27 16:32:40] Inferring sequence variants for run `2`...
-## INFO [2019-05-27 16:32:51] Finished run `2`.
-## INFO [2019-05-27 16:32:51] Learning errors for run `3` (1 samples)...
-## INFO [2019-05-27 16:32:53] Dereplicating run `3` (1 samples)...
-## INFO [2019-05-27 16:32:53] Inferring sequence variants for run `3`...
-## INFO [2019-05-27 16:32:53] Finished run `3`.
-## INFO [2019-05-27 16:32:53] Merged sequence tables, now removing chimeras...
-## INFO [2019-05-27 16:32:53] Removed 5/162 sequence variants as chimeric (1.20% of reads)
-## INFO [2019-05-27 16:32:53] Assigning taxonomy to 157 sequences...
-## INFO [2019-05-27 16:32:53] Found existing taxa db `/tmp/RtmpW2Sxk7/taxa.fna.gz`. Using that one.
-## INFO [2019-05-27 16:34:29] Found existing species db `/tmp/RtmpW2Sxk7/species.fna.gz`. Using that one.
-## INFO [2019-05-27 16:35:00] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.7 %,Species = 8.2 %
-## INFO [2019-05-27 16:35:00] Hashing 157 sequence variants.</code></pre>
+<pre><code>## INFO [2019-05-28 13:00:47] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-05-28 13:00:53] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
+## INFO [2019-05-28 13:00:53] Running DADA2 on 3 run(s) from a sample of up to 2.5e+08 bases.
+## INFO [2019-05-28 13:00:53] Learning errors for run `1` (2 samples)...
+## INFO [2019-05-28 13:01:13] Dereplicating run `1` (2 samples)...
+## INFO [2019-05-28 13:01:13] Inferring sequence variants for run `1`...
+## INFO [2019-05-28 13:01:17] Finished run `1`.
+## INFO [2019-05-28 13:01:17] Learning errors for run `2` (2 samples)...
+## INFO [2019-05-28 13:01:44] Dereplicating run `2` (2 samples)...
+## INFO [2019-05-28 13:01:44] Inferring sequence variants for run `2`...
+## INFO [2019-05-28 13:01:51] Finished run `2`.
+## INFO [2019-05-28 13:01:51] Learning errors for run `3` (1 samples)...
+## INFO [2019-05-28 13:01:52] Dereplicating run `3` (1 samples)...
+## INFO [2019-05-28 13:01:52] Inferring sequence variants for run `3`...
+## INFO [2019-05-28 13:01:53] Finished run `3`.
+## INFO [2019-05-28 13:01:53] Merged sequence tables, now removing chimeras...
+## INFO [2019-05-28 13:01:53] Removed 5/162 sequence variants as chimeric (1.20% of reads)
+## INFO [2019-05-28 13:01:53] Assigning taxonomy to 157 sequences...
+## INFO [2019-05-28 13:01:53] Found existing taxa db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpnbhPu4/taxa.fna.gz`. Using that one.
+## INFO [2019-05-28 13:03:39] Found existing species db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpnbhPu4/species.fna.gz`. Using that one.
+## INFO [2019-05-28 13:04:11] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.7 %,Species = 8.2 %
+## INFO [2019-05-28 13:04:11] Hashing 157 sequence variants.</code></pre>
 <p>Error profiles will now be estimated for each run individually and final tables will be merged at the end. This is slower than having all files in one run so you should always try to distribute your samples across as few sequencing runs as possible.</p>
 </div>
 <div id="converting-to-phyloseq" class="section level2">
