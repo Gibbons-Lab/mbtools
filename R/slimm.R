@@ -6,6 +6,7 @@
 
 
 #' The SLIMM taxonomy databases
+#' @importFrom data.table data.table
 #' @export
 slimm_files <- data.table(
     url = "http://ftp.mi.fu-berlin.de/pub/dadi/slimm/ABVF_SP_CMP_genomes.sldb",

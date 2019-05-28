@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.8</span>
       </span>
     </div>
 
@@ -65,13 +65,13 @@
       <a href="../articles/03_shotgun_align.html">3 - Shotgun data - alignments</a>
     </li>
     <li>
-      <a href="../articles/04_long_align.html">5- Long read data - alignments</a>
+      <a href="../articles/04_long_align.html">4 - Long read data - alignments</a>
     </li>
     <li>
       <a href="../articles/05_lineage.html">5 - Lineage calling with SLIMM</a>
     </li>
     <li>
-      <a href="../articles/06_counting.html">6- Reference counting</a>
+      <a href="../articles/06_counting.html">6 - Reference counting</a>
     </li>
     <li>
       <a href="../articles/07_workflow_management.html">7 - Workflow management</a>
@@ -143,14 +143,14 @@
 <a href="#quality-assessment" class="anchor"></a>Quality assessment</h2>
 <p>As before a good first step is to look at the qualities of the raw data.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">quals &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>()</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 12:56:27] Running quality assay for forward reads from 5 files.
-## INFO [2019-05-28 12:56:30] Median per base error is 0.016% (median score = 38.00).
-## INFO [2019-05-28 12:56:30] Mean per cycle entropy is 0.809 (in [0, 2]).
-## INFO [2019-05-28 12:56:30] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-05-28 12:56:30] Running quality assay for reverse reads from 5 files.
-## INFO [2019-05-28 12:56:33] Median per base error is 0.020% (median score = 37.00).
-## INFO [2019-05-28 12:56:33] Mean per cycle entropy is 0.730 (in [0, 2]).
-## INFO [2019-05-28 12:56:33] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<pre><code>## INFO [2019-05-28 16:36:06] Running quality assay for forward reads from 5 files.
+## INFO [2019-05-28 16:36:10] Median per base error is 0.016% (median score = 38.00).
+## INFO [2019-05-28 16:36:10] Mean per cycle entropy is 0.809 (in [0, 2]).
+## INFO [2019-05-28 16:36:10] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-05-28 16:36:10] Running quality assay for reverse reads from 5 files.
+## INFO [2019-05-28 16:36:12] Median per base error is 0.020% (median score = 37.00).
+## INFO [2019-05-28 16:36:12] Mean per cycle entropy is 0.731 (in [0, 2]).
+## INFO [2019-05-28 16:36:12] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">quals<span class="op">$</span>quality_plot</a></code></pre></div>
 <p><img src="02_amplicon_sequencing_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <p>Again we see that we might want to truncate the reads a bit on the 3’ ends to avoid the dip in quality. Depending on your amplified fragment make sure that this leaves sufficient overlap for merging (requires &gt;20bp).</p>
@@ -169,20 +169,20 @@
 <a class="sourceLine" id="cb13-8" title="8">)</a>
 <a class="sourceLine" id="cb13-9" title="9"></a>
 <a class="sourceLine" id="cb13-10" title="10">denoised &lt;-<span class="st"> </span>quals <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 12:56:34] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-28 12:56:42] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
-## INFO [2019-05-28 12:56:42] Running DADA2 on 1 run(s) from a sample of up to 2.5e+08 bases.
-## INFO [2019-05-28 12:56:42] Learning errors for run `all` (5 samples)...
-## INFO [2019-05-28 12:57:32] Dereplicating run `all` (5 samples)...
-## INFO [2019-05-28 12:57:33] Inferring sequence variants for run `all`...
-## INFO [2019-05-28 12:57:46] Finished run `all`.
-## INFO [2019-05-28 12:57:46] Merged sequence tables, now removing chimeras...
-## INFO [2019-05-28 12:57:46] Removed 5/164 sequence variants as chimeric (1.20% of reads)
-## INFO [2019-05-28 12:57:46] Assigning taxonomy to 159 sequences...
-## INFO [2019-05-28 12:57:46] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpnbhPu4/taxa.fna.gz...
-## INFO [2019-05-28 12:59:49] Downloading species db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpnbhPu4/species.fna.gz...
-## INFO [2019-05-28 13:00:47] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.9 %,Species = 8.3 %
-## INFO [2019-05-28 13:00:47] Hashing 159 sequence variants.</code></pre>
+<pre><code>## INFO [2019-05-28 16:36:14] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-05-28 16:36:22] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
+## INFO [2019-05-28 16:36:22] Running DADA2 on 1 run(s) from a sample of up to 2.5e+08 bases.
+## INFO [2019-05-28 16:36:22] Learning errors for run `all` (5 samples)...
+## INFO [2019-05-28 16:37:11] Dereplicating run `all` (5 samples)...
+## INFO [2019-05-28 16:37:12] Inferring sequence variants for run `all`...
+## INFO [2019-05-28 16:37:24] Finished run `all`.
+## INFO [2019-05-28 16:37:24] Merged sequence tables, now removing chimeras...
+## INFO [2019-05-28 16:37:24] Removed 5/164 sequence variants as chimeric (1.20% of reads)
+## INFO [2019-05-28 16:37:24] Assigning taxonomy to 159 sequences...
+## INFO [2019-05-28 16:37:24] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpWVLODz/taxa.fna.gz...
+## INFO [2019-05-28 16:39:25] Downloading species db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpWVLODz/species.fna.gz...
+## INFO [2019-05-28 16:40:28] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57 %,Species = 8.3 %
+## INFO [2019-05-28 16:40:28] Hashing 159 sequence variants.</code></pre>
 <p>This will run both workflow steps sequentially and will use all available CPUs by default. You will get some disgnostic output on the logging interface but you can also inspect those in the returned artifact.</p>
 <p>For instance to see how many reads were conserved in each processing step:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">denoised<span class="op">$</span>passed_reads</a></code></pre></div>
@@ -241,28 +241,28 @@
 <p>Rerunning the previous workflow with this file list will now give a slightly different output:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">byrun &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb23-2" title="2"><span class="st">         </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 13:00:47] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-28 13:00:53] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
-## INFO [2019-05-28 13:00:53] Running DADA2 on 3 run(s) from a sample of up to 2.5e+08 bases.
-## INFO [2019-05-28 13:00:53] Learning errors for run `1` (2 samples)...
-## INFO [2019-05-28 13:01:13] Dereplicating run `1` (2 samples)...
-## INFO [2019-05-28 13:01:13] Inferring sequence variants for run `1`...
-## INFO [2019-05-28 13:01:17] Finished run `1`.
-## INFO [2019-05-28 13:01:17] Learning errors for run `2` (2 samples)...
-## INFO [2019-05-28 13:01:44] Dereplicating run `2` (2 samples)...
-## INFO [2019-05-28 13:01:44] Inferring sequence variants for run `2`...
-## INFO [2019-05-28 13:01:51] Finished run `2`.
-## INFO [2019-05-28 13:01:51] Learning errors for run `3` (1 samples)...
-## INFO [2019-05-28 13:01:52] Dereplicating run `3` (1 samples)...
-## INFO [2019-05-28 13:01:52] Inferring sequence variants for run `3`...
-## INFO [2019-05-28 13:01:53] Finished run `3`.
-## INFO [2019-05-28 13:01:53] Merged sequence tables, now removing chimeras...
-## INFO [2019-05-28 13:01:53] Removed 5/162 sequence variants as chimeric (1.20% of reads)
-## INFO [2019-05-28 13:01:53] Assigning taxonomy to 157 sequences...
-## INFO [2019-05-28 13:01:53] Found existing taxa db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpnbhPu4/taxa.fna.gz`. Using that one.
-## INFO [2019-05-28 13:03:39] Found existing species db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpnbhPu4/species.fna.gz`. Using that one.
-## INFO [2019-05-28 13:04:11] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.7 %,Species = 8.2 %
-## INFO [2019-05-28 13:04:11] Hashing 157 sequence variants.</code></pre>
+<pre><code>## INFO [2019-05-28 16:40:28] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-05-28 16:40:34] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
+## INFO [2019-05-28 16:40:35] Running DADA2 on 3 run(s) from a sample of up to 2.5e+08 bases.
+## INFO [2019-05-28 16:40:35] Learning errors for run `1` (2 samples)...
+## INFO [2019-05-28 16:40:53] Dereplicating run `1` (2 samples)...
+## INFO [2019-05-28 16:40:54] Inferring sequence variants for run `1`...
+## INFO [2019-05-28 16:40:58] Finished run `1`.
+## INFO [2019-05-28 16:40:58] Learning errors for run `2` (2 samples)...
+## INFO [2019-05-28 16:41:24] Dereplicating run `2` (2 samples)...
+## INFO [2019-05-28 16:41:25] Inferring sequence variants for run `2`...
+## INFO [2019-05-28 16:41:32] Finished run `2`.
+## INFO [2019-05-28 16:41:32] Learning errors for run `3` (1 samples)...
+## INFO [2019-05-28 16:41:33] Dereplicating run `3` (1 samples)...
+## INFO [2019-05-28 16:41:33] Inferring sequence variants for run `3`...
+## INFO [2019-05-28 16:41:33] Finished run `3`.
+## INFO [2019-05-28 16:41:33] Merged sequence tables, now removing chimeras...
+## INFO [2019-05-28 16:41:34] Removed 5/162 sequence variants as chimeric (1.20% of reads)
+## INFO [2019-05-28 16:41:34] Assigning taxonomy to 157 sequences...
+## INFO [2019-05-28 16:41:34] Found existing taxa db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpWVLODz/taxa.fna.gz`. Using that one.
+## INFO [2019-05-28 16:43:24] Found existing species db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpWVLODz/species.fna.gz`. Using that one.
+## INFO [2019-05-28 16:43:56] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.3 %,Species = 8.2 %
+## INFO [2019-05-28 16:43:56] Hashing 157 sequence variants.</code></pre>
 <p>Error profiles will now be estimated for each run individually and final tables will be merged at the end. This is slower than having all files in one run so you should always try to distribute your samples across as few sequencing runs as possible.</p>
 </div>
 <div id="converting-to-phyloseq" class="section level2">

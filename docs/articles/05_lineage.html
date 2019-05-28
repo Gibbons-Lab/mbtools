@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.8</span>
       </span>
     </div>
 
@@ -65,13 +65,13 @@
       <a href="../articles/03_shotgun_align.html">3 - Shotgun data - alignments</a>
     </li>
     <li>
-      <a href="../articles/04_long_align.html">5- Long read data - alignments</a>
+      <a href="../articles/04_long_align.html">4 - Long read data - alignments</a>
     </li>
     <li>
       <a href="../articles/05_lineage.html">5 - Lineage calling with SLIMM</a>
     </li>
     <li>
-      <a href="../articles/06_counting.html">6- Reference counting</a>
+      <a href="../articles/06_counting.html">6 - Reference counting</a>
     </li>
     <li>
       <a href="../articles/07_workflow_management.html">7 - Workflow management</a>
@@ -160,10 +160,10 @@
 <a class="sourceLine" id="cb10-8" title="8">    <span class="dt">threads =</span> <span class="dv">3</span>,</a>
 <a class="sourceLine" id="cb10-9" title="9">    <span class="dt">reference =</span> ref,</a>
 <a class="sourceLine" id="cb10-10" title="10">    <span class="dt">use_existing =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 13:05:12] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-28 13:05:14] Finished aligning even1.
-## INFO [2019-05-28 13:05:17] Finished aligning even2.
-## INFO [2019-05-28 13:05:19] Finished aligning even3.</code></pre>
+<pre><code>## INFO [2019-05-28 16:44:57] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-05-28 16:44:59] Finished aligning even1.
+## INFO [2019-05-28 16:45:01] Finished aligning even2.
+## INFO [2019-05-28 16:45:04] Finished aligning even3.</code></pre>
 </div>
 <div id="using-slimm" class="section level2">
 <h2 class="hasAnchor">
@@ -197,11 +197,11 @@
 ## [1] "config"</code></pre>
 <p>With this we can perform the SLIMM workflow.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">sl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/slimm.html">slimm</a></span>(alns, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 13:05:19] running SLIMM on 3 alignments with database /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/ABVF_SP_CMP_genomes.sldb.
-## INFO [2019-05-28 13:05:20] Parsing abundances on rank `species`.
-## INFO [2019-05-28 13:05:20] Estimating read lengths from a sample of 100 reads per alignment.
-## INFO [2019-05-28 13:05:20] Estimated median read length is 100, range is [100, 100].
-## INFO [2019-05-28 13:05:20] Parsing coverage profiles with bin width of 1000bp.</code></pre>
+<pre><code>## INFO [2019-05-28 16:45:04] running SLIMM on 3 alignments with database /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/ABVF_SP_CMP_genomes.sldb.
+## INFO [2019-05-28 16:45:04] Parsing abundances on rank `species`.
+## INFO [2019-05-28 16:45:04] Estimating read lengths from a sample of 100 reads per alignment.
+## INFO [2019-05-28 16:45:05] Estimated median read length is 100, range is [100, 100].
+## INFO [2019-05-28 16:45:05] Parsing coverage profiles with bin width of 1000bp.</code></pre>
 <p>The artifact now contains the species level lineage calls…</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">sl<span class="op">$</span>abundance</a></code></pre></div>
 <pre><code>##       rank taxa_id relative reads    id              kingdom
