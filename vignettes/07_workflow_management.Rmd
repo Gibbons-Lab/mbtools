@@ -1,0 +1,133 @@
+---
+title: "Workflow management"
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{pkgdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The API design of `mbtools` makes it well suited for workflow managers. This
+is particularly useful when you have longer analysis chains. For instance, let's
+look at an example workflow. We start with the config:
+
+```{r}
+library(mbtools)
+ref <- system.file("extdata/genomes/zymo_mock.fna.gz", package = "mbtools")
+reads <- system.file("extdata/nanopore", package = "mbtools")
+
+conf_p <- config_preprocess(
+    trimLeft = 10,
+    maxEE = 500,
+    maxN = 4,
+    out_dir = "preprocessed"
+)
+conf_a <- config_align(
+    reference = ref,
+    alignment_dir = "alignments",
+    threads = 4
+)
+conf_c <- config_count(
+    reference = ref,
+    weights = TRUE,
+    maxit = 1000,
+    threads = 4
+)
+
+```
+
+Where our actual workflow looks like this:
+
+```{r, eval = FALSE}
+counting <- find_read_files(reads) %>%
+            quality_control(min_score = 20) %>%
+            preprocess(conf_p) %>%
+            align_long_reads(conf_a) %>%
+            count_references(conf_c)
+```
+
+This looks pretty clear but it will run the entire workflow everytime we execute
+the code. This is particularly costly if we only want to change some parameters
+of the last step. For instance to check what the effect of weighting on counting is.
+
+In this case we don't need to run preprocessing and aligning again. We could implement
+this with several if-statements and by saving the immediate outputs but this makes
+the code way more convoluted. Also this would not tell us if the input files changed.
+
+## Workflow management with drake
+
+One popular workflow manager for R is [drake](https://ropensci.github.io/drake/) which
+will automatically track what needs to be recomputed and what not. This requires
+only minimal changes to `mbtools` workflows, mostly wrapping all input and
+output location with `file_in` and `file_out`.
+
+```{r}
+library(drake)
+
+reads <- file_in("../inst/extdata/nanopore")
+conf_p$out_dir <- file_out("preprocessed")
+conf_a$alignment_dir <- file_out("alignment_dir")
+
+plan <- drake_plan(
+    files = find_read_files(reads),
+    qa = quality_control(files, min_score = 20),
+    qual_plot = ggsave(file_out("quals.png"), qa$quality_plot),
+    processed = preprocess(files, conf_p),
+    aligned = align_short_reads(processed, conf_a),
+    counting = count_references(aligned, conf_c)
+)
+```
+
+We can take a look if our plan makes sense:
+
+```{r}
+clean()
+dconf <- drake_config(plan)
+vis_drake_graph(dconf)
+```
+
+As we see `drake` knows we have to run everything. Let's execute the plan and see what
+happens.
+
+```{r}
+make(plan, lock_envir = FALSE)
+```
+
+We can access our final output.
+
+```{r}
+readd(counting)$counts %>% head()
+```
+
+Now if we check our plan...
+
+```{r}
+vis_drake_graph(dconf)
+```
+
+We see that everything is up-to-date. So running the plan again would do nothing:
+
+```{r}
+make(plan)
+```
+
+Now lets change the weighting for counting.
+
+```{r}
+conf_c$weights = FALSE
+```
+
+`drake` detects that we only have to rerun the counting.
+
+```{r}
+outdated(dconf)
+```
+
+Which we can do with running counting again.
+
+```{r}
+make(plan, lock_envir = FALSE)
+```
