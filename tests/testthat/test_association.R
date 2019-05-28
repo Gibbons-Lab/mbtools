@@ -26,11 +26,11 @@ test_that("DESeq2 works", {
 })
 
 test_that("limma works", {
-    tests <- association(ps, method = "limma")
+    tests <- association(ps, method = "voom")
     expect_equal(nrow(tests), 40)
     expect_true(tests[, all(padj > 0.05)])
 
-    tests <- association(ps, method = "limma",
+    tests <- association(ps, method = "voom",
                          confounders = "sex")
     expect_equal(nrow(tests), 20)
     expect_true(tests[, all(padj > 0.05)])

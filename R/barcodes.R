@@ -12,21 +12,14 @@
 #' @export
 #' @examples
 #'  config <- config_demultiplex(n = 1e4)
-config_demultiplex <- function(...) {
-    config <- list(
+config_demultiplex <- config_builder(list(
         out_dir = "demultiplexed",
         barcodes = NULL,
         samples = NULL,
         n = 1e5,
         max_edit = 1,
         reverse_complement = TRUE
-    )
-    args <- list(...)
-    for (arg in names(args)) {
-        config[[arg]] <- args[[arg]]
-    }
-    return(config)
-}
+))
 
 #' Splits FASTQ files into individual samples.
 #'
@@ -36,7 +29,7 @@ config_demultiplex <- function(...) {
 #'
 #' @param object An experiment data table as returned by
 #'  \code{\link{find_read_files}} or a worflow object.
-#' @param config A configuration file as returned by
+#' @param config A configuration as returned by
 #'  \code{\link{config_demultiplex}}.
 #' @return A list containing the split files and matching statistics.
 #' @examples
@@ -44,7 +37,8 @@ config_demultiplex <- function(...) {
 #'
 #' @export
 #' @importFrom Biostrings DNAStringSet reverseComplement
-demultiplex <- function(object, config) {
+demultiplex <- function(object, ...) {
+    config <- config_parser(list(...), config_demultiplex)
     files <- get_files(object)
     if (!"index" %in% names(files)) {
         stop("must specify an index file for each sample :/")

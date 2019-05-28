@@ -1,5 +1,5 @@
 ---
-title: "Amplicon sequencing analysis"
+title: "2 - Amplicon sequencing analysis"
 author: "Christian Diener"
 output:
     rmarkdown::html_vignette:

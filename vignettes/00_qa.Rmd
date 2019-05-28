@@ -1,5 +1,5 @@
 ---
-title: "Quality control of sequencing data"
+title: "0 - Quality control of sequencing data"
 author: "Christian Diener"
 output:
     rmarkdown::html_vignette:

@@ -1,5 +1,5 @@
 ---
-title: "Shotgun data - alignments"
+title: "3 - Shotgun data - alignments"
 output:
     rmarkdown::html_vignette:
         toc: true

@@ -1,5 +1,5 @@
 ---
-title: "Preprocessing of sequencing data"
+title: "1 - Preprocessing of sequencing data"
 author: "Christian Diener"
 output:
     rmarkdown::html_vignette:

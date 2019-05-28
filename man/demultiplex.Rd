@@ -4,13 +4,13 @@
 \alias{demultiplex}
 \title{Splits FASTQ files into individual samples.}
 \usage{
-demultiplex(object, config)
+demultiplex(object, ...)
 }
 \arguments{
 \item{object}{An experiment data table as returned by
 \code{\link{find_read_files}} or a worflow object.}
 
-\item{config}{A configuration file as returned by
+\item{config}{A configuration as returned by
 \code{\link{config_demultiplex}}.}
 }
 \value{

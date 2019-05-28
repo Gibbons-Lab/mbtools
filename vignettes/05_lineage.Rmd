@@ -1,5 +1,5 @@
 ---
-title: "Lineage calling with SLIMM"
+title: "5 - Lineage calling with SLIMM"
 output:
     rmarkdown::html_vignette:
         toc: true
