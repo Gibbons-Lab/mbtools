@@ -1,5 +1,5 @@
 ---
-title: "6- Reference counting"
+title: "6 - Reference counting"
 output:
     rmarkdown::html_vignette:
         toc: true
