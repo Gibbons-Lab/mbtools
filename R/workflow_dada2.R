@@ -172,22 +172,24 @@ denoise <- function(object, ...) {
     } else {
         taxa_db <- config$taxa_db
     }
-    if (grepl("tp(s*)://", config$species_db)) {
-        species_db <- file.path(tmp, "species.fna.gz")
-        if (!file.exists(species_db)) {
-            flog.info("Downloading species db to %s...", species_db)
-            download.file(config$species_db, species_db, quiet = TRUE)
-        } else {
-            flog.info("Found existing species db `%s`. Using that one.",
-                      species_db)
-        }
-    } else {
-        species_db <- config$taxa_db
-    }
     taxa <- assignTaxonomy(feature_table_nochim, taxa_db,
                            minBoot = config$bootstrap_confidence * 100,
                            multithread = config$threads)
-    taxa <- addSpecies(taxa, species_db)
+    if (!is.null(config$species_db) && !is.na(config$species_db)) {
+        if (grepl("tp(s*)://", config$species_db)) {
+            species_db <- file.path(tmp, "species.fna.gz")
+            if (!file.exists(species_db)) {
+                flog.info("Downloading species db to %s...", species_db)
+                download.file(config$species_db, species_db, quiet = TRUE)
+            } else {
+                flog.info("Found existing species db `%s`. Using that one.",
+                        species_db)
+            }
+        } else {
+            species_db <- config$species_db
+        }
+        taxa <- addSpecies(taxa, species_db)
+    }
     seqs <- rownames(taxa)
     taxa <- cbind(taxa, sequence = seqs)
     classified <- classified_taxa(feature_table, taxa)

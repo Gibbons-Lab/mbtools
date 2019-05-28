@@ -73,6 +73,9 @@
     <li>
       <a href="../articles/06_counting.html">Reference counting</a>
     </li>
+    <li>
+      <a href="../articles/07_workflow_management.html">Workflow management</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -116,9 +119,6 @@
 ##   [.quosures     rlang
 ##   c.quosures     rlang
 ##   print.quosures rlang</code></pre>
-<pre><code>## Registered S3 method overwritten by 'R.oo':
-##   method        from       
-##   throw.default R.methodsS3</code></pre>
 <pre><code>## Also loading:</code></pre>
 <pre><code>##   - dada2=1.12.1
 ##   - data.table=1.12.2
@@ -140,9 +140,9 @@
 <h2 class="hasAnchor">
 <a href="#finding-your-files" class="anchor"></a>Finding your files</h2>
 <p>We will again use our helper function to get a list of sequencing files.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
-<a class="sourceLine" id="cb10-2" title="2">files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</a>
-<a class="sourceLine" id="cb10-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
+<a class="sourceLine" id="cb9-2" title="2">files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
 <pre><code>##                                                                                               forward
 ## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
 ## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
@@ -166,13 +166,13 @@
 <h2 class="hasAnchor">
 <a href="#configuration" class="anchor"></a>Configuration</h2>
 <p>All <code>mbtools</code> workflow step come with corresponding <code>config_*</code> that returns an example/default configuration. Changes can be done a-posteriori or by directly passing in the parameters. We will specify a temporary directory as storage point for the preprocessed data and truncate the forward reads to 240 bp and the reverse reads to 200 bp (based on our previous quality assessment).</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_preprocess.html">config_preprocess</a></span>(<span class="dt">out_dir =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir</a></span>(), <span class="dt">truncLen =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">240</span>, <span class="dv">200</span>))</a>
-<a class="sourceLine" id="cb12-2" title="2">config</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_preprocess.html">config_preprocess</a></span>(<span class="dt">out_dir =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir</a></span>(), <span class="dt">truncLen =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">240</span>, <span class="dv">200</span>))</a>
+<a class="sourceLine" id="cb11-2" title="2">config</a></code></pre></div>
 <pre><code>## $threads
-## [1] TRUE
+## [1] 1
 ## 
 ## $out_dir
-## [1] "/tmp/RtmpzkeStw"
+## [1] "/tmp/Rtmp0FEpji"
 ## 
 ## $trimLeft
 ## [1] 10
@@ -187,18 +187,21 @@
 ## [1] 2
 ## 
 ## $maxN
-## [1] 0</code></pre>
+## [1] 0
+## 
+## attr(,"class")
+## [1] "config"</code></pre>
 <p>We can see that there are some more parameters that we could specify.</p>
 </div>
 <div id="running-the-preprocessing-step" class="section level2">
 <h2 class="hasAnchor">
 <a href="#running-the-preprocessing-step" class="anchor"></a>Running the preprocessing step</h2>
 <p>We can now run our preprocessing step.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">filtered &lt;-<span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(files, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-26 22:15:11] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-26 22:15:18] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">filtered &lt;-<span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(files, config)</a></code></pre></div>
+<pre><code>## INFO [2019-05-27 16:26:31] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-05-27 16:26:39] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
 <p>This will report the percentage of passed reads on the logging interface but you can also inspect that in detail by</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">filtered<span class="op">$</span>passed</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">filtered<span class="op">$</span>passed</a></code></pre></div>
 <pre><code>##      raw preprocessed   id
 ## 1:  7793         6992 F3D0
 ## 2:  5869         5210 F3D1

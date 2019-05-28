@@ -124,7 +124,7 @@ config_count <- config_builder(list(
         reference = NA,
         threads = getOption("mc.cores", 1),
         method = "em",
-        maxit = 1000,
+        maxit = 10000,
         cutoff = 0.01,
         tpm = FALSE,
         weights = FALSE

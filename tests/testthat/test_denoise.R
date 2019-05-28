@@ -16,7 +16,7 @@ files <- find_read_files(path)[1:2] %>%
          preprocess(out_dir = file.path(tempdir(), "pre"))
 
 test_that("denoise works", {
-    den <- denoise(files[1:2], truncLength = c(240, 180))
+    den <- denoise(files[1], truncLength = c(240, 180), species_db = NULL)
 
     expect_named(den, c('feature_table', 'taxonomy', 'errors', 'error_plots',
                         'passed_reads', 'classified', 'steps'))

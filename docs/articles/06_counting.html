@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.4</span>
       </span>
     </div>
 
@@ -72,6 +72,9 @@
     </li>
     <li>
       <a href="../articles/06_counting.html">Reference counting</a>
+    </li>
+    <li>
+      <a href="../articles/07_workflow_management.html">Workflow management</a>
     </li>
   </ul>
 </li>
@@ -116,9 +119,6 @@
 ##   [.quosures     rlang
 ##   c.quosures     rlang
 ##   print.quosures rlang</code></pre>
-<pre><code>## Registered S3 method overwritten by 'R.oo':
-##   method        from       
-##   throw.default R.methodsS3</code></pre>
 <pre><code>## Also loading:</code></pre>
 <pre><code>##   - dada2=1.12.1
 ##   - data.table=1.12.2
@@ -140,33 +140,33 @@
 <h2 class="hasAnchor">
 <a href="#alignment" class="anchor"></a>Alignment</h2>
 <p>Let’s start by aligning our short read data to a reference database of 10 microbial genomes.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">fi &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/shotgun"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-2" title="2"><span class="st">      </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>()</a>
-<a class="sourceLine" id="cb10-3" title="3">ref &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/genomes/zymo_mock.fna.gz"</span>,</a>
-<a class="sourceLine" id="cb10-4" title="4">                   <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
-<a class="sourceLine" id="cb10-5" title="5"></a>
-<a class="sourceLine" id="cb10-6" title="6">alns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/align_short_reads.html">align_short_reads</a></span>(</a>
-<a class="sourceLine" id="cb10-7" title="7">    fi,</a>
-<a class="sourceLine" id="cb10-8" title="8">    <span class="dt">threads =</span> <span class="dv">3</span>,</a>
-<a class="sourceLine" id="cb10-9" title="9">    <span class="dt">reference =</span> ref,</a>
-<a class="sourceLine" id="cb10-10" title="10">    <span class="dt">use_existing =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:31:01] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-25 22:31:03] Finished aligning even1.
-## INFO [2019-05-25 22:31:05] Finished aligning even2.
-## INFO [2019-05-25 22:31:07] Finished aligning even3.</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">fi &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/shotgun"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="st">      </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>()</a>
+<a class="sourceLine" id="cb9-3" title="3">ref &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/genomes/zymo_mock.fna.gz"</span>,</a>
+<a class="sourceLine" id="cb9-4" title="4">                   <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
+<a class="sourceLine" id="cb9-5" title="5"></a>
+<a class="sourceLine" id="cb9-6" title="6">alns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/align_short_reads.html">align_short_reads</a></span>(</a>
+<a class="sourceLine" id="cb9-7" title="7">    fi,</a>
+<a class="sourceLine" id="cb9-8" title="8">    <span class="dt">threads =</span> <span class="dv">3</span>,</a>
+<a class="sourceLine" id="cb9-9" title="9">    <span class="dt">reference =</span> ref,</a>
+<a class="sourceLine" id="cb9-10" title="10">    <span class="dt">use_existing =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>## INFO [2019-05-27 16:36:21] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-05-27 16:36:23] Finished aligning even1.
+## INFO [2019-05-27 16:36:25] Finished aligning even2.
+## INFO [2019-05-27 16:36:27] Finished aligning even3.</code></pre>
 </div>
 <div id="em-counting" class="section level2">
 <h2 class="hasAnchor">
 <a href="#em-counting" class="anchor"></a>EM counting</h2>
 <p>Counting is yet again a workflow and requires an alignment artifact and a configuration.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_count.html">config_count</a></span>(</a>
-<a class="sourceLine" id="cb12-2" title="2">    <span class="dt">reference =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/genomes/zymo_mock.fna.gz"</span>,</a>
-<a class="sourceLine" id="cb12-3" title="3">                            <span class="dt">package =</span> <span class="st">"mbtools"</span>),</a>
-<a class="sourceLine" id="cb12-4" title="4">    <span class="dt">threads =</span> <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb12-5" title="5">    <span class="dt">weights =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb12-6" title="6">)</a>
-<a class="sourceLine" id="cb12-7" title="7"></a>
-<a class="sourceLine" id="cb12-8" title="8">config</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_count.html">config_count</a></span>(</a>
+<a class="sourceLine" id="cb11-2" title="2">    <span class="dt">reference =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/genomes/zymo_mock.fna.gz"</span>,</a>
+<a class="sourceLine" id="cb11-3" title="3">                            <span class="dt">package =</span> <span class="st">"mbtools"</span>),</a>
+<a class="sourceLine" id="cb11-4" title="4">    <span class="dt">threads =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb11-5" title="5">    <span class="dt">weights =</span> <span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb11-6" title="6">)</a>
+<a class="sourceLine" id="cb11-7" title="7"></a>
+<a class="sourceLine" id="cb11-8" title="8">config</a></code></pre></div>
 <pre><code>## $reference
 ## [1] "/home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz"
 ## 
@@ -177,7 +177,7 @@
 ## [1] "em"
 ## 
 ## $maxit
-## [1] 1000
+## [1] 10000
 ## 
 ## $cutoff
 ## [1] 0.01
@@ -191,77 +191,86 @@
 ## attr(,"class")
 ## [1] "config"</code></pre>
 <p>And we can proceed to counting:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">cn &lt;-<span class="st"> </span><span class="kw"><a href="../reference/count_references.html">count_references</a></span>(alns, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:31:08] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
-## INFO [2019-05-25 22:31:08] Normalized IDs. Starting counting...
-## INFO [2019-05-25 22:31:09] [alignments/even1.bam] Read 16941 alignments.
-## INFO [2019-05-25 22:31:09] [alignments/even1.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:31:09] [alignments/even1.bam] Used 20 EM iterations on 16 equivalence classes. Last max. abs. change was 0.
-## INFO [2019-05-25 22:31:09] [alignments/even2.bam] Read 16804 alignments.
-## INFO [2019-05-25 22:31:09] [alignments/even2.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:31:09] [alignments/even2.bam] Used 20 EM iterations on 12 equivalence classes. Last max. abs. change was 1.1e-13.
-## INFO [2019-05-25 22:31:09] [alignments/even3.bam] Read 17518 alignments.
-## INFO [2019-05-25 22:31:09] [alignments/even3.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:31:10] [alignments/even3.bam] Used 20 EM iterations on 20 equivalence classes. Last max. abs. change was 0.</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">cn &lt;-<span class="st"> </span><span class="kw"><a href="../reference/count_references.html">count_references</a></span>(alns, config)</a></code></pre></div>
+<pre><code>## INFO [2019-05-27 16:36:28] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
+## INFO [2019-05-27 16:36:28] Normalized IDs. Starting counting...
+## INFO [2019-05-27 16:36:29] [alignments/even1.bam] Read 16941 alignments.
+## INFO [2019-05-27 16:36:29] [alignments/even1.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-27 16:36:29] [alignments/even1.bam] Used 20 EM iterations on 16 equivalence classes. Last max. abs. change was 0. Database concordance is 0.16%.
+## INFO [2019-05-27 16:36:29] [alignments/even2.bam] Read 16804 alignments.
+## INFO [2019-05-27 16:36:29] [alignments/even2.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-27 16:36:29] [alignments/even2.bam] Used 20 EM iterations on 12 equivalence classes. Last max. abs. change was 1.1e-13. Database concordance is 0.17%.
+## INFO [2019-05-27 16:36:29] [alignments/even3.bam] Read 17518 alignments.
+## INFO [2019-05-27 16:36:29] [alignments/even3.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-27 16:36:29] [alignments/even3.bam] Used 20 EM iterations on 20 equivalence classes. Last max. abs. change was 5.7e-14. Database concordance is 0.16%.</code></pre>
 <p>This creates a count artifact which contains the counts.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">cn<span class="op">$</span>counts</a></code></pre></div>
-<pre><code>##      reference   counts effective_length sample
-##  1: AE004091.2 634.6013          6264306  even1
-##  2: AE006468.2 670.7276          4857352  even1
-##  3: AE016830.1 661.1689          3217933  even1
-##  4: AE017341.1 604.1535         19052864  even1
-##  5: AL009126.3 628.9533          4215508  even1
-##  6: AL591824.1 629.2075          2944430  even1
-##  7: AP008937.1 464.5825          2098587  even1
-##  8: BA000007.3 703.2698          5498480  even1
-##  9: BK006935.2 584.4928         12072428  even1
-## 10: CP000253.1 717.8430          2821263  even1
-## 11: AE004091.2 638.9606          6264306  even2
-## 12: AE006468.2 547.4441          4857352  even2
-## 13: AE016830.1 685.7530          3217933  even2
-## 14: AE017341.1 589.4761         19052864  even2
-## 15: AL009126.3 588.7936          4215508  even2
-## 16: AL591824.1 511.0285          2944430  even2
-## 17: AP008937.1 671.5862          2098587  even2
-## 18: BA000007.3 631.6744          5498480  even2
-## 19: BK006935.2 609.1436         12072428  even2
-## 20: CP000253.1 591.1398          2821263  even2
-## 21: AE004091.2 617.1627          6264306  even3
-## 22: AE006468.2 653.7045          4857352  even3
-## 23: AE016830.1 600.9731          3217933  even3
-## 24: AE017341.1 639.0245         19052864  even3
-## 25: AL009126.3 557.3735          4215508  even3
-## 26: AL591824.1 720.0680          2944430  even3
-## 27: AP008937.1 732.0089          2098587  even3
-## 28: BA000007.3 554.3010          5498480  even3
-## 29: BK006935.2 611.6976         12072428  even3
-## 30: CP000253.1 486.6862          2821263  even3
-##      reference   counts effective_length sample</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">cn<span class="op">$</span>counts</a></code></pre></div>
+<pre><code>##      reference    counts effective_length sample
+##  1: AE004091.2 633.56663          6264306  even1
+##  2: AE006468.2 669.75553          4857352  even1
+##  3: AE016830.1 660.15548          3217933  even1
+##  4: AE017341.1 603.14526         19052864  even1
+##  5: AL009126.3 627.85029          4215508  even1
+##  6: AL591824.1 628.19900          2944430  even1
+##  7: AP008937.1 463.50018          2098587  even1
+##  8: BA000007.3 702.28268          5498480  even1
+##  9: BK006935.2 583.40725         12072428  even1
+## 10: CP000253.1 716.85064          2821263  even1
+## 11:       &lt;NA&gt;  10.28706               NA  even1
+## 12: AE004091.2 637.96080          6264306  even2
+## 13: AE006468.2 546.44977          4857352  even2
+## 14: AE016830.1 684.74418          3217933  even2
+## 15: AE017341.1 588.45327         19052864  even2
+## 16: AL009126.3 587.75863          4215508  even2
+## 17: AL591824.1 510.03447          2944430  even2
+## 18: AP008937.1 670.60417          2098587  even2
+## 19: BA000007.3 630.70269          5498480  even2
+## 20: BK006935.2 608.11390         12072428  even2
+## 21: CP000253.1 590.07601          2821263  even2
+## 22:       &lt;NA&gt;  10.10210               NA  even2
+## 23: AE004091.2 616.13757          6264306  even3
+## 24: AE006468.2 652.73269          4857352  even3
+## 25: AE016830.1 599.92729          3217933  even3
+## 26: AE017341.1 638.01323         19052864  even3
+## 27: AL009126.3 556.38136          4215508  even3
+## 28: AL591824.1 719.03635          2944430  even3
+## 29: AP008937.1 731.04321          2098587  even3
+## 30: BA000007.3 553.32322          5498480  even3
+## 31: BK006935.2 610.70098         12072428  even3
+## 32: CP000253.1 485.69589          2821263  even3
+## 33:       &lt;NA&gt;  10.00820               NA  even3
+##      reference    counts effective_length sample</code></pre>
+<p>Note that there is a NA reference. This is the number of reads likely coming from a sequence not contained in the reference.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">cn<span class="op">$</span>counts[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na</a></span>(reference)]</a></code></pre></div>
+<pre><code>##    reference   counts effective_length sample
+## 1:      &lt;NA&gt; 10.28706               NA  even1
+## 2:      &lt;NA&gt; 10.10210               NA  even2
+## 3:      &lt;NA&gt; 10.00820               NA  even3</code></pre>
 <p>In each sample we have 10 microbes with the same abundance.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw">ggplot</span>(cn<span class="op">$</span>counts, <span class="kw">aes</span>(<span class="dt">x=</span>counts, <span class="dt">y=</span>reference)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb18-2" title="2"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot.window">xlim</a></span>(<span class="dv">0</span>, <span class="dv">1000</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb18-3" title="3"><span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>sample) <span class="op">+</span><span class="st"> </span><span class="kw">theme_minimal</span>()</a></code></pre></div>
-<p><img src="06_counting_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
-<p>Looks ok, but there is a lot of noise since we have very low depth.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">ggplot</span>(cn<span class="op">$</span>counts, <span class="kw">aes</span>(<span class="dt">x =</span> counts)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">bins =</span> <span class="dv">8</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">ggplot</span>(cn<span class="op">$</span>counts, <span class="kw">aes</span>(<span class="dt">x=</span>counts, <span class="dt">y=</span>reference)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot.window">xlim</a></span>(<span class="dv">0</span>, <span class="dv">1000</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>sample) <span class="op">+</span><span class="st"> </span><span class="kw">theme_minimal</span>()</a></code></pre></div>
 <p><img src="06_counting_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<p>We could also compare that with a naive counting method that just uses the best alignment score. In our case that will perform equally since we have little multi-mapping here.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">config<span class="op">$</span>method &lt;-<span class="st"> "naive"</span></a>
-<a class="sourceLine" id="cb20-2" title="2">cn2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/count_references.html">count_references</a></span>(alns, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-25 22:31:10] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
-## INFO [2019-05-25 22:31:10] Normalized IDs. Starting counting...
-## INFO [2019-05-25 22:31:11] [alignments/even1.bam] Read 16941 alignments.
-## INFO [2019-05-25 22:31:11] [alignments/even1.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:31:11] [alignments/even2.bam] Read 16804 alignments.
-## INFO [2019-05-25 22:31:11] [alignments/even2.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
-## INFO [2019-05-25 22:31:11] [alignments/even3.bam] Read 17518 alignments.
-## INFO [2019-05-25 22:31:11] [alignments/even3.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].</code></pre>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">counts &lt;-<span class="st"> </span>cn<span class="op">$</span>counts[cn2<span class="op">$</span>counts, on =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"sample"</span>, <span class="st">"reference"</span>, <span class="st">"effective_length"</span>)]</a>
-<a class="sourceLine" id="cb22-2" title="2"></a>
-<a class="sourceLine" id="cb22-3" title="3"><span class="kw">ggplot</span>(counts, <span class="kw">aes</span>(<span class="dt">x =</span> counts, <span class="dt">y =</span> i.counts)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-4" title="4"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> <span class="st">"lm"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-5" title="5"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"em"</span>, <span class="dt">y =</span> <span class="st">"naive"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme_classic</span>()</a></code></pre></div>
+<p>Looks ok, but there is a lot of noise since we have very low depth.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="kw">ggplot</span>(cn<span class="op">$</span>counts, <span class="kw">aes</span>(<span class="dt">x =</span> counts)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">bins =</span> <span class="dv">8</span>)</a></code></pre></div>
 <p><img src="06_counting_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p>We could also compare that with a naive counting method that just uses the best alignment score. In our case that will perform equally since we have little multi-mapping here.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">config<span class="op">$</span>method &lt;-<span class="st"> "naive"</span></a>
+<a class="sourceLine" id="cb21-2" title="2">cn2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/count_references.html">count_references</a></span>(alns, config)</a></code></pre></div>
+<pre><code>## INFO [2019-05-27 16:36:30] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
+## INFO [2019-05-27 16:36:30] Normalized IDs. Starting counting...
+## INFO [2019-05-27 16:36:30] [alignments/even1.bam] Read 16941 alignments.
+## INFO [2019-05-27 16:36:30] [alignments/even1.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-27 16:36:30] [alignments/even2.bam] Read 16804 alignments.
+## INFO [2019-05-27 16:36:30] [alignments/even2.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].
+## INFO [2019-05-27 16:36:30] [alignments/even3.bam] Read 17518 alignments.
+## INFO [2019-05-27 16:36:30] [alignments/even3.bam] 10 reference seqs. Confidence interval for effective lengths: [2261189.10, 17482265.90].</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">counts &lt;-<span class="st"> </span>cn<span class="op">$</span>counts[cn2<span class="op">$</span>counts, on =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"sample"</span>, <span class="st">"reference"</span>, <span class="st">"effective_length"</span>)]</a>
+<a class="sourceLine" id="cb23-2" title="2"></a>
+<a class="sourceLine" id="cb23-3" title="3"><span class="kw">ggplot</span>(counts, <span class="kw">aes</span>(<span class="dt">x =</span> counts, <span class="dt">y =</span> i.counts)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb23-4" title="4"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> <span class="st">"lm"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb23-5" title="5"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"em"</span>, <span class="dt">y =</span> <span class="st">"naive"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme_classic</span>()</a></code></pre></div>
+<p><img src="06_counting_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
 <p>As we see they both give the same results for that simple case.</p>
 </div>
 </div>

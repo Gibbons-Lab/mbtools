@@ -32,12 +32,12 @@
 
 <meta property="og:title" content="Count alignment hits to a reference database. — count_references" />
 
-<meta property="og:description" content="This will correct for effective treference lengths as done by almost any
+<meta property="og:description" content="This will correct for effective reference lengths as done by almost any
 good tool those days. So the returned counts are not correlated with
 feature lengths. By default an expectation maximization algorithm is
 used to resolve multiple mappings of one read to many references which
 pretty much always happens in metagenomics data sets. The optimized
-likelihodd function is very similar to the one in kallisto
+likelihood function is very similar to the one in kallisto
 (https://doi.org/10.1038/nbt.3519)." />
 <meta name="twitter:card" content="summary" />
 
@@ -112,6 +112,9 @@ likelihodd function is very similar to the one in kallisto
     <li>
       <a href="../articles/06_counting.html">Reference counting</a>
     </li>
+    <li>
+      <a href="../articles/07_workflow_management.html">Workflow management</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -142,12 +145,12 @@ likelihodd function is very similar to the one in kallisto
 
     <div class="ref-description">
     
-    <p>This will correct for effective treference lengths as done by almost any
+    <p>This will correct for effective reference lengths as done by almost any
 good tool those days. So the returned counts are not correlated with
 feature lengths. By default an expectation maximization algorithm is
 used to resolve multiple mappings of one read to many references which
 pretty much always happens in metagenomics data sets. The optimized
-likelihodd function is very similar to the one in kallisto
+likelihood function is very similar to the one in kallisto
 (https://doi.org/10.1038/nbt.3519).</p>
     
     </div>
@@ -173,6 +176,12 @@ like <code><a href='align_short_reads.html'>align_short_reads</a></code> or <cod
     <p>A list containing the used alignments and the transcript counts in
  `counts`.</p>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Note that for the EM method there will be a NA reference reported which
+corresponds to the approximate abundance of references not contained in the
+database.</p>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -181,6 +190,8 @@ like <code><a href='align_short_reads.html'>align_short_reads</a></code> or <cod
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

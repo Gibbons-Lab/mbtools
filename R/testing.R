@@ -160,7 +160,7 @@ association <- function(ps, variables = NULL, tax = "genus", method = "deseq2",
     if (is.null(variables)) variables <- names(meta)
     variables <- variables[!(variables %in% confounders)]
     counts <- as.matrix(taxa_count(ps, lev = tax))
-    meta <- meta[rownames(counts), ]
+    meta <- meta[rownames(counts), , drop = FALSE]
     too_rare <- (colSums(counts >= 1) / nrow(counts)) < in_samples
     too_few <- colMeans(counts) < min_count
     counts <- counts[, !(too_rare | too_few)]

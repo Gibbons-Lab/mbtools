@@ -17,11 +17,16 @@ A list containing the used alignments and the transcript counts in
  `counts`.
 }
 \description{
-This will correct for effective treference lengths as done by almost any
+This will correct for effective reference lengths as done by almost any
 good tool those days. So the returned counts are not correlated with
 feature lengths. By default an expectation maximization algorithm is
 used to resolve multiple mappings of one read to many references which
 pretty much always happens in metagenomics data sets. The optimized
-likelihodd function is very similar to the one in kallisto
+likelihood function is very similar to the one in kallisto
 (https://doi.org/10.1038/nbt.3519).
+}
+\details{
+Note that for the EM method there will be a NA reference reported which
+corresponds to the approximate abundance of references not contained in the
+database.
 }

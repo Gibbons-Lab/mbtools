@@ -4,13 +4,13 @@
 \alias{filter_reference}
 \title{Filter a set of reference sequences from the data set.seed}
 \usage{
-filter_reference(object, config)
+filter_reference(object, ...)
 }
 \arguments{
 \item{object}{An experiment data table as returned by
 \code{\link{find_read_files}} or a worflow object.}
 
-\item{config}{A configuration file as returned by
+\item{...}{A configuration as returned by
 \code{\link{config_reference}}.}
 }
 \value{
