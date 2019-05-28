@@ -29,7 +29,7 @@ config_demultiplex <- config_builder(list(
 #'
 #' @param object An experiment data table as returned by
 #'  \code{\link{find_read_files}} or a worflow object.
-#' @param config A configuration as returned by
+#' @param ... A configuration as returned by
 #'  \code{\link{config_demultiplex}}.
 #' @return A list containing the split files and matching statistics.
 #' @examples

@@ -10,7 +10,7 @@ demultiplex(object, ...)
 \item{object}{An experiment data table as returned by
 \code{\link{find_read_files}} or a worflow object.}
 
-\item{config}{A configuration as returned by
+\item{...}{A configuration as returned by
 \code{\link{config_demultiplex}}.}
 }
 \value{

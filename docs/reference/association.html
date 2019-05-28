@@ -66,7 +66,7 @@ factors." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.6</span>
       </span>
     </div>
 
@@ -89,28 +89,28 @@ factors." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/00_qa.html">Quality control of sequencing data</a>
+      <a href="../articles/00_qa.html">0 - Quality control of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/01_preprocessing.html">Preprocessing of sequencing data</a>
+      <a href="../articles/01_preprocessing.html">1 - Preprocessing of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/02_amplicon_sequencing.html">Amplicon sequencing analysis</a>
+      <a href="../articles/02_amplicon_sequencing.html">2 - Amplicon sequencing analysis</a>
     </li>
     <li>
-      <a href="../articles/03_shotgun_align.html">Shotgun data - alignments</a>
+      <a href="../articles/03_shotgun_align.html">3 - Shotgun data - alignments</a>
     </li>
     <li>
-      <a href="../articles/04_long_align.html">Long read data - alignments</a>
+      <a href="../articles/04_long_align.html">5- Long read data - alignments</a>
     </li>
     <li>
-      <a href="../articles/05_lineage.html">Lineage calling with SLIMM</a>
+      <a href="../articles/05_lineage.html">5 - Lineage calling with SLIMM</a>
     </li>
     <li>
-      <a href="../articles/06_counting.html">Reference counting</a>
+      <a href="../articles/06_counting.html">6- Reference counting</a>
     </li>
     <li>
-      <a href="../articles/07_workflow_management.html">Workflow management</a>
+      <a href="../articles/07_workflow_management.html">7 - Workflow management</a>
     </li>
   </ul>
 </li>
@@ -148,9 +148,7 @@ factors.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>association</span>(<span class='no'>ps</span>, <span class='kw'>variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>tax</span> <span class='kw'>=</span> <span class='st'>"genus"</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"deseq2"</span>,
-  <span class='kw'>confounders</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_count</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>in_samples</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>independent_weighting</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>shrink</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>association</span>(<span class='no'>ps</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,55 +158,14 @@ factors.</p>
       <td><p>A phyloseq object containing the taxa counts.</p></td>
     </tr>
     <tr>
-      <th>variables</th>
-      <td><p>Names of exogenous variables to include. Defaults to all
-variables.</p></td>
-    </tr>
-    <tr>
-      <th>tax</th>
-      <td><p>The taxa level on which to run differential tests. Defaults to
-genus.</p></td>
-    </tr>
-    <tr>
-      <th>method</th>
-      <td><p>What method to use for differential calling. Either "deseq2"
-or "voom".</p></td>
-    </tr>
-    <tr>
-      <th>confounders</th>
-      <td><p>A character vector containing the confounders that should
-be used.</p></td>
-    </tr>
-    <tr>
-      <th>min_count</th>
-      <td><p>Minimum required number of average counts for a taxa.</p></td>
-    </tr>
-    <tr>
-      <th>in_samples</th>
-      <td><p>Taxa must be present in at least this fraction of samples.</p></td>
-    </tr>
-    <tr>
-      <th>independent_weighting</th>
-      <td><p>Whether to adjust p values by independent
-weighting or normal Benjamini-Hochberg.
-factors.</p></td>
-    </tr>
-    <tr>
-      <th>standardize</th>
-      <td><p>Whether to standardize continuous variables to a mean
-of zero and a variance of 1. If True log fold changes for those variables
-denote are relative to a change of one standard deviation in the variable
-value.</p></td>
-    </tr>
-    <tr>
-      <th>shrink</th>
-      <td><p>Whether to return shrunken log fold changes. Defaults to true.</p></td>
+      <th>...</th>
+      <td><p>A configuration as returned by <code><a href='config_association.html'>config_association</a></code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.table containing the results.</p>
+    <p>An artifact containing the results.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

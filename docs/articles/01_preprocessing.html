@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Preprocessing of sequencing data • mbtools</title>
+<title>1 - Preprocessing of sequencing data • mbtools</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Preprocessing of sequencing data">
+<script src="../pkgdown.js"></script><meta property="og:title" content="1 - Preprocessing of sequencing data">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.6</span>
       </span>
     </div>
 
@@ -53,28 +53,28 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/00_qa.html">Quality control of sequencing data</a>
+      <a href="../articles/00_qa.html">0 - Quality control of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/01_preprocessing.html">Preprocessing of sequencing data</a>
+      <a href="../articles/01_preprocessing.html">1 - Preprocessing of sequencing data</a>
     </li>
     <li>
-      <a href="../articles/02_amplicon_sequencing.html">Amplicon sequencing analysis</a>
+      <a href="../articles/02_amplicon_sequencing.html">2 - Amplicon sequencing analysis</a>
     </li>
     <li>
-      <a href="../articles/03_shotgun_align.html">Shotgun data - alignments</a>
+      <a href="../articles/03_shotgun_align.html">3 - Shotgun data - alignments</a>
     </li>
     <li>
-      <a href="../articles/04_long_align.html">Long read data - alignments</a>
+      <a href="../articles/04_long_align.html">5- Long read data - alignments</a>
     </li>
     <li>
-      <a href="../articles/05_lineage.html">Lineage calling with SLIMM</a>
+      <a href="../articles/05_lineage.html">5 - Lineage calling with SLIMM</a>
     </li>
     <li>
-      <a href="../articles/06_counting.html">Reference counting</a>
+      <a href="../articles/06_counting.html">6- Reference counting</a>
     </li>
     <li>
-      <a href="../articles/07_workflow_management.html">Workflow management</a>
+      <a href="../articles/07_workflow_management.html">7 - Workflow management</a>
     </li>
   </ul>
 </li>
@@ -98,7 +98,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Preprocessing of sequencing data</h1>
+      <h1>1 - Preprocessing of sequencing data</h1>
                         <h4 class="author">Christian Diener</h4>
             
       
@@ -120,7 +120,7 @@
 ##   c.quosures     rlang
 ##   print.quosures rlang</code></pre>
 <pre><code>## Also loading:</code></pre>
-<pre><code>##   - dada2=1.12.1
+<pre><code>##   - dada2=1.12.0
 ##   - data.table=1.12.2
 ##   - ggplot2=3.1.1
 ##   - magrittr=1.5
@@ -128,7 +128,7 @@
 ##   - ShortRead=1.42.0
 ##   - yaml=2.2.0</code></pre>
 <pre><code>## Found tools:</code></pre>
-<pre><code>##   - minimap2=2.15-r905
+<pre><code>##   - minimap2=2.17-r941
 ##   - slimm=0.3.4
 ##   - samtools=1.9</code></pre>
 <pre><code>## 
@@ -143,18 +143,18 @@
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a>
 <a class="sourceLine" id="cb9-2" title="2">files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</a>
 <a class="sourceLine" id="cb9-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
-<pre><code>##                                                                                               forward
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D2_S190_L001_R1_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D3_S191_L001_R1_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/Mock_S280_L001_R1_001.fastq.gz
-##                                                                                               reverse
-## 1: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D0_S188_L001_R2_001.fastq.gz
-## 2: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D1_S189_L001_R2_001.fastq.gz
-## 3: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D2_S190_L001_R2_001.fastq.gz
-## 4: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/F3D3_S191_L001_R2_001.fastq.gz
-## 5: /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/16S/Mock_S280_L001_R2_001.fastq.gz
+<pre><code>##                                                                                                              forward
+## 1: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
+## 2: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
+## 3: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D2_S190_L001_R1_001.fastq.gz
+## 4: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D3_S191_L001_R1_001.fastq.gz
+## 5: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/Mock_S280_L001_R1_001.fastq.gz
+##                                                                                                              reverse
+## 1: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D0_S188_L001_R2_001.fastq.gz
+## 2: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D1_S189_L001_R2_001.fastq.gz
+## 3: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D2_S190_L001_R2_001.fastq.gz
+## 4: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D3_S191_L001_R2_001.fastq.gz
+## 5: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/Mock_S280_L001_R2_001.fastq.gz
 ##      id injection_order lane
 ## 1: F3D0             188    1
 ## 2: F3D1             189    1
@@ -172,7 +172,7 @@
 ## [1] 1
 ## 
 ## $out_dir
-## [1] "/tmp/Rtmp0FEpji"
+## [1] "/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpDFnDei"
 ## 
 ## $trimLeft
 ## [1] 10
@@ -198,8 +198,8 @@
 <a href="#running-the-preprocessing-step" class="anchor"></a>Running the preprocessing step</h2>
 <p>We can now run our preprocessing step.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">filtered &lt;-<span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(files, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-27 16:26:31] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-27 16:26:39] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
+<pre><code>## INFO [2019-05-28 12:56:09] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-05-28 12:56:16] 4.03e+04/4.48e+04 (89.75%) reads passed preprocessing.</code></pre>
 <p>This will report the percentage of passed reads on the logging interface but you can also inspect that in detail by</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">filtered<span class="op">$</span>passed</a></code></pre></div>
 <pre><code>##      raw preprocessed   id
