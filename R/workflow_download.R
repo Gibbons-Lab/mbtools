@@ -15,8 +15,8 @@ download_files <- function(files, threads = getOption("mc.cores", 1)) {
             dir.create(dirname(meta$target), recursive = TRUE)
         }
         flog.info("Downloading %s to %s.", meta$description, meta$target)
-        ret = tryCatch(download.file(meta$url, meta$target,
-                                     quiet = (threads > 1)),
+        ret <- tryCatch(download.file(meta$url, meta$target,
+                                     quiet = TRUE),
                        error = function(e) 1)
         meta$success <- (ret == 0)
         if (meta$success) {
@@ -45,6 +45,7 @@ sra_download_url <- function(id, paired = TRUE) {
     }
 }
 
+# nocov start
 prepare_filelist <- function(runtable, files, path = "data") {
     sra <- fread(runtable, sep = "\t")
     setkey(sra, Sample_Name)
@@ -68,3 +69,4 @@ prepare_filelist <- function(runtable, files, path = "data") {
     }
     return(files)
 }
+# nocov end
