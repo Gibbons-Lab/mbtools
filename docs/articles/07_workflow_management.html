@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.5</span>
       </span>
     </div>
 
@@ -138,21 +138,23 @@
 <a class="sourceLine" id="cb9-3" title="3"></a>
 <a class="sourceLine" id="cb9-4" title="4">conf_p &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_preprocess.html">config_preprocess</a></span>(</a>
 <a class="sourceLine" id="cb9-5" title="5">    <span class="dt">trimLeft =</span> <span class="dv">10</span>,</a>
-<a class="sourceLine" id="cb9-6" title="6">    <span class="dt">maxEE =</span> <span class="dv">500</span>,</a>
-<a class="sourceLine" id="cb9-7" title="7">    <span class="dt">maxN =</span> <span class="dv">4</span>,</a>
-<a class="sourceLine" id="cb9-8" title="8">    <span class="dt">out_dir =</span> <span class="st">"preprocessed"</span></a>
-<a class="sourceLine" id="cb9-9" title="9">)</a>
-<a class="sourceLine" id="cb9-10" title="10">conf_a &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_align.html">config_align</a></span>(</a>
-<a class="sourceLine" id="cb9-11" title="11">    <span class="dt">reference =</span> ref,</a>
-<a class="sourceLine" id="cb9-12" title="12">    <span class="dt">alignment_dir =</span> <span class="st">"alignments"</span>,</a>
-<a class="sourceLine" id="cb9-13" title="13">    <span class="dt">threads =</span> <span class="dv">4</span></a>
-<a class="sourceLine" id="cb9-14" title="14">)</a>
-<a class="sourceLine" id="cb9-15" title="15">conf_c &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_count.html">config_count</a></span>(</a>
-<a class="sourceLine" id="cb9-16" title="16">    <span class="dt">reference =</span> ref,</a>
-<a class="sourceLine" id="cb9-17" title="17">    <span class="dt">weights =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb9-18" title="18">    <span class="dt">maxit =</span> <span class="dv">1000</span>,</a>
-<a class="sourceLine" id="cb9-19" title="19">    <span class="dt">threads =</span> <span class="dv">4</span></a>
-<a class="sourceLine" id="cb9-20" title="20">)</a></code></pre></div>
+<a class="sourceLine" id="cb9-6" title="6">    <span class="dt">maxEE =</span> <span class="ot">Inf</span>,</a>
+<a class="sourceLine" id="cb9-7" title="7">    <span class="dt">maxN =</span> <span class="ot">Inf</span>,</a>
+<a class="sourceLine" id="cb9-8" title="8">    <span class="dt">truncQ =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb9-9" title="9">    <span class="dt">out_dir =</span> <span class="st">"preprocessed"</span></a>
+<a class="sourceLine" id="cb9-10" title="10">)</a>
+<a class="sourceLine" id="cb9-11" title="11">conf_a &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_align.html">config_align</a></span>(</a>
+<a class="sourceLine" id="cb9-12" title="12">    <span class="dt">reference =</span> ref,</a>
+<a class="sourceLine" id="cb9-13" title="13">    <span class="dt">alignment_dir =</span> <span class="st">"alignments"</span>,</a>
+<a class="sourceLine" id="cb9-14" title="14">    <span class="dt">threads =</span> <span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb9-15" title="15">    <span class="dt">use_existing =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb9-16" title="16">)</a>
+<a class="sourceLine" id="cb9-17" title="17">conf_c &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_count.html">config_count</a></span>(</a>
+<a class="sourceLine" id="cb9-18" title="18">    <span class="dt">reference =</span> ref,</a>
+<a class="sourceLine" id="cb9-19" title="19">    <span class="dt">weights =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb9-20" title="20">    <span class="dt">maxit =</span> <span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb9-21" title="21">    <span class="dt">threads =</span> <span class="dv">4</span></a>
+<a class="sourceLine" id="cb9-22" title="22">)</a></code></pre></div>
 <p>Where our actual workflow looks like this:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">counting &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(reads) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-2" title="2"><span class="st">            </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(<span class="dt">min_score =</span> <span class="dv">20</span>) <span class="op">%&gt;%</span></a>
@@ -175,57 +177,55 @@
 ## 
 ##     expand</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">reads &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/file_in">file_in</a></span>(<span class="st">"../inst/extdata/nanopore"</span>)</a>
-<a class="sourceLine" id="cb15-2" title="2">conf_p<span class="op">$</span>out_dir &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/file_out">file_out</a></span>(<span class="st">"preprocessed"</span>)</a>
-<a class="sourceLine" id="cb15-3" title="3">conf_a<span class="op">$</span>alignment_dir &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/file_out">file_out</a></span>(<span class="st">"alignment_dir"</span>)</a>
-<a class="sourceLine" id="cb15-4" title="4"></a>
-<a class="sourceLine" id="cb15-5" title="5">plan &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/drake_plan">drake_plan</a></span>(</a>
-<a class="sourceLine" id="cb15-6" title="6">    <span class="dt">files =</span> <span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(reads),</a>
-<a class="sourceLine" id="cb15-7" title="7">    <span class="dt">qa =</span> <span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(files, <span class="dt">min_score =</span> <span class="dv">20</span>),</a>
-<a class="sourceLine" id="cb15-8" title="8">    <span class="dt">qual_plot =</span> <span class="kw">ggsave</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/file_out">file_out</a></span>(<span class="st">"quals.png"</span>), qa<span class="op">$</span>quality_plot),</a>
-<a class="sourceLine" id="cb15-9" title="9">    <span class="dt">processed =</span> <span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(files, conf_p),</a>
-<a class="sourceLine" id="cb15-10" title="10">    <span class="dt">aligned =</span> <span class="kw"><a href="../reference/align_short_reads.html">align_short_reads</a></span>(processed, conf_a),</a>
-<a class="sourceLine" id="cb15-11" title="11">    <span class="dt">counting =</span> <span class="kw"><a href="../reference/count_references.html">count_references</a></span>(aligned, conf_c)</a>
-<a class="sourceLine" id="cb15-12" title="12">)</a></code></pre></div>
+<a class="sourceLine" id="cb15-2" title="2"></a>
+<a class="sourceLine" id="cb15-3" title="3">plan &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/drake_plan">drake_plan</a></span>(</a>
+<a class="sourceLine" id="cb15-4" title="4">    <span class="dt">files =</span> <span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(reads),</a>
+<a class="sourceLine" id="cb15-5" title="5">    <span class="dt">qa =</span> <span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(files, <span class="dt">min_score =</span> <span class="dv">20</span>),</a>
+<a class="sourceLine" id="cb15-6" title="6">    <span class="dt">qual_plot =</span> <span class="kw">ggsave</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/file_out">file_out</a></span>(<span class="st">"quals.png"</span>), qa<span class="op">$</span>quality_plot),</a>
+<a class="sourceLine" id="cb15-7" title="7">    <span class="dt">processed =</span> <span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(files, conf_p),</a>
+<a class="sourceLine" id="cb15-8" title="8">    <span class="dt">aligned =</span> <span class="kw"><a href="../reference/align_long_reads.html">align_long_reads</a></span>(processed, conf_a),</a>
+<a class="sourceLine" id="cb15-9" title="9">    <span class="dt">counting =</span> <span class="kw"><a href="../reference/count_references.html">count_references</a></span>(aligned, conf_c)</a>
+<a class="sourceLine" id="cb15-10" title="10">)</a></code></pre></div>
 <p>We can take a look if our plan makes sense:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/clean">clean</a></span>()</a>
 <a class="sourceLine" id="cb16-2" title="2">dconf &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/drake_config">drake_config</a></span>(plan)</a>
 <a class="sourceLine" id="cb16-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/vis_drake_graph">vis_drake_graph</a></span>(dconf)</a></code></pre></div>
 <div id="htmlwidget-9b841de324d41155df19" style="width:700px;height:432.632880098888px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9b841de324d41155df19">{"x":{"nodes":{"id":["conf_c","reads","conf_p","conf_a","files","qa","processed","qual_plot","aligned","p-OF2WC3DTFZYG4ZY","counting"],"imported":[true,true,true,true,false,false,false,false,false,false,false],"label":["conf_c","reads","conf_p","conf_a","files","qa","processed","qual_plot","aligned","file quals.png","counting"],"status":["imported","imported","imported","imported","outdated","outdated","outdated","outdated","outdated","outdated","failed"],"type":["object","object","object","object","object","object","object","object","object","file","object"],"font.size":[20,20,20,20,20,20,20,20,20,20,20],"color":["#1874CD","#1874CD","#1874CD","#1874CD","#000000","#000000","#000000","#000000","#000000","#000000","#AA0000"],"shape":["dot","dot","dot","dot","dot","dot","dot","dot","dot","square","dot"],"level":[1,1,1,1,2,3,3,4,4,5,5],"x":[-1,-1,-1,-1,-0.5,0,0,0.5,0.5,1,1],"y":[-1,-0.333333333333333,0.333333333333333,1,-2.22044604925031e-16,-0.555555555555556,0.555555555555555,-0.555555555555556,0.555555555555555,-0.555555555555556,0.555555555555555]},"edges":{"from":["conf_c","reads","conf_p","conf_a","files","files","qa","qual_plot","processed","aligned"],"to":["counting","files","processed","aligned","qa","processed","qual_plot","p-OF2WC3DTFZYG4ZY","aligned","counting"],"arrows":["to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":false},"physics":{"stabilization":false},"interaction":{"navigationButtons":true}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)"},"main":{"text":"Dependency graph","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":false,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"left","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Outdated","Failed","Imported","Object","File"],"color":["#000000","#AA0000","#1874CD","#888888","#888888"],"shape":["dot","dot","dot","dot","square"],"font.color":["black","black","black","black","black"],"font.size":[20,20,20,20,20],"id":[2,4,5,7,9]},"nodesToDataframe":true},"igraphlayout":{"type":"square"},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script><p>As we see <code>drake</code> knows we have to run everything. Let’s execute the plan and see what happens.</p>
+<script type="application/json" data-for="htmlwidget-9b841de324d41155df19">{"x":{"nodes":{"id":["conf_c","reads","conf_p","conf_a","files","qa","processed","qual_plot","aligned","p-OF2WC3DTFZYG4ZY","counting"],"imported":[true,true,true,true,false,false,false,false,false,false,false],"label":["conf_c","reads","conf_p","conf_a","files","qa","processed","qual_plot","aligned","file quals.png","counting"],"status":["imported","imported","imported","imported","outdated","outdated","outdated","outdated","outdated","outdated","outdated"],"type":["object","object","object","object","object","object","object","object","object","file","object"],"font.size":[20,20,20,20,20,20,20,20,20,20,20],"color":["#1874CD","#1874CD","#1874CD","#1874CD","#000000","#000000","#000000","#000000","#000000","#000000","#000000"],"shape":["dot","dot","dot","dot","dot","dot","dot","dot","dot","square","dot"],"level":[1,1,1,1,2,3,3,4,4,5,5],"x":[-1,-1,-1,-1,-0.5,0,0,0.5,0.5,1,1],"y":[-1,-0.333333333333333,0.333333333333333,1,-2.22044604925031e-16,-0.555555555555556,0.555555555555555,-0.555555555555556,0.555555555555555,-0.555555555555556,0.555555555555555]},"edges":{"from":["conf_c","reads","conf_p","conf_a","files","files","qa","qual_plot","processed","aligned"],"to":["counting","files","processed","aligned","qa","processed","qual_plot","p-OF2WC3DTFZYG4ZY","aligned","counting"],"arrows":["to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":false},"physics":{"stabilization":false},"interaction":{"navigationButtons":true}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)"},"main":{"text":"Dependency graph","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":false,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"left","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Outdated","Imported","Object","File"],"color":["#000000","#1874CD","#888888","#888888"],"shape":["dot","dot","dot","square"],"font.color":["black","black","black","black"],"font.size":[20,20,20,20],"id":[2,5,7,9]},"nodesToDataframe":true},"igraphlayout":{"type":"square"},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script><p>As we see <code>drake</code> knows we have to run everything. Let’s execute the plan and see what happens. Note, the <code>lock_envir</code> argument which is currently necessary.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/make">make</a></span>(plan, <span class="dt">lock_envir =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## target files</code></pre>
 <pre><code>## target qa</code></pre>
-<pre><code>## INFO [2019-05-27 16:36:41] Running quality assay for forward reads from 3 files.
-## INFO [2019-05-27 16:36:56] Median per base error is 12.589% (median score = 9.00).
-## INFO [2019-05-27 16:36:56] Mean per cycle entropy is 1.578 (in [0, 2]).
-## INFO [2019-05-27 16:36:56] On average we have 1000.00 +- 0.00 reads per file.</code></pre>
+<pre><code>## INFO [2019-05-27 21:58:46] Running quality assay for forward reads from 3 files.
+## INFO [2019-05-27 21:58:59] Median per base error is 12.589% (median score = 9.00).
+## INFO [2019-05-27 21:58:59] Mean per cycle entropy is 1.578 (in [0, 2]).
+## INFO [2019-05-27 21:58:59] On average we have 1000.00 +- 0.00 reads per file.</code></pre>
 <pre><code>## target processed</code></pre>
-<pre><code>## INFO [2019-05-27 16:36:59] Preprocessing reads for 3 single-end samples...
-## INFO [2019-05-27 16:37:00] 593/3e+03 (19.77%) reads passed preprocessing.</code></pre>
+<pre><code>## INFO [2019-05-27 21:59:03] Preprocessing reads for 3 single-end samples...
+## INFO [2019-05-27 21:59:08] 2.99e+03/3e+03 (99.53%) reads passed preprocessing.</code></pre>
 <pre><code>## target qual_plot</code></pre>
 <pre><code>## Target qual_plot messages:
 ##   Saving 7.29 x 4.51 in image</code></pre>
 <pre><code>## target aligned</code></pre>
-<pre><code>## INFO [2019-05-27 16:37:04] Aligning 3 samples on 4 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-27 16:37:04] Found existing alignment for even1. Will use that one.
-## INFO [2019-05-27 16:37:04] Found existing alignment for even2. Will use that one.
-## INFO [2019-05-27 16:37:04] Found existing alignment for even3. Will use that one.</code></pre>
+<pre><code>## INFO [2019-05-27 21:59:11] Aligning 3 samples on 4 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-05-27 21:59:14] Finished aligning even1.
+## INFO [2019-05-27 21:59:17] Finished aligning even2.
+## INFO [2019-05-27 21:59:20] Finished aligning even3.</code></pre>
 <pre><code>## target counting</code></pre>
-<pre><code>## INFO [2019-05-27 16:37:04] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
-## INFO [2019-05-27 16:37:04] Normalized IDs. Starting counting...</code></pre>
+<pre><code>## INFO [2019-05-27 21:59:20] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
+## INFO [2019-05-27 21:59:20] Normalized IDs. Starting counting...</code></pre>
 <p>We can access our final output.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/readd">readd</a></span>(counting)<span class="op">$</span>counts <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>()</a></code></pre></div>
-<pre><code>##     reference    counts effective_length sample
-## 1: AE016830.1 0.4581379          3217947  even1
-## 2: CP000253.1 1.1780436          2821277  even1
-## 3:       &lt;NA&gt; 3.3632271               NA  even1
-## 4: AE016830.1 1.0295526          3217904  even2
-## 5: AL591824.1 0.4253844          2944400  even2
-## 6: AP008937.1 0.7403842          2098558  even2</code></pre>
+<pre><code>##     reference     counts effective_length sample
+## 1: AE004091.2   3.193363          6261124  even1
+## 2: AE006468.2  26.257417          4854170  even1
+## 3: AE016830.1 120.312710          3214751  even1
+## 4: AE017341.1   2.296111         19049682  even1
+## 5: AL009126.3 156.701221          4212326  even1
+## 6: AL591824.1 168.907323          2941248  even1</code></pre>
 <p>Now if we check our plan…</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/vis_drake_graph">vis_drake_graph</a></span>(dconf)</a></code></pre></div>
 <div id="htmlwidget-a0846c9cd8803738e5c5" style="width:700px;height:432.632880098888px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a0846c9cd8803738e5c5">{"x":{"nodes":{"id":["conf_c","reads","conf_p","conf_a","files","qa","processed","qual_plot","aligned","p-OF2WC3DTFZYG4ZY","counting"],"imported":[true,true,true,true,false,false,false,false,false,false,false],"label":["conf_c","reads","conf_p","conf_a","files\n0.026s","qa\n18.553s","processed\n1.242s","qual_plot\n3.389s","aligned\n0.033s","file quals.png","counting\n0.632s"],"status":["imported","imported","imported","imported","up to date","up to date","up to date","up to date","up to date","up to date","up to date"],"type":["object","object","object","object","object","object","object","object","object","file","object"],"font.size":[20,20,20,20,20,20,20,20,20,20,20],"color":["#1874CD","#1874CD","#1874CD","#1874CD","#228B22","#228B22","#228B22","#228B22","#228B22","#228B22","#228B22"],"shape":["dot","dot","dot","dot","dot","dot","dot","dot","dot","square","dot"],"level":[1,1,1,1,2,3,3,4,4,5,5],"x":[-1,-1,-1,-1,-0.5,0,0,0.5,0.5,1,1],"y":[-1,-0.333333333333333,0.333333333333333,1,-2.22044604925031e-16,-0.555555555555556,0.555555555555555,-0.555555555555556,0.555555555555555,-0.555555555555556,0.555555555555555]},"edges":{"from":["conf_c","reads","conf_p","conf_a","files","files","qa","qual_plot","processed","aligned"],"to":["counting","files","processed","aligned","qa","processed","qual_plot","p-OF2WC3DTFZYG4ZY","aligned","counting"],"arrows":["to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":false},"physics":{"stabilization":false},"interaction":{"navigationButtons":true}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)"},"main":{"text":"Dependency graph","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":false,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"left","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Imported","Object","File"],"color":["#228B22","#1874CD","#888888","#888888"],"shape":["dot","dot","dot","square"],"font.color":["black","black","black","black"],"font.size":[20,20,20,20],"id":[1,5,7,9]},"nodesToDataframe":true},"igraphlayout":{"type":"square"},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script><p>We see that everything is up-to-date. So running the plan again would do nothing:</p>
+<script type="application/json" data-for="htmlwidget-a0846c9cd8803738e5c5">{"x":{"nodes":{"id":["conf_c","reads","conf_p","conf_a","files","qa","processed","qual_plot","aligned","p-OF2WC3DTFZYG4ZY","counting"],"imported":[true,true,true,true,false,false,false,false,false,false,false],"label":["conf_c","reads","conf_p","conf_a","files\n0.015s","qa\n17.082s","processed\n5.289s","qual_plot\n2.766s","aligned\n9.305s","file quals.png","counting\n0.898s"],"status":["imported","imported","imported","imported","up to date","up to date","up to date","up to date","up to date","up to date","up to date"],"type":["object","object","object","object","object","object","object","object","object","file","object"],"font.size":[20,20,20,20,20,20,20,20,20,20,20],"color":["#1874CD","#1874CD","#1874CD","#1874CD","#228B22","#228B22","#228B22","#228B22","#228B22","#228B22","#228B22"],"shape":["dot","dot","dot","dot","dot","dot","dot","dot","dot","square","dot"],"level":[1,1,1,1,2,3,3,4,4,5,5],"x":[-1,-1,-1,-1,-0.5,0,0,0.5,0.5,1,1],"y":[-1,-0.333333333333333,0.333333333333333,1,-2.22044604925031e-16,-0.555555555555556,0.555555555555555,-0.555555555555556,0.555555555555555,-0.555555555555556,0.555555555555555]},"edges":{"from":["conf_c","reads","conf_p","conf_a","files","files","qa","qual_plot","processed","aligned"],"to":["counting","files","processed","aligned","qa","processed","qual_plot","p-OF2WC3DTFZYG4ZY","aligned","counting"],"arrows":["to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":false},"physics":{"stabilization":false},"interaction":{"navigationButtons":true}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)"},"main":{"text":"Dependency graph","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":false,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"left","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Imported","Object","File"],"color":["#228B22","#1874CD","#888888","#888888"],"shape":["dot","dot","dot","square"],"font.color":["black","black","black","black"],"font.size":[20,20,20,20],"id":[1,5,7,9]},"nodesToDataframe":true},"igraphlayout":{"type":"square"},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script><p>We see that everything is up-to-date. So running the plan again would do nothing:</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/make">make</a></span>(plan)</a></code></pre></div>
 <pre><code>## All targets are already up to date.</code></pre>
 <p>Now lets change the weighting for counting.</p>
@@ -236,8 +236,8 @@
 <p>Which we can do with running counting again.</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/drake/topics/make">make</a></span>(plan, <span class="dt">lock_envir =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## target counting</code></pre>
-<pre><code>## INFO [2019-05-27 16:37:05] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
-## INFO [2019-05-27 16:37:05] Normalized IDs. Starting counting...</code></pre>
+<pre><code>## INFO [2019-05-27 21:59:21] Getting reference lengths from /home/cdiener/R/x86_64-pc-linux-gnu-library/3.6/mbtools/extdata/genomes/zymo_mock.fna.gz...
+## INFO [2019-05-27 21:59:22] Normalized IDs. Starting counting...</code></pre>
 </div>
   </div>
 

@@ -21,14 +21,16 @@ reads <- system.file("extdata/nanopore", package = "mbtools")
 
 conf_p <- config_preprocess(
     trimLeft = 10,
-    maxEE = 500,
-    maxN = 4,
+    maxEE = Inf,
+    maxN = Inf,
+    truncQ = 0,
     out_dir = "preprocessed"
 )
 conf_a <- config_align(
     reference = ref,
     alignment_dir = "alignments",
-    threads = 4
+    threads = 4,
+    use_existing = FALSE
 )
 conf_c <- config_count(
     reference = ref,
@@ -68,15 +70,13 @@ output location with `file_in` and `file_out`.
 library(drake)
 
 reads <- file_in("../inst/extdata/nanopore")
-conf_p$out_dir <- file_out("preprocessed")
-conf_a$alignment_dir <- file_out("alignment_dir")
 
 plan <- drake_plan(
     files = find_read_files(reads),
     qa = quality_control(files, min_score = 20),
     qual_plot = ggsave(file_out("quals.png"), qa$quality_plot),
     processed = preprocess(files, conf_p),
-    aligned = align_short_reads(processed, conf_a),
+    aligned = align_long_reads(processed, conf_a),
     counting = count_references(aligned, conf_c)
 )
 ```
@@ -90,7 +90,7 @@ vis_drake_graph(dconf)
 ```
 
 As we see `drake` knows we have to run everything. Let's execute the plan and see what
-happens.
+happens. Note, the `lock_envir` argument which is currently necessary.
 
 ```{r}
 make(plan, lock_envir = FALSE)
