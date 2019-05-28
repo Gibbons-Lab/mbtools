@@ -36,4 +36,11 @@ test_that("limma works", {
     expect_true(tests[, all(padj > 0.05)])
 })
 
+test_that("combinatorial works", {
+    sample_data(ps)$cat <- factor(rep(LETTERS[1:3], 2))
+    tests <- combinatorial_association(ps, variable = "cat")
+    expect_equal(nrow(tests), 60)
+    expect_true(tests[, all(padj > 0.05)])
+})
+
 flog.threshold(INFO)
