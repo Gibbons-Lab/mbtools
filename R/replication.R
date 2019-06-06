@@ -39,11 +39,11 @@ irep <- function(profile, conf) {
             profile = NULL
         ))
     }
-    slided <- sort(slided[!is.na(slided)])
+    so <- sort(slided[!is.na(slided)])
     k <- ceiling(conf$remove_extremes * length(slided))
-    slided <- slided[k:(length(slided) - k)]
-    pos <- seq_along(slided)
-    fit <- lm(log(slided) ~ pos)
+    so <- so[k:(length(slided) - k)]
+    pos <- seq_along(so)
+    fit <- lm(log(so) ~ pos)
     coefs <- coef(fit)
     rate <- exp(coefs[2] * max(pos))
     profile[, "coverage" := list(list(coverage = slided))]
