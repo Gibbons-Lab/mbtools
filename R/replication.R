@@ -12,7 +12,7 @@
 #' @examples
 #'  config <- config_rep(min_coverage = 0.8)
 config_rep <- config_builder(list(
-    remove_extremes = 0.05,
+    remove_extremes = 0.1,
     max_median_fold = 8,
     min_coverage = 2,
     min_covered = 0.6,
@@ -98,14 +98,7 @@ replication_rates <- function(object, ...) {
         }
         return(res)
     })
-    profiles <- lapply(rates, function(l) {
-        pro <- l$profile
-        if (is.null(pro)) return(NULL)
-        co <- data.table(rank = 1:length(pro$coverage[[1]]),
-                         coverage = pro$coverage[[1]])
-        pro[, coverage := NULL]
-        cbind(pro, co)
-    }) %>% rbindlist()
+    profiles <- lapply(rates, "[[", "profile") %>% rbindlist()
     rates <- lapply(rates, "[[", "rate") %>% rbindlist()
     flog.info(paste("Finished. %d genome-sample combinations had sufficient",
                     "coverage for obtaining replication rates."),
