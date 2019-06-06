@@ -12,7 +12,8 @@
 #' @examples
 #'  config <- config_rep(min_coverage = 0.8)
 config_rep <- config_builder(list(
-    linear_quantile = 0.8,
+    remove_extremes = 0.05,
+    max_median_fold = 8,
     min_coverage = 2,
     min_covered = 0.6,
     threads = getOption("mc.cores", 1)
@@ -27,26 +28,24 @@ irep <- function(profile, conf) {
     co <- reads * profile$read_length / w
     slided <- frollmean(co, 50, align = "center")
     slided[slided <= conf$min_coverage] <- NA
+    m <- median(slided, na.rm = TRUE)
+    slided[slided <= m / conf$max_median_fold |
+           slided > m * conf$max_median_fold] <- NA
     sufficient <- ((sum(!is.na(slided)) / length(slided)) > conf$min_covered &
-                   sum(!is.na(slided)) > 50)
+                   sum(!is.na(slided)) > 60)
     if (!sufficient) {
         return(list(
             rate = NULL,
             profile = NULL
         ))
     }
-    m <- median(slided, na.rm = TRUE)
-    q <- conf$linear_quantile
-    d <- min(quantile(slided[slided > m] - m, q, na.rm = TRUE),
-             quantile(m - slided[slided < m], q, na.rm = TRUE))
-    in_range <- m + c(-1, 1) * d
-    slided[!between(slided, in_range[1], in_range[2])] <- NA
     slided <- sort(slided[!is.na(slided)])
+    k <- ceiling(conf$remove_extremes * length(slided))
+    slided <- slided[k:(length(slided) - k)]
     pos <- seq_along(slided)
-    fit <- lm(slided ~ pos)
+    fit <- lm(log(slided) ~ pos)
     coefs <- coef(fit)
-    extremes <- coefs[1] + coefs[2] * range(pos)
-    rate <- extremes[2] / extremes[1]
+    rate <- exp(coefs[2] * max(pos))
     profile[, "coverage" := list(list(coverage = slided))]
     res <- list(
         rates = data.table(intercept = coefs[1],
