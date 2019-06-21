@@ -29,8 +29,8 @@ before_install:
   - rm -rf slimm
   - echo "options(Ncpus = 4)" >> $R_PROFILE
   - cat $R_PROFILE
-  - Rscript -e "devtools::install('bryandmartin/corncob')"
-  - Rscript -e "install.packages('vegan')"
+  - Rscript -e "install.packages('vegan', 'devtools')"
+  - Rscript -e "setRepositories(ind = 1:4); devtools::install_github('bryandmartin/corncob')"
 
 after_success:
   - Rscript -e 'covr::codecov()'
