@@ -45,6 +45,7 @@ irep <- function(profile, conf) {
     pos <- seq_along(so)
     fit <- lm(log(so) ~ pos)
     coefs <- coef(fit)
+
     rate <- exp(coefs[2] * max(pos))
     profile[, "coverage" := list(list(coverage = slided))]
     res <- list(
