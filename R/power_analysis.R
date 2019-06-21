@@ -1,5 +1,15 @@
 # Runs Power Analysis for microbial abundances
 
+#' Build a configuration for power analysis.
+#'
+#' This can be saved and passed on to others to ensure reproducibility.
+#'
+#' @param ... Any arguments are used to update the default configuration. See
+#'  the example below. Optional.
+#' @return A list with the parameters used in power analysis.
+#' @export
+#' @examples
+#'  config <- config_power(fraction_differential = 0.1)
 config_power <- config_builder(list(
     fraction_differential = 0.5,
     method = "permanova",
@@ -22,7 +32,7 @@ memory_use <- function(config, n_taxa) {
 
 get_corncob_pars <- function(ps, threads) {
     if (!requireNamespace("corncob", quietly = TRUE)) {
-        stop("Power Analysis requires corncob to be installed.")
+        stop("Power Analysis requires `corncob` to be installed.")
     }
 
     clean <- corncob::clean_taxa_names(ps)
@@ -129,6 +139,9 @@ power_analysis <- function(ps, ...) {
     flog.info("Will need at least %s of memory.",
               memory_use(config, ntaxa(ps)) %>% format(unit = "auto"))
     if (config$method == "permanova") {
+        if (!requireNamespace("vegan", quietly = TRUE)) {
+        stop("PERMANOVA requires `vegan` to be installed.")
+    }
         power <- apfun(1:nrow(comb), function(i) {
             co <- as.numeric(comb[i, ])
             if (config$type == "categorical") {

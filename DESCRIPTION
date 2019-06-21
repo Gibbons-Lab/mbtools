@@ -38,7 +38,10 @@ Suggests:
     covr,
     IHW,
     knitr,
-    rmarkdown
+    rmarkdown,
+    corncob,
+    VGAM,
+    vegan
 SystemRequirements:
     bowtie2,
     minimap2,
