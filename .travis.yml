@@ -19,6 +19,12 @@ addons:
       - gcc-9
       - g++-9
 
+r_packages:
+  - vegan
+
+r_github_packages:
+  - bryandmartin/corncob
+
 # Don't build vignettes
 before_install:
   - rm -rf vignettes
@@ -29,8 +35,6 @@ before_install:
   - rm -rf slimm
   - echo "options(Ncpus = 4)" >> $R_PROFILE
   - cat $R_PROFILE
-  - Rscript -e "install.packages(c('vegan', 'devtools'))"
-  - Rscript -e "setRepositories(ind = 1:4); devtools::install_github('bryandmartin/corncob')"
 
 after_success:
   - Rscript -e 'covr::codecov()'
