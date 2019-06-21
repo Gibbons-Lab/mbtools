@@ -28,6 +28,7 @@
 #'
 #' @importFrom data.table tstrsplit
 #' @importFrom digest digest
+#' @importFrom ShortRead writeFastq
 remove_reference <- function(reads, out, reference, alignments=NA,
                              threads=3) {
     paired <- length(reads) == 2 & !any(is.na(reads))
@@ -65,6 +66,9 @@ remove_reference <- function(reads, out, reference, alignments=NA,
         ids <- sub("/\\d+$", "", as.character(id(reads)))
         ids <- tstrsplit(ids, " ", fixed = TRUE)[[1]]
         rem <- !(ids %in% ref_ids)
+        if (file.exists(newfiles[i])) {
+            file.remove(newfiles[i])
+        }
         writeFastq(reads[rem], new_files[i])
         c(n, length(reads[rem]))
     })[, 1]
