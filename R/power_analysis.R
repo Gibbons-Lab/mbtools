@@ -130,7 +130,6 @@ power_analysis <- function(ps, ...) {
     pars <- pars[!is.na(mu)]
     sig_taxa <- sample(taxa_names(ps)[1:(ntaxa(ps) - 1)],
                        config$fraction_differential * ntaxa(ps) - 1)
-    sig_taxa <- c(sig_taxa, taxa_names(ps)[ntaxa(ps)])
     comb <- expand.grid(list(n = config$n,
                              effect_size = config$effect_size))
     flog.info(paste("Estimating power for %d n/effect combinations.",
