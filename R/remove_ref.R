@@ -121,7 +121,8 @@ filter_reference <- function(object, ...) {
     # we will leave 3 threads for minimap2
     threads <- parse_threads(config$threads, FALSE)
     threads <- ceiling(threads / 3)
-    flog.info("Actually using %d threads to filter and count.", threads * 3)
+    flog.info("Actually using %d threads to filter and count %d files.",
+              threads * 3, nrow(files))
     counts <- mclapply(1:nrow(files), function(i) {
         row <- files[i]
         if ("lane" %in% names(row)) {
@@ -129,7 +130,6 @@ filter_reference <- function(object, ...) {
         } else {
             lane <- NA
         }
-        flog.info("Processing %s on lane %d.", row[, id], lane)
         r <- if (paired) row[, .(forward, reverse)] else row[, forward]
         if (is.na(config$alignment_dir)) {
             aln <- NA
