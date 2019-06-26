@@ -5,7 +5,7 @@
 \title{Plots relative distribution for taxa across samples.}
 \usage{
 plot_taxa(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
-  max_taxa = 12, only_data = FALSE)
+  max_taxa = 12, only_data = FALSE, ...)
 }
 \arguments{
 \item{ps}{A phyloseq data set.}
@@ -20,6 +20,8 @@ plot_taxa(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
 there is probably no color scale that can visualize them.}
 
 \item{only_data}{Only get the raw data for the plot as a data table.}
+
+\item{...}{Addditional arguments passed to geom_bar.}
 }
 \value{
 Nothing or a data.table containing the relative abundances.
