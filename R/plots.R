@@ -61,6 +61,7 @@ plot_counts <- function(ps, variable, tax_level = "genus", taxa = NULL,
 #' @param max_taxa Maximum number of different taxa to plot. If more than 12
 #'  there is probably no color scale that can visualize them.
 #' @param only_data Only get the raw data for the plot as a data table.
+#' @param ... Addditional arguments passed to geom_bar.
 #' @return Nothing or a data.table containing the relative abundances.
 #' @examples
 #'  NULL
@@ -69,7 +70,7 @@ plot_counts <- function(ps, variable, tax_level = "genus", taxa = NULL,
 #' @importFrom scales percent
 #' @importFrom stringr str_trunc
 plot_taxa <- function(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
-                      max_taxa = 12, only_data = FALSE) {
+                      max_taxa = 12, only_data = FALSE, ...) {
     counts <- taxa_count(ps, lev=level)[, reads := as.double(reads)]
     counts[, reads := reads / sum(reads), by = "sample"]
     if (is.na(level)) {
@@ -90,7 +91,7 @@ plot_taxa <- function(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
     if (show_samples) x <- "sample"
 
     pl <- ggplot(counts, aes_string(x=x, y="reads", fill="taxa")) +
-        geom_bar(stat="identity", col=NA, width=1) +
+        geom_bar(stat="identity", col=NA, width=1, ...) +
         scale_y_continuous(expand = c(0, 0.01), labels = percent) +
         scale_fill_brewer(palette = "Paired", direction = -1,
                           label = function(x) str_trunc(x, 30)) +
