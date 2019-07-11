@@ -91,7 +91,7 @@ plot_taxa <- function(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
     if (show_samples) x <- "sample"
 
     pl <- ggplot(counts, aes_string(x=x, y="reads", fill="taxa")) +
-        geom_bar(stat="identity", col=NA, width=1, ...) +
+        geom_bar(stat="identity", ...) +
         scale_y_continuous(expand = c(0, 0.01), labels = percent) +
         scale_fill_brewer(palette = "Paired", direction = -1,
                           label = function(x) str_trunc(x, 30)) +

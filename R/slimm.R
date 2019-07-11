@@ -93,6 +93,14 @@ slimm <- function(object, ...) {
         file.path(reports, alignments$id,
                   paste0(alignments$id, "_profile.tsv")),
         read_slimm) %>% rbindlist()
+    flog.info("Fixing taxa names.")
+    abundance[genus == "unknown_genus" & grepl("[", species),
+              c("genus", "species") := list(
+                  tstrsplit(species, "\\[|\\]")[[2]],
+                  gsub("\\[|\\]", "", species)
+              )]
+    abundance[, "species" := gsub("Candidatus\\s", "", species)]
+    abundance[genus == "unknown_genus", "genus" := NA]
 
     flog.info(paste("Estimating read lengths from a sample of",
                     "100 reads per alignment."))
@@ -109,6 +117,15 @@ slimm <- function(object, ...) {
                   paste0(alignments$id, "_uniq_coverage2.tsv")),
         read_slimm_coverage, conf$bin_width) %>% rbindlist()
     coverage[, "read_length" := rlens[id]]
+    flog.info("Fixing taxa names.")
+    coverage[genus == "unknown_genus" & grepl("[", species),
+              c("genus", "species") := list(
+                  tstrsplit(species, "\\[|\\]")[[2]],
+                  gsub("\\[|\\]", "", species)
+              )]
+    coverage[, "species" := gsub("Candidatus\\s", "", species)]
+    coverage[genus == "unknown_genus", "genus" := NA]
+
     artifact <- list(
         alignments = alignments,
         abundance = abundance,
