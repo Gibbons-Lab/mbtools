@@ -14,6 +14,20 @@ slimm_files <- data.table(
     description = "SLIMM taxonomy mapping DB"
 )
 
+clean_taxa_names <- function(dt) {
+    flog.info("Fixing taxa names.")
+    dt[genus == "unknown_genus" & grepl("[", species),
+              c("genus", "species") := list(
+                  tstrsplit(species, "\\[|\\]")[[2]],
+                  gsub("\\[|\\]", "", species)
+              )]
+    dt[, "species" := gsub("Candidatus\\s", "", species)]
+    dt[grepl("unknown|unclassified", genus), "genus" := NA]
+    dt[grepl("unknown|unclassified", species), "species" := NA]
+    return(dt)
+}
+
+
 #' Build a configuration for the SLIMM workflow.
 #'
 #' This can be saved and passed on to others to ensure reproducibility.
@@ -92,15 +106,7 @@ slimm <- function(object, ...) {
     abundance <- apfun(
         file.path(reports, alignments$id,
                   paste0(alignments$id, "_profile.tsv")),
-        read_slimm) %>% rbindlist()
-    flog.info("Fixing taxa names.")
-    abundance[genus == "unknown_genus" & grepl("[", species),
-              c("genus", "species") := list(
-                  tstrsplit(species, "\\[|\\]")[[2]],
-                  gsub("\\[|\\]", "", species)
-              )]
-    abundance[, "species" := gsub("Candidatus\\s", "", species)]
-    abundance[genus == "unknown_genus", "genus" := NA]
+        read_slimm) %>% rbindlist() %>% clean_taxa_names()
 
     flog.info(paste("Estimating read lengths from a sample of",
                     "100 reads per alignment."))
@@ -115,16 +121,8 @@ slimm <- function(object, ...) {
     coverage <- apfun(
         file.path(reports, alignments$id,
                   paste0(alignments$id, "_uniq_coverage2.tsv")),
-        read_slimm_coverage, conf$bin_width) %>% rbindlist()
-    coverage[, "read_length" := rlens[id]]
-    flog.info("Fixing taxa names.")
-    coverage[genus == "unknown_genus" & grepl("[", species),
-              c("genus", "species") := list(
-                  tstrsplit(species, "\\[|\\]")[[2]],
-                  gsub("\\[|\\]", "", species)
-              )]
-    coverage[, "species" := gsub("Candidatus\\s", "", species)]
-    coverage[genus == "unknown_genus", "genus" := NA]
+        read_slimm_coverage, conf$bin_width) %>%
+        rbindlist() %>% clean_taxa_names()
 
     artifact <- list(
         alignments = alignments,
