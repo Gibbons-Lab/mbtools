@@ -80,7 +80,7 @@ count_alns <- function(alignments, reflengths, file, method = "em",
                         "is %.2f%%."),
                   file, em_result$iterations, length(em_result$ecs),
                   max(em_result$change),
-                  100 * em_result$unobserved / (max(rids) + 1))
+                  100 * (1 - em_result$unobserved / (max(rids) + 1)))
         equiv_classes <- em_result$ecs
         counts <- data.table(reference = refnames,
                              counts = em_result$p,

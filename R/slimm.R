@@ -123,6 +123,7 @@ slimm <- function(object, ...) {
                   paste0(alignments$id, "_uniq_coverage2.tsv")),
         read_slimm_coverage, conf$bin_width) %>%
         rbindlist() %>% clean_taxa_names()
+    coverage[, "read_length" := rlens[id]]
 
     artifact <- list(
         alignments = alignments,
