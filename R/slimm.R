@@ -16,9 +16,11 @@ slimm_files <- data.table(
 
 clean_taxa_names <- function(dt) {
     flog.info("Fixing taxa names.")
-    dt[genus == "unknown_genus" & grepl("\\[.+\\]", species),
+    dt[ggrepl("\\[.+\\]", species),
               c("genus", "species") := list(
-                  tstrsplit(species, "\\[|\\]")[[2]],
+                  ifelse(genus %chin% c("unknown_genus", ""),
+                         tstrsplit(species, "\\[|\\]")[[2]],
+                         genus),
                   gsub("\\[|\\]", "", species)
               )]
     dt[, "species" := gsub("Candidatus\\s", "", species)]
