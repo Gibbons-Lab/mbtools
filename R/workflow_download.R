@@ -70,3 +70,58 @@ prepare_filelist <- function(runtable, files, path = "data") {
     return(files)
 }
 # nocov end
+
+
+sra_filelist <- function(runtable, path) {
+    sra <- fread(runtable, sep = "\t")
+    if (sra[, uniqueN(LibraryLayout) != 1]) {
+        stop("Can't handle mixed library layouts :(")
+    }
+    paired <- sra[, unique(LibraryLayout) %>% tolower() == "paired"]
+
+    urls <- sapply(sra$Run, sra_download_url, paired = paired)
+    if (paired) {
+        files <- data.table(
+            url = c(urls[1, ], urls[2, ]),
+            target = file.path(path, c(paste0(sra$Run, "_1.fastq.gz"),
+                                       paste0(sra$Run, "_2.fastq.gz"))),
+            description = c(paste("forward reads for", sra$Run),
+                            paste("reverse reads for", sra$Run))
+            )
+    } else {
+        files <- data.table(
+            url = urls,
+            target = file.path(path, paste0(sra$Run, "_1.fastq.gz")),
+            description = c(paste("forward reads for", sra$Run))
+            )
+    }
+    return(files)
+}
+
+
+#' Download data from SRA.
+#'
+#' To use this function first obtain a RunInfo Table as described at
+#' \url{https://www.ncbi.nlm.nih.gov/Traces/study/?go=help}.
+#'
+#' @param runtable Path to a runtable as selected in the SRA interface.
+#' @param path The folder into which to download the FASTQ files.
+#' @param threads Maximum number of parallel file downloads.
+#' @return The list of files with indicated download success.
+#' @export
+download_sra <- function(runtable, path = "sra/",
+                         threads = getOption("mc.cores", 1)) {
+    if (!dir.exists(path)) {
+        flog.info("Creating directory `%s`.", path)
+        dir.create(path, recursive = TRUE)
+    }
+    files <- sra_filelist(runtable, path)
+    dl <- download_files(files, threads)
+    if (dl[, sum(success)] != nrow(dl)) {
+        flog.warning(paste0("%d/%d files could not be downloaded. ",
+                            "They haven been marked in the returned table ",
+                            "with `success == FALSE`."),
+                     dl[, sum(!success)], nrow(dl))
+    }
+    return(dl)
+}
