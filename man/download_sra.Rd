@@ -4,13 +4,15 @@
 \alias{download_sra}
 \title{Download data from SRA.}
 \usage{
-download_sra(runtable, path = "sra/", threads = getOption("mc.cores",
-  1))
+download_sra(runtable, path = "sra/", retries = 3,
+  threads = getOption("mc.cores", 1))
 }
 \arguments{
 \item{runtable}{Path to a runtable as selected in the SRA interface.}
 
 \item{path}{The folder into which to download the FASTQ files.}
+
+\item{retries}{How often to try downloading again after failure.}
 
 \item{threads}{Maximum number of parallel file downloads.}
 }

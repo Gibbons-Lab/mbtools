@@ -4,12 +4,14 @@
 \alias{download_files}
 \title{Download a list of files.}
 \usage{
-download_files(files, threads = getOption("mc.cores", 1))
+download_files(files, retries = 3, threads = getOption("mc.cores", 1))
 }
 \arguments{
 \item{files}{A data frame-like object with three columns: url, target,
 description specifying the source file, target location (including
 the file name) and description.}
+
+\item{retries}{How often to try downloading again after failure.}
 
 \item{threads}{Maximum number of parallel file downloads.}
 }
