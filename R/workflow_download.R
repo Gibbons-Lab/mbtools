@@ -109,6 +109,7 @@ sra_filelist <- function(runtable, path) {
 #' @param threads Maximum number of parallel file downloads.
 #' @return The list of files with indicated download success.
 #' @export
+#' @importFrom futile.logger flog.warn
 download_sra <- function(runtable, path = "sra/",
                          threads = getOption("mc.cores", 1)) {
     if (!dir.exists(path)) {
@@ -118,10 +119,10 @@ download_sra <- function(runtable, path = "sra/",
     files <- sra_filelist(runtable, path)
     dl <- download_files(files, threads)
     if (dl[, sum(success)] != nrow(dl)) {
-        flog.warning(paste0("%d/%d files could not be downloaded. ",
-                            "They haven been marked in the returned table ",
-                            "with `success == FALSE`."),
-                     dl[, sum(!success)], nrow(dl))
+        flog.warn(paste0("%d/%d files could not be downloaded. ",
+                         "They haven been marked in the returned table ",
+                         "with `success == FALSE`."),
+                  dl[, sum(!success)], nrow(dl))
     }
     return(dl)
 }
