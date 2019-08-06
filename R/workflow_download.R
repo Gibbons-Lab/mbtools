@@ -5,10 +5,12 @@
 #' @param files A data frame-like object with three columns: url, target,
 #'  description specifying the source file, target location (including
 #'  the file name) and description.
+#' @param retries How often to try downloading again after failure.
 #' @param threads Maximum number of parallel file downloads.
 #' @return The list of files with indicated download success.
 #' @export
-download_files <- function(files, threads = getOption("mc.cores", 1)) {
+download_files <- function(files, retries = 3,
+                           threads = getOption("mc.cores", 1)) {
     downloaded <- mclapply(1:nrow(files), function(i) {
         meta <- files[i, ]
         if (!dir.exists(dirname(meta$target))) {
@@ -18,6 +20,18 @@ download_files <- function(files, threads = getOption("mc.cores", 1)) {
         ret <- tryCatch(download.file(meta$url, meta$target,
                                      quiet = TRUE),
                        error = function(e) 1)
+        if (ret != 0 && retries > 0) {
+            for (i in 1:retries) {
+                file.remove(meta$target)
+                flog.info("re-trying download for %s", meta$target)
+                ret <- tryCatch(download.file(meta$url, meta$target,
+                                     quiet = TRUE),
+                       error = function(e) 1)
+                if (ret == 0) {
+                    break
+                }
+            }
+        }
         meta$success <- (ret == 0)
         if (meta$success) {
             flog.info("Finished downloading %s.", meta$target)
@@ -106,18 +120,19 @@ sra_filelist <- function(runtable, path) {
 #'
 #' @param runtable Path to a runtable as selected in the SRA interface.
 #' @param path The folder into which to download the FASTQ files.
+#' @param retries How often to try downloading again after failure.
 #' @param threads Maximum number of parallel file downloads.
 #' @return The list of files with indicated download success.
 #' @export
 #' @importFrom futile.logger flog.warn
-download_sra <- function(runtable, path = "sra/",
+download_sra <- function(runtable, path = "sra/", retries = 3,
                          threads = getOption("mc.cores", 1)) {
     if (!dir.exists(path)) {
         flog.info("Creating directory `%s`.", path)
         dir.create(path, recursive = TRUE)
     }
     files <- sra_filelist(runtable, path)
-    dl <- download_files(files, threads)
+    dl <- download_files(files, retries, threads)
     if (dl[, sum(success)] != nrow(dl)) {
         flog.warn(paste0("%d/%d files could not be downloaded. ",
                          "They haven been marked in the returned table ",
