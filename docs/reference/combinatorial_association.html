@@ -9,10 +9,12 @@
 <title>Run differential association tests between between all combinations of a
 factor variable. Can be used as post-hoc test for regression. — combinatorial_association • mbtools</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -31,12 +33,13 @@ factor variable. Can be used as post-hoc test for regression. — combinatorial_
 
 
 
+
 <meta property="og:title" content="Run differential association tests between between all combinations of a
 factor variable. Can be used as post-hoc test for regression. — combinatorial_association" />
-
 <meta property="og:description" content="Run differential association tests between between all combinations of a
 factor variable. Can be used as post-hoc test for regression." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -66,7 +69,7 @@ factor variable. Can be used as post-hoc test for regression." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.39.3</span>
       </span>
     </div>
 
@@ -115,7 +118,6 @@ factor variable. Can be used as post-hoc test for regression." />
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/Gibbons-Lab/mbtools">
@@ -142,16 +144,14 @@ factor variable. Can be used as post-hoc test for regression.</h1>
     </div>
 
     <div class="ref-description">
-    
     <p>Run differential association tests between between all combinations of a
 factor variable. Can be used as post-hoc test for regression.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>combinatorial_association</span>(<span class='no'>ps</span>, <span class='no'>variable</span>, <span class='kw'>tax</span> <span class='kw'>=</span> <span class='st'>"genus"</span>,
   <span class='kw'>confounders</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_count</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>in_samples</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
   <span class='kw'>independent_weighting</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>shrink</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -199,11 +199,10 @@ value.</p></td>
       <td><p>Whether to return shrunken log fold changes. Defaults to true.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data.table containing the results.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'> <span class='kw'>NULL</span></div><div class='output co'>#&gt; NULL</div><div class='input'>
@@ -213,9 +212,7 @@ value.</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

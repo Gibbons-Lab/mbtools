@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.39.3</span>
       </span>
     </div>
 
@@ -114,16 +114,11 @@
 <a href="#amplicon-sequencing-data-analysis" class="anchor"></a>Amplicon sequencing data analysis</h1>
 <p>We can combine what we have seen in the quality assessment and preprocessing tutoarials with specific workflow steps for amplicon sequencing, for instance 16S rRNA gene sequencing.</p>
 <p>As before we will load <code>mbtools</code> and use our example data:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</a></code></pre></div>
-<pre><code>## Registered S3 methods overwritten by 'ggplot2':
-##   method         from 
-##   [.quosures     rlang
-##   c.quosures     rlang
-##   print.quosures rlang</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</span></code></pre></div>
 <pre><code>## Also loading:</code></pre>
-<pre><code>##   - dada2=1.12.0
+<pre><code>##   - dada2=1.12.1
 ##   - data.table=1.12.2
-##   - ggplot2=3.1.1
+##   - ggplot2=3.2.1
 ##   - magrittr=1.5
 ##   - phyloseq=1.28.0
 ##   - ShortRead=1.42.0
@@ -137,21 +132,21 @@
 <pre><code>## The following object is masked _by_ 'package:BiocGenerics':
 ## 
 ##     normalize</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</span></code></pre></div>
 <div id="quality-assessment" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quality-assessment" class="anchor"></a>Quality assessment</h2>
 <p>As before a good first step is to look at the qualities of the raw data.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">quals &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>()</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 16:36:06] Running quality assay for forward reads from 5 files.
-## INFO [2019-05-28 16:36:10] Median per base error is 0.016% (median score = 38.00).
-## INFO [2019-05-28 16:36:10] Mean per cycle entropy is 0.809 (in [0, 2]).
-## INFO [2019-05-28 16:36:10] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-05-28 16:36:10] Running quality assay for reverse reads from 5 files.
-## INFO [2019-05-28 16:36:12] Median per base error is 0.020% (median score = 37.00).
-## INFO [2019-05-28 16:36:12] Mean per cycle entropy is 0.731 (in [0, 2]).
-## INFO [2019-05-28 16:36:12] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">quals<span class="op">$</span>quality_plot</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>quals &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>()</span></code></pre></div>
+<pre><code>## INFO [2019-08-28 12:50:52] Running quality assay for forward reads from 5 files.
+## INFO [2019-08-28 12:50:55] Median per base error is 0.016% (median score = 38.00).
+## INFO [2019-08-28 12:50:55] Mean per cycle entropy is 0.809 (in [0, 2]).
+## INFO [2019-08-28 12:50:55] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-08-28 12:50:55] Running quality assay for reverse reads from 5 files.
+## INFO [2019-08-28 12:50:58] Median per base error is 0.020% (median score = 37.00).
+## INFO [2019-08-28 12:50:58] Mean per cycle entropy is 0.731 (in [0, 2]).
+## INFO [2019-08-28 12:50:58] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>quals<span class="op">$</span>quality_plot</span></code></pre></div>
 <p><img src="02_amplicon_sequencing_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <p>Again we see that we might want to truncate the reads a bit on the 3’ ends to avoid the dip in quality. Depending on your amplified fragment make sure that this leaves sufficient overlap for merging (requires &gt;20bp).</p>
 </div>
@@ -159,33 +154,33 @@
 <h2 class="hasAnchor">
 <a href="#denoise" class="anchor"></a>Denoise</h2>
 <p>We can now perform our preprocessing and denoise workflow to obtain the amplicon sequence variants (ASVs) in our samples. We can chain our preprocessing and denoise workflows from our original quality assessment. For clarity we will define the confguration for the analysis on top.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(</a>
-<a class="sourceLine" id="cb13-2" title="2">    <span class="dt">preprocess =</span> <span class="kw"><a href="../reference/config_preprocess.html">config_preprocess</a></span>(</a>
-<a class="sourceLine" id="cb13-3" title="3">        <span class="dt">trimLeft =</span> <span class="dv">10</span>,  <span class="co"># this is the default</span></a>
-<a class="sourceLine" id="cb13-4" title="4">        <span class="dt">trunLen =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">240</span>, <span class="dv">180</span>),  <span class="co"># forward and reverse truncation</span></a>
-<a class="sourceLine" id="cb13-5" title="5">        <span class="dt">out_dir =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir</a></span>()  <span class="co"># will store filtered files in a temporary dir</span></a>
-<a class="sourceLine" id="cb13-6" title="6">    ),</a>
-<a class="sourceLine" id="cb13-7" title="7">    <span class="dt">denoise =</span> <span class="kw"><a href="../reference/config_denoise.html">config_denoise</a></span>()  <span class="co"># will only use defaults</span></a>
-<a class="sourceLine" id="cb13-8" title="8">)</a>
-<a class="sourceLine" id="cb13-9" title="9"></a>
-<a class="sourceLine" id="cb13-10" title="10">denoised &lt;-<span class="st"> </span>quals <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 16:36:14] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-28 16:36:22] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
-## INFO [2019-05-28 16:36:22] Running DADA2 on 1 run(s) from a sample of up to 2.5e+08 bases.
-## INFO [2019-05-28 16:36:22] Learning errors for run `all` (5 samples)...
-## INFO [2019-05-28 16:37:11] Dereplicating run `all` (5 samples)...
-## INFO [2019-05-28 16:37:12] Inferring sequence variants for run `all`...
-## INFO [2019-05-28 16:37:24] Finished run `all`.
-## INFO [2019-05-28 16:37:24] Merged sequence tables, now removing chimeras...
-## INFO [2019-05-28 16:37:24] Removed 5/164 sequence variants as chimeric (1.20% of reads)
-## INFO [2019-05-28 16:37:24] Assigning taxonomy to 159 sequences...
-## INFO [2019-05-28 16:37:24] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpWVLODz/taxa.fna.gz...
-## INFO [2019-05-28 16:39:25] Downloading species db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpWVLODz/species.fna.gz...
-## INFO [2019-05-28 16:40:28] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57 %,Species = 8.3 %
-## INFO [2019-05-28 16:40:28] Hashing 159 sequence variants.</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>config &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(</span>
+<span id="cb12-2"><a href="#cb12-2"></a>    <span class="dt">preprocess =</span> <span class="kw"><a href="../reference/config_preprocess.html">config_preprocess</a></span>(</span>
+<span id="cb12-3"><a href="#cb12-3"></a>        <span class="dt">trimLeft =</span> <span class="dv">10</span>,  <span class="co"># this is the default</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>        <span class="dt">trunLen =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">240</span>, <span class="dv">180</span>),  <span class="co"># forward and reverse truncation</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>        <span class="dt">out_dir =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir</a></span>()  <span class="co"># will store filtered files in a temporary dir</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>    ),</span>
+<span id="cb12-7"><a href="#cb12-7"></a>    <span class="dt">denoise =</span> <span class="kw"><a href="../reference/config_denoise.html">config_denoise</a></span>()  <span class="co"># will only use defaults</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a>)</span>
+<span id="cb12-9"><a href="#cb12-9"></a></span>
+<span id="cb12-10"><a href="#cb12-10"></a>denoised &lt;-<span class="st"> </span>quals <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</span></code></pre></div>
+<pre><code>## INFO [2019-08-28 12:51:00] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-08-28 12:51:08] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
+## INFO [2019-08-28 12:51:08] Running DADA2 on 1 run(s) from a sample of up to 2.5e+08 bases.
+## INFO [2019-08-28 12:51:08] Learning errors for run `all` (5 samples)...
+## INFO [2019-08-28 12:51:58] Dereplicating run `all` (5 samples)...
+## INFO [2019-08-28 12:51:59] Inferring sequence variants for run `all`...
+## INFO [2019-08-28 12:52:11] Finished run `all`.
+## INFO [2019-08-28 12:52:11] Merged sequence tables, now removing chimeras...
+## INFO [2019-08-28 12:52:11] Removed 5/164 sequence variants as chimeric (1.20% of reads)
+## INFO [2019-08-28 12:52:11] Assigning taxonomy to 159 sequences...
+## INFO [2019-08-28 12:52:11] Downloading taxa db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpqdLJ5i/taxa.fna.gz...
+## INFO [2019-08-28 12:54:15] Downloading species db to /var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpqdLJ5i/species.fna.gz...
+## INFO [2019-08-28 12:55:19] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.1 %,Species = 8.3 %
+## INFO [2019-08-28 12:55:19] Hashing 159 sequence variants.</code></pre>
 <p>This will run both workflow steps sequentially and will use all available CPUs by default. You will get some disgnostic output on the logging interface but you can also inspect those in the returned artifact.</p>
 <p>For instance to see how many reads were conserved in each processing step:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">denoised<span class="op">$</span>passed_reads</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>denoised<span class="op">$</span>passed_reads</span></code></pre></div>
 <pre><code>##      raw preprocessed   id derep_forward derep_reverse denoised_forward
 ## 1:  7793         5616 F3D0          5616          5616             5461
 ## 2:  5869         4388 F3D1          4388          4388             4280
@@ -200,7 +195,7 @@
 ## 5:             3934   3895        3895</code></pre>
 <p>We see that most samples were conserved (as reported in the logging).</p>
 <p>The abundance of each sequence variant is saved in <code>denoised$feature_tables</code> which contains abundances for samples x ASVs. The ASVs here have been named by their md5 hash value and you can get the taxonomy and original sequence from <code>denoised$taxonomy</code>:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">denoised<span class="op">$</span>taxonomy[<span class="dv">1</span>, , drop =<span class="st"> </span><span class="ot">FALSE</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>denoised<span class="op">$</span>taxonomy[<span class="dv">1</span>, , drop =<span class="st"> </span><span class="ot">FALSE</span>]</span></code></pre></div>
 <pre><code>##                                  Kingdom    Phylum          Class        
 ## c69a3db92e1dcdebb01dfaa5b5795559 "Bacteria" "Bacteroidetes" "Bacteroidia"
 ##                                  Order           Family           Genus
@@ -210,16 +205,16 @@
 ##                                  sequence                                                                                                                                                                                                                                                    
 ## c69a3db92e1dcdebb01dfaa5b5795559 "ACGGAGGATGCGAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGCAGGCGGAAGATCAAGTCAGCGGTAAAATTGAGAGGCTCAACCTCTTCGAGCCGTTGAAACTGGTTTTCTTGAGTGAGCGAGAAGTATGCGGAATGCGTGGTGTAGCGGTGAAATGCATAGATATCACGCAGAACTCCGATTGCGAAGGCAGCATACCGGCGCTCAACTGACGCTCATGCACGAAAGTGTGGGTATCGAACAG"</code></pre>
 <p>To see all steps run to obatin that output you can check the provenance:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">denoised<span class="op">$</span>steps</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>denoised<span class="op">$</span>steps</span></code></pre></div>
 <pre><code>## [1] "quality_control" "preprocess"      "denoise"</code></pre>
 </div>
 <div id="managing-several-sequencing-runs" class="section level2">
 <h2 class="hasAnchor">
 <a href="#managing-several-sequencing-runs" class="anchor"></a>Managing several sequencing runs</h2>
 <p>The <code>denoise</code> workflow step supports multiple sequencing runs in the same experiment. This requires that your files data table has a “run” column. If you sequencing files are organized such that every subfolder is a run you can simply use <code><a href="../reference/find_read_files.html">find_read_files(path, dirs_are_runs = TRUE)</a></code>. Otherwise, you have to specify the run by hand. We will do so for our files here:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">files &lt;-<span class="st"> </span>quals<span class="op">$</span>files</a>
-<a class="sourceLine" id="cb21-2" title="2">files[, run <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">times =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>))]</a>
-<a class="sourceLine" id="cb21-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>files &lt;-<span class="st"> </span>quals<span class="op">$</span>files</span>
+<span id="cb20-2"><a href="#cb20-2"></a>files[, run <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">times =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>))]</span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</span></code></pre></div>
 <pre><code>##                                                                                                              forward
 ## 1: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
 ## 2: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
@@ -239,41 +234,41 @@
 ## 4: F3D3             191    1   2
 ## 5: Mock             280    1   3</code></pre>
 <p>Rerunning the previous workflow with this file list will now give a slightly different output:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">byrun &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb23-2" title="2"><span class="st">         </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 16:40:28] Preprocessing reads for 5 paired-end samples...
-## INFO [2019-05-28 16:40:34] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
-## INFO [2019-05-28 16:40:35] Running DADA2 on 3 run(s) from a sample of up to 2.5e+08 bases.
-## INFO [2019-05-28 16:40:35] Learning errors for run `1` (2 samples)...
-## INFO [2019-05-28 16:40:53] Dereplicating run `1` (2 samples)...
-## INFO [2019-05-28 16:40:54] Inferring sequence variants for run `1`...
-## INFO [2019-05-28 16:40:58] Finished run `1`.
-## INFO [2019-05-28 16:40:58] Learning errors for run `2` (2 samples)...
-## INFO [2019-05-28 16:41:24] Dereplicating run `2` (2 samples)...
-## INFO [2019-05-28 16:41:25] Inferring sequence variants for run `2`...
-## INFO [2019-05-28 16:41:32] Finished run `2`.
-## INFO [2019-05-28 16:41:32] Learning errors for run `3` (1 samples)...
-## INFO [2019-05-28 16:41:33] Dereplicating run `3` (1 samples)...
-## INFO [2019-05-28 16:41:33] Inferring sequence variants for run `3`...
-## INFO [2019-05-28 16:41:33] Finished run `3`.
-## INFO [2019-05-28 16:41:33] Merged sequence tables, now removing chimeras...
-## INFO [2019-05-28 16:41:34] Removed 5/162 sequence variants as chimeric (1.20% of reads)
-## INFO [2019-05-28 16:41:34] Assigning taxonomy to 157 sequences...
-## INFO [2019-05-28 16:41:34] Found existing taxa db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpWVLODz/taxa.fna.gz`. Using that one.
-## INFO [2019-05-28 16:43:24] Found existing species db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpWVLODz/species.fna.gz`. Using that one.
-## INFO [2019-05-28 16:43:56] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 57.3 %,Species = 8.2 %
-## INFO [2019-05-28 16:43:56] Hashing 157 sequence variants.</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>byrun &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/preprocess.html">preprocess</a></span>(config<span class="op">$</span>preprocess) <span class="op">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="st">         </span><span class="kw"><a href="../reference/denoise.html">denoise</a></span>(config<span class="op">$</span>denoise)</span></code></pre></div>
+<pre><code>## INFO [2019-08-28 12:55:19] Preprocessing reads for 5 paired-end samples...
+## INFO [2019-08-28 12:55:25] 3.23e+04/4.48e+04 (73.36%) reads passed preprocessing.
+## INFO [2019-08-28 12:55:25] Running DADA2 on 3 run(s) from a sample of up to 2.5e+08 bases.
+## INFO [2019-08-28 12:55:25] Learning errors for run `1` (2 samples)...
+## INFO [2019-08-28 12:55:45] Dereplicating run `1` (2 samples)...
+## INFO [2019-08-28 12:55:45] Inferring sequence variants for run `1`...
+## INFO [2019-08-28 12:55:49] Finished run `1`.
+## INFO [2019-08-28 12:55:49] Learning errors for run `2` (2 samples)...
+## INFO [2019-08-28 12:56:16] Dereplicating run `2` (2 samples)...
+## INFO [2019-08-28 12:56:17] Inferring sequence variants for run `2`...
+## INFO [2019-08-28 12:56:24] Finished run `2`.
+## INFO [2019-08-28 12:56:24] Learning errors for run `3` (1 samples)...
+## INFO [2019-08-28 12:56:26] Dereplicating run `3` (1 samples)...
+## INFO [2019-08-28 12:56:26] Inferring sequence variants for run `3`...
+## INFO [2019-08-28 12:56:26] Finished run `3`.
+## INFO [2019-08-28 12:56:26] Merged sequence tables, now removing chimeras...
+## INFO [2019-08-28 12:56:26] Removed 5/162 sequence variants as chimeric (1.20% of reads)
+## INFO [2019-08-28 12:56:26] Assigning taxonomy to 157 sequences...
+## INFO [2019-08-28 12:56:26] Found existing taxa db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpqdLJ5i/taxa.fna.gz`. Using that one.
+## INFO [2019-08-28 12:58:10] Found existing species db `/var/folders/55/dv0p21y96g1cq84sr1zd3kym0000gr/T//RtmpqdLJ5i/species.fna.gz`. Using that one.
+## INFO [2019-08-28 12:58:42] Reads with taxonomic classification: Kingdom = 100 %,Phylum = 100 %,Class = 100 %,Order = 100 %,Family = 97 %,Genus = 56.9 %,Species = 8.2 %
+## INFO [2019-08-28 12:58:42] Hashing 157 sequence variants.</code></pre>
 <p>Error profiles will now be estimated for each run individually and final tables will be merged at the end. This is slower than having all files in one run so you should always try to distribute your samples across as few sequencing runs as possible.</p>
 </div>
 <div id="converting-to-phyloseq" class="section level2">
 <h2 class="hasAnchor">
 <a href="#converting-to-phyloseq" class="anchor"></a>Converting to phyloseq</h2>
 <p>For all further analyses you might want to work with a data type which is more suited for amplicon abundance data. You can directly obtain a phyloseq object with</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">ps &lt;-<span class="st"> </span><span class="kw"><a href="../reference/as_phyloseq.html">as_phyloseq</a></span>(denoised)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>ps &lt;-<span class="st"> </span><span class="kw"><a href="../reference/as_phyloseq.html">as_phyloseq</a></span>(denoised)</span></code></pre></div>
 <p>It is possible to pass in metadata as a data frame with <code>to_phyloseq(object, metadata = df)</code>.</p>
 <p>You can now use all additional functions from <code>mbtools</code> on that. For instance we can get the ASV counts in a tidy data table:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">asv_counts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/taxa_count.html">taxa_count</a></span>(ps, <span class="dt">lev =</span> <span class="ot">NA</span>)</a>
-<a class="sourceLine" id="cb26-2" title="2">asv_counts[sample <span class="op">==</span><span class="st"> "Mock"</span> <span class="op">&amp;</span><span class="st"> </span>reads <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>asv_counts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/taxa_count.html">taxa_count</a></span>(ps, <span class="dt">lev =</span> <span class="ot">NA</span>)</span>
+<span id="cb25-2"><a href="#cb25-2"></a>asv_counts[sample <span class="op">==</span><span class="st"> "Mock"</span> <span class="op">&amp;</span><span class="st"> </span>reads <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>]</span></code></pre></div>
 <pre><code>##     sample                             taxa reads
 ##  1:   Mock e941355a23a624aef3fe3e4caf9bc301   564
 ##  2:   Mock 532c8d14997a65c94cdabbf41c8f2647    90
@@ -316,7 +311,7 @@
 ## 19:               Streptococcus NA</code></pre>
 <p>Here we see that we have identified 10 ASVs in the Mock sample. The exact number of strains in that sample is 20, which we don’t find since we don’t have enough reads available to learn a perfect error model. This is not surprising since those are only a few files from that particular study.</p>
 <p>We could also plot the phyla distribution across the samples:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="kw"><a href="../reference/plot_taxa.html">plot_taxa</a></span>(ps)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw"><a href="../reference/plot_taxa.html">plot_taxa</a></span>(ps)</span></code></pre></div>
 <pre><code>## Warning in `[.data.table`(counts, , `:=`(id, as.numeric(sample))):
 ## Invalid .internal.selfref detected and fixed by taking a (shallow) copy
 ## of the data.table so that := can add this new column by reference. At
@@ -332,6 +327,7 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>

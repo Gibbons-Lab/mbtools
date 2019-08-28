@@ -8,10 +8,12 @@
 
 <title>Removes sequence that map to a given reference. — remove_reference • mbtools</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -30,8 +32,8 @@
 
 
 
-<meta property="og:title" content="Removes sequence that map to a given reference. — remove_reference" />
 
+<meta property="og:title" content="Removes sequence that map to a given reference. — remove_reference" />
 <meta property="og:description" content="This can be used for a variety of applications the most common ones are:
 removing sequences from the host
 removing ribosomal sequences
@@ -39,6 +41,7 @@ removing contaminants
 This function uses minimap2 to align and identify hits and does not require
 a prebuilt index." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -68,7 +71,7 @@ a prebuilt index." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.39.3</span>
       </span>
     </div>
 
@@ -117,7 +120,6 @@ a prebuilt index." />
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/Gibbons-Lab/mbtools">
@@ -143,18 +145,16 @@ a prebuilt index." />
     </div>
 
     <div class="ref-description">
-    
     <p>This can be used for a variety of applications the most common ones are:</p><ul>
 <li><p>removing sequences from the host</p></li>
 <li><p>removing ribosomal sequences</p></li>
 <li><p>removing contaminants</p></li>
 </ul><p>This function uses minimap2 to align and identify hits and does not require
 a prebuilt index.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>remove_reference</span>(<span class='no'>reads</span>, <span class='no'>out</span>, <span class='no'>reference</span>, <span class='kw'>alignments</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>threads</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -182,12 +182,11 @@ string indicating the path to the output bam file.</p></td>
       <td><p>How many threads to use for mapping.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A numeric vector with two entries. The number of sequences after
  filtering (non-mapped), and the number of removed sequences (mapped).</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'> <span class='kw'>NULL</span></div><div class='output co'>#&gt; NULL</div><div class='input'>
@@ -197,9 +196,7 @@ string indicating the path to the output bam file.</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

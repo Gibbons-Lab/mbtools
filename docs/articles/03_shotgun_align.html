@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.35.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.39.3</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
 <h1 class="hasAnchor">
 <a href="#shotgun-metagenomics" class="anchor"></a>Shotgun metagenomics</h1>
 <p><code>mbtools</code> has support for aligning shotgun metagenomic reads. Before proceeding we recommend you preprocess the reads first as described in an earlier vignette.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</span></code></pre></div>
 </div>
 <div id="aligning-reads" class="section level1">
 <h1 class="hasAnchor">
@@ -123,24 +123,24 @@
 <h2 class="hasAnchor">
 <a href="#preparing-the-example-data" class="anchor"></a>Preparing the example data</h2>
 <p>Let’s create our file list for the example data and reference database:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">fi &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/shotgun"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="st">      </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>()</a>
-<a class="sourceLine" id="cb2-3" title="3">ref &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/genomes/zymo_mock.fna.gz"</span>,</a>
-<a class="sourceLine" id="cb2-4" title="4">                   <span class="dt">package =</span> <span class="st">"mbtools"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>fi &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/shotgun"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>) <span class="op">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="st">      </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>()</span>
+<span id="cb2-3"><a href="#cb2-3"></a>ref &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/genomes/zymo_mock.fna.gz"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4"></a>                   <span class="dt">package =</span> <span class="st">"mbtools"</span>)</span></code></pre></div>
 <p>Which are 3 paired-end files.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">fi</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>fi</span></code></pre></div>
 </div>
 <div id="aligning" class="section level2">
 <h2 class="hasAnchor">
 <a href="#aligning" class="anchor"></a>Aligning</h2>
 <p>As always we will need A config object.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">config &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_align.html">config_align</a></span>(</a>
-<a class="sourceLine" id="cb4-2" title="2">    <span class="dt">reference =</span> ref,</a>
-<a class="sourceLine" id="cb4-3" title="3">    <span class="dt">threads =</span> <span class="dv">3</span>,</a>
-<a class="sourceLine" id="cb4-4" title="4">    <span class="dt">use_existing =</span> <span class="ot">FALSE</span></a>
-<a class="sourceLine" id="cb4-5" title="5">)</a>
-<a class="sourceLine" id="cb4-6" title="6"></a>
-<a class="sourceLine" id="cb4-7" title="7">config</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>config &lt;-<span class="st"> </span><span class="kw"><a href="../reference/config_align.html">config_align</a></span>(</span>
+<span id="cb4-2"><a href="#cb4-2"></a>    <span class="dt">reference =</span> ref,</span>
+<span id="cb4-3"><a href="#cb4-3"></a>    <span class="dt">threads =</span> <span class="dv">3</span>,</span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="dt">use_existing =</span> <span class="ot">FALSE</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>)</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>config</span></code></pre></div>
 <pre><code>## $reference
 ## [1] "/Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/genomes/zymo_mock.fna.gz"
 ## 
@@ -165,37 +165,38 @@
 ## attr(,"class")
 ## [1] "config"</code></pre>
 <p>This will be sufficient to align reads. As always the first argument can also be an artifact from <code>quality_control</code> or <code>preprocess</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">alns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/align_short_reads.html">align_short_reads</a></span>(fi, config)</a></code></pre></div>
-<pre><code>## INFO [2019-05-28 16:44:18] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
-## INFO [2019-05-28 16:44:20] Finished aligning even1.
-## INFO [2019-05-28 16:44:23] Finished aligning even2.
-## INFO [2019-05-28 16:44:25] Finished aligning even3.</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>alns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/align_short_reads.html">align_short_reads</a></span>(fi, config)</span></code></pre></div>
+<pre><code>## INFO [2019-08-28 12:59:05] Aligning 3 samples on 3 threads. Keeping up to 100 secondary alignments.
+## INFO [2019-08-28 12:59:07] Finished aligning even1.
+## INFO [2019-08-28 12:59:09] Finished aligning even2.
+## INFO [2019-08-28 12:59:12] Finished aligning even3.</code></pre>
 <p>You will get an output artifact that logs the created alignments…</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">alns<span class="op">$</span>alignments</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>alns<span class="op">$</span>alignments</span></code></pre></div>
 <pre><code>##       id            alignment success
 ## 1: even1 alignments/even1.bam    TRUE
 ## 2: even2 alignments/even2.bam    TRUE
 ## 3: even3 alignments/even3.bam    TRUE</code></pre>
 <p>…the size of all the alignments on disk…</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(alns<span class="op">$</span>disk_size, <span class="dt">unit =</span> <span class="st">"auto"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(alns<span class="op">$</span>disk_size, <span class="dt">unit =</span> <span class="st">"auto"</span>)</span></code></pre></div>
 <pre><code>## 2.4 Mb</code></pre>
 <p>…and the logs in case something goes wrong.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(alns<span class="op">$</span>logs[[<span class="dv">1</span>]])</a></code></pre></div>
-<pre><code>## [M::mm_idx_gen::1.824*1.17] collected minimizers
-## [M::mm_idx_gen::2.019*1.34] sorted minimizers
-## [M::main::2.020*1.34] loaded/built the index for 10 target sequence(s)
-## [M::mm_mapopt_update::2.020*1.34] mid_occ = 1000
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(alns<span class="op">$</span>logs[[<span class="dv">1</span>]])</span></code></pre></div>
+<pre><code>## [M::mm_idx_gen::1.788*1.17] collected minimizers
+## [M::mm_idx_gen::1.989*1.35] sorted minimizers
+## [M::main::1.989*1.35] loaded/built the index for 10 target sequence(s)
+## [M::mm_mapopt_update::1.989*1.35] mid_occ = 1000
 ## [M::mm_idx_stat] kmer size: 21; skip: 11; is_hpc: 0; #seq: 10
-## [M::mm_idx_stat::2.102*1.33] distinct minimizers: 10112254 (98.45% are singletons); average occurrences: 1.040; average spacing: 5.997
-## [M::worker_pipeline::2.234*1.35] mapped 12598 sequences
+## [M::mm_idx_stat::2.066*1.34] distinct minimizers: 10112254 (98.45% are singletons); average occurrences: 1.040; average spacing: 5.997
+## [M::worker_pipeline::2.195*1.36] mapped 12598 sequences
 ## [M::main] Version: 2.17-r941
 ## [M::main] CMD: minimap2 -acx sr -t 3 --secondary=yes -N 100 -I 100G /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/genomes/zymo_mock.fna.gz /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/shotgun/even1_S1_L001_R1_001.fasta.gz /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/shotgun/even1_S1_L001_R2_001.fasta.gz
-## [M::main] Real time: 2.307 sec; CPU: 3.088 sec; Peak RSS: 0.476 GB</code></pre>
+## [M::main] Real time: 2.260 sec; CPU: 3.047 sec; Peak RSS: 0.473 GB</code></pre>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>

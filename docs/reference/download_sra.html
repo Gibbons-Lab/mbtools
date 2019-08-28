@@ -8,10 +8,12 @@
 
 <title>Download data from SRA. — download_sra • mbtools</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -30,11 +32,12 @@
 
 
 
-<meta property="og:title" content="Download data from SRA. — download_sra" />
 
+<meta property="og:title" content="Download data from SRA. — download_sra" />
 <meta property="og:description" content="To use this function first obtain a RunInfo Table as described at
 https://www.ncbi.nlm.nih.gov/Traces/study/?go=help." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -64,7 +67,7 @@ https://www.ncbi.nlm.nih.gov/Traces/study/?go=help." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.38.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.39.3</span>
       </span>
     </div>
 
@@ -113,7 +116,6 @@ https://www.ncbi.nlm.nih.gov/Traces/study/?go=help." />
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/Gibbons-Lab/mbtools">
@@ -139,15 +141,13 @@ https://www.ncbi.nlm.nih.gov/Traces/study/?go=help." />
     </div>
 
     <div class="ref-description">
-    
     <p>To use this function first obtain a RunInfo Table as described at
 <a href='https://www.ncbi.nlm.nih.gov/Traces/study/?go=help'>https://www.ncbi.nlm.nih.gov/Traces/study/?go=help</a>.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>download_sra</span>(<span class='no'>runtable</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"sra/"</span>, <span class='kw'>threads</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"mc.cores"</span>,
-  <span class='fl'>1</span>))</pre>
-    
+    <pre class="usage"><span class='fu'>download_sra</span>(<span class='no'>runtable</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"sra/"</span>, <span class='kw'>retries</span> <span class='kw'>=</span> <span class='fl'>3</span>,
+  <span class='kw'>threads</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"mc.cores"</span>, <span class='fl'>1</span>))</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -160,24 +160,26 @@ https://www.ncbi.nlm.nih.gov/Traces/study/?go=help." />
       <td><p>The folder into which to download the FASTQ files.</p></td>
     </tr>
     <tr>
+      <th>retries</th>
+      <td><p>How often to try downloading again after failure.</p></td>
+    </tr>
+    <tr>
       <th>threads</th>
       <td><p>Maximum number of parallel file downloads.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>The list of files with indicated download success.</p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-          </ul>
+    </ul>
 
   </div>
 </div>
