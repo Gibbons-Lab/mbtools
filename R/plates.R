@@ -13,7 +13,8 @@
 #'  config <- config_align(reference = "refs/mouse.fna.gz")
 config_layout <- config_builder(list(
     idcol = "id",
-    blank_step = 18
+    blank_step = 18,
+    ncol = 1
 ))
 
 grid <- expand.grid(as.character(1:12), LETTERS[1:8])[, 2:1] %>%
@@ -25,13 +26,15 @@ grid <- expand.grid(as.character(1:12), LETTERS[1:8])[, 2:1] %>%
 #' @param ... other parameters passed to \code{\link{config_layout}}.
 #' @return An artifact with the annotated manifest as well as a plate map.
 #'
+#' @export
 #' @importFrom stringr str_pad
 #' @importFrom magrittr %>%
-#' @importFrom data.table copy
+#' @importFrom data.table copy setnames
 layout <- function(manifest, ...) {
     config <- config_parser(list(...), config_layout)
     blank <- data.table(layout_type = "blank")
     manifest <- as.data.table(copy(manifest))[, "layout_type" := "sample"]
+    setnames(manifest, old = config$idcol, new = "id")
     blank[[config$idcol]] <- ""
     dt <- list()
     for (i in seq(1, nrow(manifest), config$blank_step)) {
@@ -52,13 +55,16 @@ layout <- function(manifest, ...) {
             y = substr(well, 1, 1),
             fill = layout_type,
             label = id)) +
-        geom_tile(color = "black", size = 1) +
+        geom_tile(color = "black", size = 0.5) +
         geom_text(hjust = 0.5, vjust = 0.5) +
         facet_wrap(~ plate, scales = "free",
-                   labeller = function(x) label_both(x, sep = " ")) +
+                   labeller = function(x) label_both(x, sep = " "),
+                   ncol = config$ncol) +
         scale_fill_manual(values = c("gray", "white")) +
+        guides(fill = guide_legend(nrow = 1)) +
         scale_y_discrete(limits = rev(LETTERS[1:8])) +
-        labs(x = "", y = "", fill = "type") + theme_minimal()
+        labs(x = "", y = "", fill = "") +
+        theme_minimal(base_size = 16) + theme(legend.position = "bottom")
 
     artifact <- list(manifest = manifest, layout = layout, steps = c("layout"))
     return(artifact)
