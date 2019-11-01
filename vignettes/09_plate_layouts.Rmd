@@ -1,0 +1,60 @@
+---
+title: "9 - Plate Layouts"
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{pkgdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Before even having sequencing data you will have to extract DNA or RNA from possibly many samples. This is often
+done on 96-well plates which requires designing layouts for many plates. `mbtools` provides a few helpers for that.
+
+The only thing you will need is yet again a sample manifest. This will need to have an id column again. 
+Let's make one for a somewhat larger experiment.
+
+```{r}
+library(mbtools)
+
+manifest <- data.table(
+    id = paste0("S", 1:640),
+    age = runif(640, 18, 97) %>% ceiling(),
+    treatment = c("control", "inulin")[(runif(640) > 0.5) + 1],
+    sex = c("F", "M")[(runif(640) > 0.5) + 1]
+)
+
+head(manifest)
+```
+
+You can now get plate layouts by using `layout`.
+
+```{r}
+lo <- layout(manifest)
+```
+
+This will annotate your manifest with wells and also add in blanks (those have empty IDs):
+
+```{r}
+lo$manifest
+```
+
+This will create a plate map as well. You can control the number of columns with the `ncol` argument.
+
+```{r, fig.width = 14, fig.height = 14}
+layout(manifest, ncol = 2)$layout
+```
+
+You can control the frequency of blanks with the `blank_step` argument. Set it to `Inf` or `NA` to get no blanks.
+
+```{r, fig.width = 18, fig.height = 12}
+layout(manifest, blank_step = 9, ncol = 3)$layout
+```
+
+Depending on how you like to arrange your samples you could also do so by column:
+
+```{r, fig.width = 18, fig.height = 12}
+layout(manifest, blank_step = 10, by = "col", ncol = 3)$layout
+```

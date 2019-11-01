@@ -1,0 +1,99 @@
+---
+title: "8 - Submitting data to SRA"
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{pkgdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+At some point of your project youy will want to make your data available to the public. This often required to happen in
+the form of a submission to the Sequence Read Archive (SRA), which can be challenging. `mbtools` includes helpers to
+prep a submission for you.
+
+In order to create a submission you will need the following:
+
+1. A file manifest for all of your sequencing data.
+2. A metadata table describing the sequenced samples.
+3. Some basic information about the study and sequencing.
+
+Number 1 is managed as in all other `mbtools` steps in that it is a file list such as used in quality control etc. For 
+instance for our example data:
+
+```{r}
+library(mbtools)
+
+fi <- system.file("extdata/shotgun", package = "mbtools") %>% find_read_files()
+```
+
+Which gives you:
+
+```{r}
+fi
+```
+
+The metadata is a data frame describing additional attributes for each of those samples. For instance you could use the `sample_data()` slot of a phyloseq object. However, this table always needs to have a column specifying the sample
+ID as in the file manifest and a date column denoting the date of sample extraction. Let's create one for the three samples in our example data:
+
+```{r}
+metadata <- data.table(
+    id = fi$id,
+    date = rep("2019-01-01", 3),
+    diet = c("vegan", "vegitarian", "flexitarian"),
+    age = c(23, 38, 64)
+)
+```
+
+For the additional study data `mbtools` will use a set of presets that will set a lot of the
+information for you but you will still need to specify additional aspects of your study. This is
+again managed by configurations and you can see the set of configuration variables by
+creating one with `config_sra`:
+
+```{r}
+config_sra()
+```
+
+Except for the `bioproject` (fill only if you already have a BIOPROJECT ID) variable everything else needs to be
+specified (or the default values will be used). You can check the the list of available presets with:
+
+```{r}
+names(mbtools:::presets)
+```
+
+Let's fill in the data for the example study:
+
+```{r}
+config <- config_sra(
+    title = "Sequencing of the gut metagenome: the effect of age on Bacteroides",
+    preset = "human gut metagenome",
+    platform = "ILLUMINA",
+    instrument = "Illumina HiSeq 2000",
+    metadata = metadata
+)
+```
+
+You can now proceed building the subsmission data:
+
+```{r}
+sra <- sra_submission(fi, config)
+```
+
+This told us exactly how to submit the data. We urge you to first check all created files for correctness. This can
+be done by inspecting the return value. For insatnce:
+
+```{r}
+sra$sra_metadata
+```
+
+
+When looking in the specified folder (`./sra` by default) you will see the tables for step 5 and 6:
+
+```{r}
+list.files("sra")
+```
+
+For larger submission we recommend installing the Aspera client in your browser as this
+will speed up the upload significantly and allow for larger packages.
