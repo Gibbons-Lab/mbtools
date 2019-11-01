@@ -7,7 +7,7 @@ test_that("configuration is good", {
     expect_type(config, "list")
     expect_s3_class(config, "config")
     expect_true(length(config) > 3)
-    config <- config_preprocess(title = "blub")
+    config <- config_sra(title = "blub")
     expect_equal(config$title, "blub")
 })
 
