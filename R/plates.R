@@ -14,11 +14,16 @@
 config_layout <- config_builder(list(
     idcol = "id",
     blank_step = 18,
-    ncol = 1
+    ncol = 1,
+    by = "row"
 ))
 
-grid <- expand.grid(as.character(1:12), LETTERS[1:8])[, 2:1] %>%
-    apply(1, paste, collapse = "", sep = "")
+grid <- list(
+    row = expand.grid(as.character(1:12), LETTERS[1:8])[, 2:1] %>%
+        apply(1, paste, collapse = "", sep = ""),
+    col = expand.grid(LETTERS[1:8], as.character(1:12)) %>%
+        apply(1, paste, collapse = "", sep = "")
+)
 
 #' Generate a plate layout from a sample manifest.
 #'
@@ -47,7 +52,7 @@ layout <- function(manifest, ...) {
     }
     manifest <- rbindlist(dt, fill = TRUE)
     manifest[, "plate" := ceiling(1:nrow(manifest) / 96)]
-    manifest[, "well" := grid[1:.N], by = "plate"]
+    manifest[, "well" := grid[[config$by]][1:.N], by = "plate"]
 
     layout <- ggplot(
         manifest,
@@ -55,6 +60,7 @@ layout <- function(manifest, ...) {
             y = substr(well, 1, 1),
             fill = layout_type,
             label = id)) +
+        scale_x_discrete(drop = FALSE) +
         geom_tile(color = "black", size = 0.5) +
         geom_text(hjust = 0.5, vjust = 0.5) +
         facet_wrap(~ plate, scales = "free",
