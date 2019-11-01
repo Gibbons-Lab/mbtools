@@ -42,15 +42,17 @@ layout <- function(manifest, ...) {
     setnames(manifest, old = config$idcol, new = "id")
     blank[[config$idcol]] <- ""
     dt <- list()
-    for (i in seq(1, nrow(manifest), config$blank_step)) {
-        n <- min(i + config$blank_step - 1, nrow(manifest))
-        if (i == 1) {
-            dt <- append(dt, list(manifest[i:n]))
-        } else {
-            dt <- append(dt, list(blank, manifest[i:n]))
+    if (is.finite(config$blank_step)) {
+        for (i in seq(1, nrow(manifest), config$blank_step)) {
+            n <- min(i + config$blank_step - 1, nrow(manifest))
+            if (i == 1) {
+                dt <- append(dt, list(manifest[i:n]))
+            } else {
+                dt <- append(dt, list(blank, manifest[i:n]))
+            }
         }
+        manifest <- rbindlist(dt, fill = TRUE)
     }
-    manifest <- rbindlist(dt, fill = TRUE)
     manifest[, "plate" := ceiling(1:nrow(manifest) / 96)]
     manifest[, "well" := grid[[config$by]][1:.N], by = "plate"]
 
