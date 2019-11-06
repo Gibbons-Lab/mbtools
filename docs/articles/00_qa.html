@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mbtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.39.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.40.1</span>
       </span>
     </div>
 
@@ -76,6 +76,12 @@
     <li>
       <a href="../articles/07_workflow_management.html">7 - Workflow management</a>
     </li>
+    <li>
+      <a href="../articles/08_sra.html">8 - Submitting data to SRA</a>
+    </li>
+    <li>
+      <a href="../articles/09_plate_layouts.html">9 - Plate Layouts</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -117,7 +123,7 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mbtools)</span></code></pre></div>
 <pre><code>## Also loading:</code></pre>
 <pre><code>##   - dada2=1.12.1
-##   - data.table=1.12.2
+##   - data.table=1.12.6
 ##   - ggplot2=3.2.1
 ##   - magrittr=1.5
 ##   - phyloseq=1.28.0
@@ -132,13 +138,16 @@
 <pre><code>## The following object is masked _by_ 'package:BiocGenerics':
 ## 
 ##     normalize</code></pre>
+<pre><code>## The following object is masked from 'package:graphics':
+## 
+##     layout</code></pre>
 <div id="finding-your-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#finding-your-files" class="anchor"></a>Finding your files</h2>
 <p><code>mbtools</code> includes helpers to find your sequencing files. It works out of the box for normal Illumina file names (the ones you get from basespace). There is a small example data set in our package which we can use to illustrate that.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2"></a>files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/16S"</span>, <span class="dt">package =</span> <span class="st">"mbtools"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>files &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_read_files.html">find_read_files</a></span>(path)</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(files)</span></code></pre></div>
 <pre><code>##                                                                                                              forward
 ## 1: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D0_S188_L001_R1_001.fastq.gz
 ## 2: /Library/Frameworks/R.framework/Versions/3.6/Resources/library/mbtools/extdata/16S/F3D1_S189_L001_R1_001.fastq.gz
@@ -163,21 +172,21 @@
 <h2 class="hasAnchor">
 <a href="#running-quality-assesment" class="anchor"></a>Running Quality assesment</h2>
 <p>Now we can run the quality assessment workflow step. This step does not take a configuration since it does not require that much prior information. It does take additional arguments to specify the maximum number of sampled reads and a quality cutoff that you consider sufficient. The default is a quality score of 10 which is the average for nanopore reads for instance. This corresponds to a per-base error of about 10%. We can be a bit more stringent here and use a cutoff of 1% error (quality score 20).</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>quals &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(<span class="dt">min_score =</span> <span class="dv">20</span>)</span></code></pre></div>
-<pre><code>## INFO [2019-08-28 12:50:02] Running quality assay for forward reads from 5 files.
-## INFO [2019-08-28 12:50:05] Median per base error is 0.016% (median score = 38.00).
-## INFO [2019-08-28 12:50:05] Mean per cycle entropy is 0.809 (in [0, 2]).
-## INFO [2019-08-28 12:50:05] On average we have 8963.80 +- 6059.73 reads per file.
-## INFO [2019-08-28 12:50:05] Running quality assay for reverse reads from 5 files.
-## INFO [2019-08-28 12:50:08] Median per base error is 0.020% (median score = 37.00).
-## INFO [2019-08-28 12:50:08] Mean per cycle entropy is 0.731 (in [0, 2]).
-## INFO [2019-08-28 12:50:08] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>quals &lt;-<span class="st"> </span>files <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/quality_control.html">quality_control</a></span>(<span class="dt">min_score =</span> <span class="dv">20</span>)</span></code></pre></div>
+<pre><code>## INFO [2019-11-05 08:11:22] Running quality assay for forward reads from 5 files.
+## INFO [2019-11-05 08:11:26] Median per base error is 0.016% (median score = 38.00).
+## INFO [2019-11-05 08:11:26] Mean per cycle entropy is 0.808 (in [0, 2]).
+## INFO [2019-11-05 08:11:26] On average we have 8963.80 +- 6059.73 reads per file.
+## INFO [2019-11-05 08:11:26] Running quality assay for reverse reads from 5 files.
+## INFO [2019-11-05 08:11:28] Median per base error is 0.020% (median score = 37.00).
+## INFO [2019-11-05 08:11:28] Mean per cycle entropy is 0.731 (in [0, 2]).
+## INFO [2019-11-05 08:11:28] On average we have 8963.80 +- 6059.73 reads per file.</code></pre>
 <p>This runs in parallel and will report global quality metrics on the logging interface. We see that we have relatively shallow sequencing data, but the average quality and entropy is pretty good.</p>
 <div id="quality-plots" class="section level3">
 <h3 class="hasAnchor">
 <a href="#quality-plots" class="anchor"></a>Quality plots</h3>
 <p>In order to indentify points where the quality tanks we can have a look at the average quality profile.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>quals<span class="op">$</span>quality_plot</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>quals<span class="op">$</span>quality_plot</span></code></pre></div>
 <p><img src="00_qa_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>This is a quick global plot giving us the overall average quality per sample. The 5’ (first 10bp) qualities are usually artificially lowered by Illumina sequencers and have some lower confidence. We also see some declining qualities on the 3’ of the reverse reads. This is all pretty typical for MiSeq data.</p>
 </div>
@@ -185,7 +194,7 @@
 <h3 class="hasAnchor">
 <a href="#length-plots" class="anchor"></a>Length plots</h3>
 <p>One additional questions is if we have samples were reads are shorter of have strongly declining qualities compared to other samples. This can be evaluated by the length plot.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>quals<span class="op">$</span>length_plot</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>quals<span class="op">$</span>length_plot</span></code></pre></div>
 <p><img src="00_qa_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>You usually want to see horizontal bands of a single color. If the colors become lighter towards the right that means that some samples have shorter reads after trimming which could complicate some workflows.</p>
 </div>
@@ -193,7 +202,7 @@
 <h3 class="hasAnchor">
 <a href="#entropy-plots" class="anchor"></a>Entropy plots</h3>
 <p>We can also check how heterogenous the reads positions are. This is quantified by the entropy which tells us how varying a single position is. Any value appreciably larger than 0 is usually fine.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>quals<span class="op">$</span>entropy_plot</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>quals<span class="op">$</span>entropy_plot</span></code></pre></div>
 <p><img src="00_qa_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>16S amplified regions tend to have some lower variability on the ends which is what we see by the lower entropy on the beginning of the forward and reverse reads (the ends of the amplicon).</p>
 </div>

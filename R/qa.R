@@ -106,7 +106,7 @@ quality_profile <- function(files, n = 1e4) {
 plot_qualities <- function(qp, min_score = 10) {
     cycles <- qp$qualities
     mean_scores <- cycles[, .(quality = sum(count * quality) / sum(count),
-                              direction[1]),
+                              direction = direction[1]),
                           by = c("cycle", "file")]
     pl <- ggplot(mean_scores, aes(x = cycle, y = quality)) +
             geom_hline(yintercept = min_score, col = "blue") +
@@ -136,7 +136,8 @@ plot_qualities <- function(qp, min_score = 10) {
 #' @export
 plot_lengths <- function(qp, min_score = 10) {
     nice <- qp$qualities[quality > min_score,
-                        .(count = sum(count), direction[1], id[1]),
+                        .(count = sum(count), direction = direction[1],
+                          id = id[1]),
                         by = c("cycle", "file")]
     pl <- ggplot(nice, aes(x = cycle, y = id, fill = count)) +
             geom_raster() +
@@ -160,7 +161,7 @@ plot_lengths <- function(qp, min_score = 10) {
 #'
 #' @export
 plot_entropy <- function(qp) {
-    ent <- qp$bases[, .(entropy = entropy(count), direction[1]),
+    ent <- qp$bases[, .(entropy = entropy(count), direction = direction[1]),
                     by = c("cycle", "file")]
     pl <- ggplot(ent, aes(x = cycle, y = entropy)) +
             geom_hline(yintercept = 2, col = "blue") +
