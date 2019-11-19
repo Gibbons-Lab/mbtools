@@ -65,9 +65,9 @@ remove_chimeras <- function(object, ...) {
                 config$out_dir,
                 paste0(basename(passed_files$forward[i]), ".yacrd"))
         args <- c("-x", config$preset, "-g", config$seed_distance,
-                        "-t", config$threads, infile, infile, "|",
-                        "yacrd", "chimeric", "-f", infile, ">", yacfile,
-                        "2>", "/dev/null")
+                        "-t", config$threads, infile, infile, "2>",
+                        "/dev/null", "|",
+                        "yacrd", "chimeric", "-f", infile, ">", yacfile)
         ret <- system2("minimap2", args = args)
         if (ret != 0) {
             stop(sprintf(
@@ -93,9 +93,9 @@ remove_chimeras <- function(object, ...) {
                         config$out_dir,
                         paste0(basename(passed_files$reverse[i]), ".yacrd"))
                 args <- c("-x", config$preset, "-g", config$seed_distance,
-                          "-t", config$threads, infile, infile, "|",
-                          "yacrd", "chimeric", "-f", infile, ">", yacfile,
-                          "2>", "/dev/null")
+                          "-t", config$threads, infile, infile, "2>",
+                          "/dev/null", "|",
+                          "yacrd", "chimeric", "-f", infile, ">", yacfile)
                 ret <- system2("minimap2", args = args)
                 if (ret != 0) {
                     stop(sprintf(
