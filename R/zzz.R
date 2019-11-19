@@ -11,7 +11,7 @@ NULL
 pkgs <- c("ggplot2", "dada2", "phyloseq", "ShortRead",
           "data.table", "yaml", "magrittr")
 
-tools <- c("minimap2", "slimm", "samtools")
+tools <- c("minimap2", "slimm", "samtools", "yacrd")
 
 silent_lib <- function(...) suppressWarnings(
     suppressPackageStartupMessages(library(...)))
@@ -25,7 +25,7 @@ tool_version <- function(command) {
         )
     if (!is.null(out)) {
         out <- str_split_fixed(out, " ", n = Inf)
-        out <- out[length(out)]
+        out <- out[grepl("^\\d\\.\\d", out)][1]
     }
     return(out)
 }

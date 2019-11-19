@@ -81,3 +81,5 @@ parse_threads <- function(th, return_fun = TRUE) {
     }
     return(threads)
 }
+
+`%p%` <- function(a, b) paste0(a, b)

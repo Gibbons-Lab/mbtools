@@ -19,6 +19,41 @@ config_chimera <- config_builder(list(
     seed_distance = 500
 ))
 
+filter_chimeras <- function(files, output, config) {
+    stats <- lapply(1:nrow(files), function(i) {
+        infile <- files[i]
+        outfile <- output[i]
+        filter_file <- sub(basename(infile),
+                           paste0(basename(infile), "_filtered"),
+                           infile)
+        yacfile <- file.path(
+                config$out_dir,
+                paste0(basename(files[i]), ".yacrd"))
+        args <- c("-x", config$preset, "-g", config$seed_distance,
+                 "-t", config$threads, infile, infile, "2>",
+                 "/dev/null", "|",
+                 "yacrd", "chimeric", "-f", infile, ">", yacfile)
+        ret <- system2("minimap2", args = args)
+        if (ret != 0) {
+            stop(sprintf(
+                "Chimera detection failed for file %s :(", infile))
+        }
+        file.copy(filter_file, outfile)
+        file.remove(filter_file)
+        nseq <- fastq.geometry(infile)[1]
+        bad <- fread(yacfile, sep = "\t") %>% nrow()
+        flog.info("Finished looking for chimeras in %s. " %p%
+                  "Removing %d/%d as chimeric.",
+                  infile, bad, nseq)
+        return(data.table(id = files$id[i], file = infile,
+                          before = nseq, after = nseq - bad,
+                          chimeric = bad))
+    }) %>% rbindlist()
+
+    return(stats)
+}
+
+
 #' Removes chimeric reads from amplicon sequencing data.
 #'
 #' It is recommended to run this step after preprocessing which will be a bit
@@ -50,65 +85,16 @@ remove_chimeras <- function(object, ...) {
         dir.create(config$out_dir, recursive = TRUE)
     }
 
-    flog.info("Preprocessing reads for %d %s-end samples...",
+    flog.info("Removing chimeras in %d %s-end samples...",
               nrow(files), ifelse(paired, "paired", "single"))
     passed_files <- copy(files)
     passed_files$forward <- file.path(config$out_dir,
                                       basename(files$forward))
-    stats <- lapply(1:nrow(files), function(i) {
-        infile <- files$forward[i]
-        outfile <- passed_files$forward[i]
-        filter_file <- sub(basename(infile),
-                           paste0(basename(infile), "_filtered"),
-                           infile)
-        yacfile <- file.path(
-                config$out_dir,
-                paste0(basename(passed_files$forward[i]), ".yacrd"))
-        args <- c("-x", config$preset, "-g", config$seed_distance,
-                        "-t", config$threads, infile, infile, "2>",
-                        "/dev/null", "|",
-                        "yacrd", "chimeric", "-f", infile, ">", yacfile)
-        ret <- system2("minimap2", args = args)
-        if (ret != 0) {
-            stop(sprintf(
-                "Chimera detection failed for file %s.", infile))
-        }
-        file.copy(filter_file, outfile)
-        file.remove(filter_file)
-        nseq <- fastq.geometry(infile)[1]
-        bad <- fread(yacfile, sep = "\t") %>% nrow()
-        flog.info("Finished looking for chimeras in %s. Found %d.",
-                          infile, bad)
-        return(data.table(id = files$id[i], file = infile,
-                          before = nseq, after = nseq - bad,
-                          chimeric = bad))
-    }) %>% rbindlist()
+    stats <- filter_chimeras(files$forward, passed_files$forward, config)
     if (paired) {
         passed_files$reverse <- file.path(config$out_dir,
                                           basename(files$reverse))
-        s <- lapply(1:nrow(files), function(i) {
-                infile <- files$reverse[i]
-                outfile <- passed_files$reverse[i]
-                yacfile <- file.path(
-                        config$out_dir,
-                        paste0(basename(passed_files$reverse[i]), ".yacrd"))
-                args <- c("-x", config$preset, "-g", config$seed_distance,
-                          "-t", config$threads, infile, infile, "2>",
-                          "/dev/null", "|",
-                          "yacrd", "chimeric", "-f", infile, ">", yacfile)
-                ret <- system2("minimap2", args = args)
-                if (ret != 0) {
-                    stop(sprintf(
-                            "Chimera detection failed for file %s.", infile))
-                }
-                nseq <- fastq.geometry(infile)[1]
-                bad <- fread(yacfile, sep = "\t") %>% nrow()
-                flog.info("Finished looking for chimeras in %s. Found %d.",
-                          infile, bad)
-                return(data.table(id = files$id[i], file = infile,
-                                  before = nseq, after = nseq - bad,
-                                  chimeric = bad))
-        }) %>% rbindlist()
+        s <- filter_chimeras(files$reverse, passed_files$reverse, config)
         stats <- rbind(stats, s)
     }
     flog.info("%.3g/%.3g (%.2f%%) reads passed preprocessing.",
