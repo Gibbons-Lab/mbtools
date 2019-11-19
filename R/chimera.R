@@ -91,7 +91,8 @@ remove_chimeras <- function(object, ...) {
                         paste0(basename(passed_files$reverse[i]), ".yacrd"))
                 args <- c("-x", config$preset, "-g", config$seed_distance,
                           "-t", config$threads, infile, infile, "|",
-                          "yacrd", "chimeric", "-f", infile, ">", yacfile)
+                          "yacrd", "chimeric", "-f", infile, ">", yacfile,
+                          "2>", "/dev/null")
                 ret <- system2("minimap2", args = args)
                 if (ret != 0) {
                     stop(sprintf(
@@ -102,6 +103,8 @@ remove_chimeras <- function(object, ...) {
                 return(data.table(id = files$id[i], file = infile,
                                   before = nseq, after = nseq - bad,
                                   chimeric = bad))
+                flog.info("Finished looking for chimeras in %s. Found %d.",
+                          infile, bad)
         }) %>% rbindlist()
         stats <- rbind(stats, s)
     }
