@@ -25,10 +25,10 @@ filter_chimeras <- function(files, output, config) {
         infile <- files[i]
         spl <- split_ext(infile)
         outfile <- output[i]
-        filter_file <- paste0(spl[, 1], "_filtered.", spl[, 2])
+        filter_file <- paste0(spl[1, 1], "_filtered.", spl[1, 2])
         yacfile <- file.path(
                 config$out_dir,
-                paste0(spl[, 1], ".yacrd"))
+                paste0(spl[1, 1], ".yacrd"))
         args <- c("-x", config$preset, "-g", config$seed_distance,
                  "-t", config$threads, infile, infile, "2>",
                  "/dev/null", "|",
