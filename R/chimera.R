@@ -19,16 +19,16 @@ config_chimera <- config_builder(list(
     seed_distance = 500
 ))
 
+#' @importFrom tools file_path_sans_ext
 filter_chimeras <- function(files, output, config) {
     stats <- lapply(1:nrow(files), function(i) {
         infile <- files[i]
+        spl <- split_ext(infile)
         outfile <- output[i]
-        filter_file <- sub(basename(infile),
-                           paste0(basename(infile), "_filtered"),
-                           infile)
+        filter_file <- paste0(spl[1], "_filtered.", spl[2])
         yacfile <- file.path(
                 config$out_dir,
-                paste0(basename(files[i]), ".yacrd"))
+                paste0(spl[1], ".yacrd"))
         args <- c("-x", config$preset, "-g", config$seed_distance,
                  "-t", config$threads, infile, infile, "2>",
                  "/dev/null", "|",

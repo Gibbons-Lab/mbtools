@@ -83,3 +83,8 @@ parse_threads <- function(th, return_fun = TRUE) {
 }
 
 `%p%` <- function(a, b) paste0(a, b)
+
+split_ext <- function(path) {
+    path <- basename(path)
+    return(str_split_fixed(path, ".", 2) %>% as.character())
+}
