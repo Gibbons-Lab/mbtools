@@ -21,7 +21,7 @@ config_chimera <- config_builder(list(
 
 #' @importFrom tools file_path_sans_ext
 filter_chimeras <- function(files, output, config) {
-    stats <- lapply(1:nrow(files), function(i) {
+    stats <- lapply(1:length(files), function(i) {
         infile <- files[i]
         spl <- split_ext(infile)
         outfile <- output[i]
