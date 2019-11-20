@@ -86,5 +86,5 @@ parse_threads <- function(th, return_fun = TRUE) {
 
 split_ext <- function(path) {
     path <- basename(path)
-    return(str_split_fixed(path, ".", 2)
+    return(str_split_fixed(path, ".", 2))
 }
