@@ -50,7 +50,7 @@ filter_chimeras <- function(files, output, config) {
         flog.info("Finished looking for chimeras in %s. " %p%
                   "Removing %d/%d as chimeric.",
                   infile, bad, nseq)
-        return(data.table(id = files$id[i], file = infile,
+        return(data.table(id = spl[1, 1], file = infile,
                           before = nseq, after = nseq - bad,
                           chimeric = bad))
     }) %>% rbindlist()
