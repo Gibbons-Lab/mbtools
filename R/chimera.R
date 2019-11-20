@@ -25,7 +25,8 @@ filter_chimeras <- function(files, output, config) {
         infile <- files[i]
         spl <- split_ext(infile)
         outfile <- output[i]
-        filter_file <- paste0(spl[1, 1], "_filtered.", spl[1, 2])
+        filter_file <- file.path(dirname(infile),
+            paste0(spl[1, 1], "_filtered.", spl[1, 2]))
         yacfile <- file.path(
                 config$out_dir,
                 paste0(spl[1, 1], ".yacrd"))
@@ -38,8 +39,12 @@ filter_chimeras <- function(files, output, config) {
             stop(sprintf(
                 "Chimera detection failed for file %s :(", infile))
         }
-        file.copy(filter_file, outfile)
-        file.remove(filter_file)
+        ret <- file.copy(filter_file, outfile, overwrite = TRUE)
+        ret <- ret & file.remove(filter_file)
+        if (!ret) {
+            stop(sprintf(
+                "Could not copy to output file %s %s :(", outfile))
+        }
         nseq <- fastq.geometry(infile)[1]
         bad <- fread(yacfile, sep = "\t") %>% nrow()
         flog.info("Finished looking for chimeras in %s. " %p%
