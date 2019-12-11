@@ -86,11 +86,11 @@ align <- function(object, config) {
             args <- append(args, c("--split-prefix",
                                    file.path(config$alignment_dir, "prefix")))
         } else {
-            args <- append(args, c("-I", "100G"))
+            args <- append(args, c("-I", "500G"))
         }
         args <- append(args, c(index, reads))
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
-                            "view", "-bS", "-", ">", out_path))
+                            "sort", "-o", out_path))
         success <- system2("minimap2", args = args)
         if (success == 0) {
             flog.info("Finished aligning %s.", file$id)
