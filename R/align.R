@@ -90,7 +90,7 @@ align <- function(object, config) {
         }
         args <- append(args, c(index, reads))
         args <- append(args, c(paste0("2>", log_file), "|", "samtools",
-                            "sort", "--threads", threads - 1, "-o", out_path))
+                            "view", "-bS", "-o", out_path))
         success <- system2("minimap2", args = args)
         if (success == 0) {
             flog.info("Finished aligning %s.", file$id)
