@@ -4,8 +4,12 @@
 \alias{download_bacterial_transcripts}
 \title{Download the entire ENSEMBL transcript DB for bacteria.}
 \usage{
-download_bacterial_transcripts(out = "transcripts", what = "cdna",
-  np = 8, remove_redundant = TRUE)
+download_bacterial_transcripts(
+  out = "transcripts",
+  what = "cdna",
+  np = 8,
+  remove_redundant = TRUE
+)
 }
 \arguments{
 \item{out}{Where to store the downloaded transcript files.}

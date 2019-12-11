@@ -4,8 +4,15 @@
 \alias{plot_taxa}
 \title{Plots relative distribution for taxa across samples.}
 \usage{
-plot_taxa(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
-  max_taxa = 12, only_data = FALSE, ...)
+plot_taxa(
+  ps,
+  level = "Phylum",
+  show_samples = TRUE,
+  sort = TRUE,
+  max_taxa = 12,
+  only_data = FALSE,
+  ...
+)
 }
 \arguments{
 \item{ps}{A phyloseq data set.}

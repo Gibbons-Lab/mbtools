@@ -4,8 +4,15 @@
 \alias{plot_counts}
 \title{Plots counts for several taxa across a co-variable}
 \usage{
-plot_counts(ps, variable, tax_level = "genus", taxa = NULL,
-  normalized = TRUE, pc = 0.5, only_data = FALSE)
+plot_counts(
+  ps,
+  variable,
+  tax_level = "genus",
+  taxa = NULL,
+  normalized = TRUE,
+  pc = 0.5,
+  only_data = FALSE
+)
 }
 \arguments{
 \item{ps}{A phyloseq data set.}

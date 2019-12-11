@@ -4,8 +4,12 @@
 \alias{merge_transcripts}
 \title{Merge transcripts into a single database}
 \usage{
-merge_transcripts(transcript_files, transcript_folder, what = "cdna",
-  out = "ensembl_transcripts.fa.gz")
+merge_transcripts(
+  transcript_files,
+  transcript_folder,
+  what = "cdna",
+  out = "ensembl_transcripts.fa.gz"
+)
 }
 \arguments{
 \item{transcript_files}{A data table as returned by

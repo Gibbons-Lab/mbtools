@@ -5,9 +5,17 @@
 \title{Run differential association tests between between all combinations of a
 factor variable. Can be used as post-hoc test for regression.}
 \usage{
-combinatorial_association(ps, variable, tax = "genus",
-  confounders = NULL, min_count = 10, in_samples = 0.1,
-  independent_weighting = TRUE, standardize = TRUE, shrink = TRUE)
+combinatorial_association(
+  ps,
+  variable,
+  tax = "genus",
+  confounders = NULL,
+  min_count = 10,
+  in_samples = 0.1,
+  independent_weighting = TRUE,
+  standardize = TRUE,
+  shrink = TRUE
+)
 }
 \arguments{
 \item{ps}{A phyloseq object containing the taxa counts.}

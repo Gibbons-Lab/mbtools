@@ -4,8 +4,12 @@
 \alias{download_sra}
 \title{Download data from SRA.}
 \usage{
-download_sra(runtable, path = "sra/", retries = 3,
-  threads = getOption("mc.cores", 1))
+download_sra(
+  runtable,
+  path = "sra/",
+  retries = 3,
+  threads = getOption("mc.cores", 1)
+)
 }
 \arguments{
 \item{runtable}{Path to a runtable as selected in the SRA interface.}

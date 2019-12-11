@@ -3,7 +3,6 @@
 \docType{package}
 \name{mbtools}
 \alias{mbtools}
-\alias{mbtools-package}
 \title{mbtools.}
 \description{
 `mbtools` includes several helper functions for analysis and benchmarking

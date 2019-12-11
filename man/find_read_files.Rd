@@ -4,8 +4,12 @@
 \alias{find_read_files}
 \title{Find read files in a given directory.}
 \usage{
-find_read_files(directory, pattern = illumina_pattern,
-  annotations = illumina_annotations, dirs_are_runs = FALSE)
+find_read_files(
+  directory,
+  pattern = illumina_pattern,
+  annotations = illumina_annotations,
+  dirs_are_runs = FALSE
+)
 }
 \arguments{
 \item{directory}{The directory in which to look.}

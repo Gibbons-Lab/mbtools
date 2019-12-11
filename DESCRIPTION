@@ -46,7 +46,7 @@ SystemRequirements:
     bowtie2,
     minimap2,
     slimm
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.0
 VignetteBuilder: knitr
 LinkingTo:
     Rcpp

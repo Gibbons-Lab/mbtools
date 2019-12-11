@@ -4,8 +4,16 @@
 \alias{em_count}
 \title{Count transcripts using an Expectation Maximization (EM) algorithm.}
 \usage{
-em_count(txreads, txlengths, weights, ntx, nr, maxit = 1000L,
-  reltol = 0.01, abstol = 0.01)
+em_count(
+  txreads,
+  txlengths,
+  weights,
+  ntx,
+  nr,
+  maxit = 1000L,
+  reltol = 0.01,
+  abstol = 0.01
+)
 }
 \arguments{
 \item{txreads}{A minimal matrix where each row corresponds to an
