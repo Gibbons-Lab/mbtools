@@ -21,7 +21,10 @@ config_chimera <- config_builder(list(
 
 #' @importFrom tools file_path_sans_ext
 filter_chimeras <- function(files, output, config) {
-    stats <- lapply(1:length(files), function(i) {
+    th <- ceiling(config$threads / 4)
+    flog.info("Launching a total of %d blocks with 4 threads each.", th)
+    apfun <- parse_threads(th)
+    stats <- apfun(1:length(files), function(i) {
         infile <- files[i]
         spl <- split_ext(infile)
         outfile <- output[i]
@@ -31,7 +34,7 @@ filter_chimeras <- function(files, output, config) {
                 config$out_dir,
                 paste0(spl[1, 1], ".yacrd"))
         args <- c("-x", config$preset, "-g", config$seed_distance,
-                 "-t", config$threads, infile, infile, "2>",
+                 "-t", 4, infile, infile, "2>",
                  "/dev/null", "|",
                  "yacrd", "chimeric", "-f", infile, ">", yacfile)
         ret <- system2("minimap2", args = args)
