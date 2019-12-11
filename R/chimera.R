@@ -22,7 +22,8 @@ config_chimera <- config_builder(list(
 #' @importFrom tools file_path_sans_ext
 filter_chimeras <- function(files, output, config) {
     th <- ceiling(config$threads / 4)
-    flog.info("Launching a total of %d blocks with 4 threads each.", th)
+    flog.info("Launching a total of %d blocks with 4 threads each (%d total).",
+              th, th * 4)
     apfun <- parse_threads(th)
     stats <- apfun(1:length(files), function(i) {
         infile <- files[i]
