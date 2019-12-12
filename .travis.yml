@@ -47,9 +47,6 @@ before_install:
   - echo "options(Ncpus = 4)" >> $R_PROFILE
   - cat $R_PROFILE
 
-script:
-  - echo "dummy"
-
 after_success:
   - Rscript -e 'covr::codecov()'
 
