@@ -18,8 +18,14 @@ jobs:
           sudo apt-get install -y libxml2-dev libssl-dev git bzip2 \
             cmake autoconf automake make gcc perl zlib1g-dev libbz2-dev \
             liblzma-dev libcurl4-gnutls-dev libssl-dev libncurses5-dev \
-            libglpk-dev samtools dotnet-sdk-3.1
+            libglpk-dev samtools
         displayName: "Install System Dependencies"
+      - task: UseDotNet@2
+        displayName: 'install dotnet core'
+        inputs:
+          packageType: sdk
+          version: 2.x
+          installationPath: $(Agent.ToolsDirectory)/dotnet
       - bash: |
           echo 'options(repos = "$(CRAN)", Ncpus = 2, crayon.enabled = TRUE)' > ~/.Rprofile
           mkdir -p $(R_LIBS_USER)
