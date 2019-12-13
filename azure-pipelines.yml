@@ -35,10 +35,17 @@ jobs:
           rm -rf samtools-1.10
         displayName: "Install tools"
       - bash: |
-          Rscript -e "install.packages(c('devtools', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
-          Rscript -e "devtools::install_github('bryandmartin/corncob')"
-          Rscript -e "setRepositories(ind=1:4); devtools::install_deps(dependencies = TRUE)"
+          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
         displayName: "Install dependencies"
+      - task: Cache@2
+        inputs:
+          inputs:
+            key: ./DESCRIPTION | "$(Agent.JobName)"
+            path: $(R_LIBS_USER)
+            displayName: 'R library cache'
+            continueOnError: true
+        displayName: Cache Yarn packages
       - bash: |
           Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
         displayName: 'Check package'

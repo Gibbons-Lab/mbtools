@@ -28,9 +28,11 @@ Imports:
     futile.logger,
     digest,
     Rcpp
+Remotes: github::bryandmartin/corncob
 License: Apache License (== 2.0)
 URL: https://github.com/Gibbons-Lab/mbtools
 BugReports: https://github.com/Gibbons-Lab/mbtools/issues
+biocViews: Software, Regression
 Encoding: UTF-8
 LazyData: true
 Suggests:
