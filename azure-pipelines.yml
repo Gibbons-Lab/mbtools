@@ -43,8 +43,8 @@ jobs:
           inputs:
             key: ./DESCRIPTION | "$(Agent.JobName)"
             path: $(R_LIBS_USER)
-            displayName: 'R library cache'
-            continueOnError: true
+          displayName: 'R library cache'
+          continueOnError: true
         displayName: Cache Yarn packages
       - bash: |
           Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
