@@ -16,7 +16,7 @@ jobs:
       - bash: sudo apt-get update && sudo apt-get install -y libxml2-dev libssl-dev
         displayName: "Install System Dependencies"
       - bash: |
-          echo 'options(Ncpus = 2, crayon.enabled = TRUE)' > ~/.Rprofile
+          echo 'options(repos = "$(CRAN)", Ncpus = 2, crayon.enabled = TRUE)' > ~/.Rprofile
           mkdir -p $(R_LIBS_USER)
         displayName: "Setting up R library"
       - bash: |
