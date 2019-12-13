@@ -32,15 +32,15 @@ jobs:
           (cd slimm && mkdir build && cd build && cmake .. && make && sudo cp bin/slimm /usr/bin/)
           rm -rf slimm
         displayName: "Install tools"
-      - bash: |
-          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
-          Rscript -e "remotes::install_deps(dependencies = TRUE)"
-        displayName: "Install dependencies"
       - task: Cache@2
         inputs:
           key: ./DESCRIPTION | "$(Agent.JobName)"
           path: $(R_LIBS_USER)
         displayName: 'R library cache'
+      - bash: |
+          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
+        displayName: "Install dependencies"
       - bash: |
           Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
         displayName: 'Check package'
