@@ -40,11 +40,9 @@ jobs:
         displayName: "Install dependencies"
       - task: Cache@2
         inputs:
-          inputs:
-            key: ./DESCRIPTION | "$(Agent.JobName)"
-            path: $(R_LIBS_USER)
+          key: ./DESCRIPTION | "$(Agent.JobName)"
+          path: $(R_LIBS_USER)
         displayName: 'R library cache'
-        continueOnError: true
       - bash: |
           Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
         displayName: 'Check package'
