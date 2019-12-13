@@ -20,8 +20,23 @@ jobs:
           mkdir -p $(R_LIBS_USER)
         displayName: "Setting up R library"
       - bash: |
+          rm -rf vignettes
+          curl -L https://github.com/lh3/minimap2/releases/download/v2.13/minimap2-2.13_x64-linux.tar.bz2 | tar -jxf -
+          sudo cp ./minimap2-2.13_x64-linux/minimap2 /usr/bin/ && rm -rf ./minimap2-*
+          git clone --recursive https://github.com/seqan/slimm
+          (cd slimm && mkdir build && cd build && cmake .. && make && sudo cp bin/slimm /usr/bin/)
+          rm -rf slimm
+          curl -L https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2 | tar -jxf -
+          (cd samtools-1.10 && autoheader && autoconf -Wno-syntax && ./configure && make && sudo cp samtools /usr/bin/)
+          rm -rf samtools-1.10
+          echo "options(Ncpus = 4)" >> $R_PROFILE
+          cat $R_PROFILE
+        displayName: "Install tools"
+      - bash: |
           Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
           Rscript -e "setRepositories(ind=1:3); remotes::install_deps(dependencies = TRUE)"
+          Rscript -e "remotes::install_github('bryandmartin/corncob')"
+        displayName: "Install dependencies"
       - bash: |
           Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
         displayName: 'Check package'
