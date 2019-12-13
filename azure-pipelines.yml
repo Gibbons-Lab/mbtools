@@ -59,10 +59,9 @@ jobs:
       - bash: |
           Rscript -e "cov <- covr::azure()"
         displayName: 'Run code coverage'
-      - task: PublishCodeCoverageResults@1
-        inputs:
-          codeCoverageTool: 'Cobertura'
-          summaryFileLocation: 'coverage.xml'
+      - script: |
+        bash <(curl -s https://codecov.io/bash)
+        displayName: 'Upload to codecov.io'
       - publish: check
         artifact: $(Build.BuildNumber)-$(Agent.JobName)-check_results
         condition: succeededOrFailed()
