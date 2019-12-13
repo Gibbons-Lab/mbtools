@@ -20,9 +20,9 @@ jobs:
           mkdir -p $(R_LIBS_USER)
         displayName: "Setting up R library"
       - bash: |
-          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager'))"
-          Rscript -e "remotes::install_deps(dependencies = TRUE)"
-          - bash: |
+          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
+          Rscript -e "setRepositories(ind=1:3); remotes::install_deps(dependencies = TRUE)"
+      - bash: |
           Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
         displayName: 'Check package'
       - task: PublishTestResults@1
