@@ -1,9 +1,43 @@
-resources:
-  repositories:
-    - repository: r-azure-pipelines
-      type: github
-      name: r-lib/r-azure-pipelines
-      endpoint: Gibbons-Lab
+parameters:
+  R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
+  CRAN: 'https://cloud.r-project.org'
+  coverage: true
+  env: {}
 
 jobs:
-  - template: azure-tidyverse.yml@r-azure-pipelines
+  - job: 'Linux'
+    variables:
+      CRAN: 'https://demo.rstudiopm.com/all/__linux__/xenial/latest'
+      R_LIBS_USER: ${{parameters.R_LIBS_USER}}
+      TZ: UTC
+      CI: true
+      ${{ insert }}: ${{ parameters.env }}
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    strategy:
+      matrix:
+        R-3.6:
+          containerImage: rocker/r-base:3.6
+    container: $[ variables['containerImage'] ]
+    steps:
+      - script: sudo apt-get update && sudo apt-get install -y libxml2-dev libssl-dev
+        displayName: "Install System Dependencies"
+      - bash: |
+          echo 'options(Ncpus = 2, crayon.enabled = TRUE)' > ~/.Rprofile
+          mkdir -p $(R_LIBS_USER)
+        displayName: "Setting up R library"
+      - bash: |
+          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager'))"
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
+          - bash: |
+          Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
+        displayName: 'Check package'
+      - task: PublishTestResults@1
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: 'check/*.Rcheck/tests/test-*.xml'
+          testRunTitle: $(Agent.JobName)
+        condition: succeededOrFailed()
+      - publish: check
+        artifact: $(Build.BuildNumber)-$(Agent.JobName)-check_results
+        condition: succeededOrFailed()
