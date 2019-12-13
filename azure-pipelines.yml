@@ -3,7 +3,7 @@ resources:
     - repository: r-azure-pipelines
       type: github
       name: r-lib/r-azure-pipelines
-      endpoint: cdiener
+      endpoint: Gibbons-Lab
 
 jobs:
   - template: azure-tidyverse.yml@r-azure-pipelines
