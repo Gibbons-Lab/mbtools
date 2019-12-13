@@ -1,7 +1,7 @@
 jobs:
   - job: 'Linux'
     variables:
-      CRAN: 'https://demo.rstudiopm.com/all/__linux__/xenial/latest'
+      CRAN: 'https://demo.rstudiopm.com/all/__linux__/bionic/latest'
       R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
       TZ: UTC
       CI: true
@@ -10,14 +10,14 @@ jobs:
     strategy:
       matrix:
         R-3.6:
-          containerImage: rstudio/r-base:3.6-xenial
+          containerImage: rstudio/r-base:3.6-bionic
     container: $[ variables['containerImage'] ]
     steps:
       - bash: |
           sudo apt-get update
           sudo apt-get install -y libxml2-dev libssl-dev git bzip2 \
             cmake autoconf automake make gcc perl zlib1g-dev libbz2-dev \
-            liblzma-dev libcurl4-gnutls-dev libssl-dev libncurses5-dev
+            liblzma-dev libcurl4-gnutls-dev libssl-dev libncurses5-dev samtools
         displayName: "Install System Dependencies"
       - bash: |
           echo 'options(repos = "$(CRAN)", Ncpus = 2, crayon.enabled = TRUE)' > ~/.Rprofile
@@ -30,9 +30,6 @@ jobs:
           git clone --recursive https://github.com/seqan/slimm
           (cd slimm && mkdir build && cd build && cmake .. && make && sudo cp bin/slimm /usr/bin/)
           rm -rf slimm
-          curl -L https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2 | tar -jxf -
-          (cd samtools-1.10 && autoheader && autoconf -Wno-syntax && ./configure && make && sudo cp samtools /usr/bin/)
-          rm -rf samtools-1.10
         displayName: "Install tools"
       - bash: |
           Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
