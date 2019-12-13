@@ -1,6 +1,8 @@
 <img src="https://github.com/Gibbons-Lab/mbtools/raw/master/inst/extdata/logo.png" width="25%" align="right">
 
 [![Build Status](https://dev.azure.com/chdiener/cdiener/_apis/build/status/Gibbons-Lab.mbtools?branchName=master)](https://dev.azure.com/chdiener/cdiener/_build/latest?definitionId=1&branchName=master)
+![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/chdiener/cdiener/1)
+![Azure DevOps tests (compact)](https://img.shields.io/azure-devops/tests/chdiener/cdiener/1?compact_message)
 [![Build Status](https://travis-ci.org/Gibbons-Lab/mbtools.svg?branch=master)](https://travis-ci.org/Gibbons-Lab/mbtools)
 [![codecov](https://codecov.io/gh/Gibbons-Lab/mbtools/branch/master/graph/badge.svg)](https://codecov.io/gh/Gibbons-Lab/mbtools)
 

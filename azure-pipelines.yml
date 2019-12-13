@@ -50,13 +50,13 @@ jobs:
           testResultsFiles: 'check/*.Rcheck/tests/test-*.xml'
           testRunTitle: $(Agent.JobName)
         condition: succeededOrFailed()
-      - publish: check
-        artifact: $(Build.BuildNumber)-$(Agent.JobName)-check_results
-        condition: succeededOrFailed()
       - bash: |
-        Rscript -e "cov <- covr::azure()"
-      displayName: 'Run code coverage'
+          Rscript -e "cov <- covr::azure()"
+        displayName: 'Run code coverage'
       - task: PublishCodeCoverageResults@1
         inputs:
           codeCoverageTool: 'Cobertura'
           summaryFileLocation: 'coverage.xml'
+      - publish: check
+        artifact: $(Build.BuildNumber)-$(Agent.JobName)-check_results
+        condition: succeededOrFailed()
