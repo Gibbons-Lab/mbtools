@@ -29,8 +29,6 @@ jobs:
           curl -L https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2 | tar -jxf -
           (cd samtools-1.10 && autoheader && autoconf -Wno-syntax && ./configure && make && sudo cp samtools /usr/bin/)
           rm -rf samtools-1.10
-          echo "options(Ncpus = 4)" >> $R_PROFILE
-          cat $R_PROFILE
         displayName: "Install tools"
       - bash: |
           Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
