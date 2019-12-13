@@ -35,8 +35,8 @@ jobs:
           rm -rf samtools-1.10
         displayName: "Install tools"
       - bash: |
-          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
-          Rscript -e "setRepositories(ind=1:4); remotes::install_deps(dependencies = TRUE)"
+          Rscript -e "install.packages(c('devtools', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
+          Rscript -e "setRepositories(ind=1:4); devtools::install_deps(dependencies = TRUE)"
           Rscript -e "remotes::install_github('bryandmartin/corncob')"
         displayName: "Install dependencies"
       - bash: |
