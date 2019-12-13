@@ -53,3 +53,10 @@ jobs:
       - publish: check
         artifact: $(Build.BuildNumber)-$(Agent.JobName)-check_results
         condition: succeededOrFailed()
+      - bash: |
+        Rscript -e "cov <- covr::azure()"
+      displayName: 'Run code coverage'
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          codeCoverageTool: 'Cobertura'
+          summaryFileLocation: 'coverage.xml'
