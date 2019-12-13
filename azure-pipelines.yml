@@ -13,7 +13,7 @@ jobs:
           containerImage: rstudio/r-base:3.6-xenial
     container: $[ variables['containerImage'] ]
     steps:
-      - bash: sudo apt-get update && sudo apt-get install -y libxml2-dev libssl-dev
+      - bash: sudo apt-get update && sudo apt-get install -y libxml2-dev libssl-dev git bzip2 build-essential
         displayName: "Install System Dependencies"
       - bash: |
           echo 'options(repos = "$(CRAN)", Ncpus = 2, crayon.enabled = TRUE)' > ~/.Rprofile
