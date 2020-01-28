@@ -6,7 +6,7 @@ jobs:
       TZ: UTC
       CI: true
     pool:
-      vmImage: 'Ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
     strategy:
       matrix:
         R-3.6:
@@ -20,12 +20,6 @@ jobs:
             liblzma-dev libcurl4-gnutls-dev libssl-dev libncurses5-dev \
             libglpk-dev samtools
         displayName: "Install System Dependencies"
-      - task: UseDotNet@2
-        displayName: 'install dotnet core'
-        inputs:
-          packageType: sdk
-          version: 2.x
-          installationPath: $(Agent.ToolsDirectory)/dotnet
       - bash: |
           echo 'options(repos = "$(CRAN)", Ncpus = 2, crayon.enabled = TRUE)' > ~/.Rprofile
           mkdir -p $(R_LIBS_USER)
