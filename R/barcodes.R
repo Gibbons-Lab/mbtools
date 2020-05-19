@@ -77,11 +77,15 @@ demultiplex <- function(object, ...) {
 
             ids <- sub("[/\\s].+$", "", id(fq), perl = TRUE)
 
-            hits <- do.call(cbind, srdistance(fq, ref)) <= config$max_edit
+            hits <- do.call(cbind, srdistance(fq, ref))
             inds <- apply(hits, 1, function(x) {
-                i <- unique(which(x) %% nref) + 1
+                scores <- x[x < config$max_edit]
+                i <- (which(x < config$max_edit) %% nref) + 1
                 if (length(i) == 0) return(-1)
-                if (length(i) > 1) return(0)
+                if (length(i) > 1) {
+                    i <- i[which.min(scores)]
+                    if (length(i) != 1) return(0)
+                }
                 else return(i)
             })
             flog.info("Processed chunk of size %g. Found %d hits.",
