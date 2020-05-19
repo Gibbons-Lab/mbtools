@@ -89,7 +89,7 @@ demultiplex <- function(object, ...) {
                     i <- i[scores == min(scores)]
                     if (length(i) != 1) return(0)
                 }
-                else return(i)
+                return(i)
             })
             flog.info("Processed chunk of size %g. Found %d hits.",
                       config$n, sum(inds > 0))
@@ -112,6 +112,7 @@ demultiplex <- function(object, ...) {
                                    mode = "a", compress = TRUE)
                     }
                 })
+            }
             nseq <- nseq + length(fq)
             res <- res + c(sum(inds > 0), sum(inds == 0), sum(inds < 0))
         }
