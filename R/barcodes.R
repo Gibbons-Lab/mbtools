@@ -96,6 +96,7 @@ demultiplex <- function(object, ...) {
                 for (sid in 1:nref) {
                     filename <- sprintf("%s_S%d_L%d_R%d_001.fastq.gz",
                                         snames[sid], sid, i, di)
+                    if (!sid %in% inds) break
                     writeFastq(rfq[inds == sid],
                                file.path(config$out_dir, filename),
                                mode = "a", compress = TRUE)
