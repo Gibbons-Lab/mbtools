@@ -27,10 +27,13 @@ Imports:
     magrittr,
     futile.logger,
     digest,
-    Rcpp
+    Rcpp,
+    xml2
+Remotes: github::bryandmartin/corncob
 License: Apache License (== 2.0)
 URL: https://github.com/Gibbons-Lab/mbtools
 BugReports: https://github.com/Gibbons-Lab/mbtools/issues
+biocViews: Software, Regression
 Encoding: UTF-8
 LazyData: true
 Suggests:

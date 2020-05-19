@@ -1,4 +1,14 @@
 library(testthat)
 library(mbtools)
 
-test_check("mbtools")
+if (requireNamespace("xml2")) {
+    test_check(
+        "mbtools",
+        reporter = MultiReporter$new(
+            reporters = list(
+                JunitReporter$new(file = "test-results.xml"),
+                CheckReporter$new()))
+    )
+} else {
+    test_check("mbtools")
+}
