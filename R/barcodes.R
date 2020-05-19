@@ -18,7 +18,8 @@ config_demultiplex <- config_builder(list(
         samples = NULL,
         n = 1e5,
         max_edit = 1,
-        reverse_complement = TRUE
+        reverse_complement = TRUE,
+        threads = getoption("mc.cores")
 ))
 
 #' Splits FASTQ files into individual samples.
@@ -46,6 +47,7 @@ demultiplex <- function(object, ...) {
     if (is.null(config$barcodes)) {
         stop("must specify barcodes in configuration :/")
     }
+    apfun <- parse_threads(conf$threads)
 
     ref <- DNAStringSet(config$barcodes)
     nref <- length(ref)
@@ -77,7 +79,8 @@ demultiplex <- function(object, ...) {
 
             ids <- sub("[/\\s].+$", "", id(fq), perl = TRUE)
 
-            hits <- do.call(cbind, srdistance(fq, ref))
+            hits <- apfun(ref, function(p) srdistance(fq, p)[[1]])
+            hits <- do.call(cbind, hits)
             inds <- apply(hits, 1, function(x) {
                 scores <- x[x < config$max_edit]
                 i <- (which(x < config$max_edit) %% nref) + 1
@@ -99,7 +102,7 @@ demultiplex <- function(object, ...) {
                     stop("Index file and reads do not match!")
                 }
 
-                for (sid in 1:nref) {
+                apfun(1:nref, function(sid) {
                     filename <- sprintf("%s_S%d_L%d_R%d_001.fastq.gz",
                                         snames[sid], sid, i, di)
                     matched <- rfq[inds == sid]
@@ -108,8 +111,7 @@ demultiplex <- function(object, ...) {
                                    file.path(config$out_dir, filename),
                                    mode = "a", compress = TRUE)
                     }
-                }
-            }
+                })
             nseq <- nseq + length(fq)
             res <- res + c(sum(inds > 0), sum(inds == 0), sum(inds < 0))
         }
