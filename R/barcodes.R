@@ -84,6 +84,8 @@ demultiplex <- function(object, ...) {
                 if (length(i) > 1) return(0)
                 else return(i)
             })
+            flog.info("Processed chunk of size %g. Found %d hits.",
+                      config$n, sum(inds > 0))
 
             for (di in 1:length(rstream)) {
                 rfq <- yield(rstream[[di]])
@@ -96,10 +98,12 @@ demultiplex <- function(object, ...) {
                 for (sid in 1:nref) {
                     filename <- sprintf("%s_S%d_L%d_R%d_001.fastq.gz",
                                         snames[sid], sid, i, di)
-                    if (sum(sid == inds) == 0) break
-                    writeFastq(rfq[inds == sid],
-                               file.path(config$out_dir, filename),
-                               mode = "a", compress = TRUE)
+                    matched <- rfq[inds == sid]
+                    if (length(matched) > 0 {
+                        writeFastq(matched,
+                                   file.path(config$out_dir, filename),
+                                   mode = "a", compress = TRUE)
+                    }
                 }
             }
             nseq <- nseq + length(fq)
