@@ -83,7 +83,7 @@ demultiplex <- function(object, ...) {
                 i <- (which(x < config$max_edit) %% nref) + 1
                 if (length(i) == 0) return(-1)
                 if (length(i) > 1) {
-                    i <- i[which.min(scores)]
+                    i <- i[scores == min(scores)]
                     if (length(i) != 1) return(0)
                 }
                 else return(i)
