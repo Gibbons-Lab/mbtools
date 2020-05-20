@@ -1,7 +1,7 @@
 # Helpers to manage read files
 
 illumina_pattern <-
-    "([A-Za-z0-9\\-]+)_S(\\d+)(?:_trimmed)*(?:_L(\\d+))*_R(\\d+)_001.f"
+    "([A-Za-z0-9\\-\\.]+)_S(\\d+)(?:_trimmed)*(?:_L(\\d+))*_R(\\d+)_001.f"
 illumina_annotations <- c("id", "injection_order", "lane", "direction")
 
 sra_pattern <- "([A-Za-z0-9\\-]+)_(\\d).fastq"
