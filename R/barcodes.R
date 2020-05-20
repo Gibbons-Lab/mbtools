@@ -19,7 +19,7 @@ config_demultiplex <- config_builder(list(
         n = 1e5,
         max_edit = 1,
         reverse_complement = TRUE,
-        threads = getoption("mc.cores")
+        threads = getOption("mc.cores", 1)
 ))
 
 #' Splits FASTQ files into individual samples.
