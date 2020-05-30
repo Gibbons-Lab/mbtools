@@ -47,7 +47,7 @@ demultiplex <- function(object, ...) {
     if (is.null(config$barcodes)) {
         stop("must specify barcodes in configuration :/")
     }
-    apfun <- parse_threads(conf$threads)
+    apfun <- parse_threads(config$threads)
 
     ref <- DNAStringSet(config$barcodes)
     nref <- length(ref)

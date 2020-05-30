@@ -57,7 +57,7 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     res <- results(dds)
     if (shrink) {
         res <- lfcShrink(dds, coef = length(resultsNames(dds)),
-                            results = res, quiet = TRUE)
+                            res = res, quiet = TRUE)
     }
     res <- as.data.table(res)
     set(res, j = ifelse(is.na(tax), "variant", tax),
@@ -158,7 +158,8 @@ association <- function(ps, ...) {
                               function(row) any(is.na(row)))
         ps <- prune_samples(!missing_conf, ps)
     }
-    if (!requireNamespace("IHW", quietly = TRUE)) {
+    if ((!requireNamespace("IHW", quietly = TRUE)) &&
+          config$independent_weighting) {
         stop("independent weighting requires the IHW package!")
     }
     if (config$standardize) meta <- standardize(meta)
@@ -248,7 +249,7 @@ combinatorial_association <- function(ps, variable, tax = "genus",
                               function(row) any(is.na(row)))
         ps <- prune_samples(!missing_conf, ps)
     }
-    if (!requireNamespace("IHW", quietly = TRUE)) {
+    if ((!requireNamespace("IHW", quietly = TRUE)) && independent_weighting) {
         stop("independent weighting requires the IHW package!")
     }
     meta <- as(sample_data(ps), "data.frame")
@@ -284,24 +285,22 @@ combinatorial_association <- function(ps, variable, tax = "genus",
         if (shrink) {
             res <- lfcShrink(dds,
                              contrast = c(variable, levs[co[1]], levs[co[2]]),
-                             results = res)
+                             res = res, type = "normal")
         }
         res <- as.data.table(res)
         set(res, j = tax, value = colnames(counts))
         set(res, j = "variable", value = name)
         n <- min(table(meta[[variable]])[co])
         set(res, j = "n_eff", value = n)
+        return(res)
     })
     tests <- rbindlist(tests)
 
     if (independent_weighting) {
-        if (!requireNamespace("IHW", quietly = TRUE)) {
-            stop("independent weighting requires the IHW package!")
-        }
         weights <- IHW::ihw(pvalue ~ baseMean, tests, alpha = 0.05)
         set(tests, j = "padj", value = IHW::adj_pvalues(weights))
     } else {
-        set(tests, j = "padj", value = p.adjust(tests$pvalues, method = "BH"))
+        set(tests, j = "padj", value = p.adjust(tests$pvalue, method = "BH"))
     }
 
     return(tests)

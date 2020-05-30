@@ -142,7 +142,11 @@ denoise <- function(object, ...) {
         rownames(feature_table[[r]]) <- fi$id
         flog.info("Finished run `%s`.", r)
     }
-    feature_table <- mergeSequenceTables(tables = feature_table)
+    if (length(feature_table) > 1) {
+        feature_table <- mergeSequenceTables(tables = feature_table)
+    } else {
+        feature_table <- feature_table[[1]]
+    }
     dada_stats <- rbindlist(dada_stats)
     if ("passed" %in% names(object)) {
         dada_stats <- object$passed[dada_stats, on = "id"]

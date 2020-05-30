@@ -13,6 +13,7 @@ Imports:
     GenomicAlignments,
     Rsamtools,
     DESeq2,
+    apeglm,
     limma,
     ShortRead,
     pbapply,
