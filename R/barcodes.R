@@ -57,10 +57,10 @@ demultiplex <- function(object, ...) {
         flog.warn("No sample names specified using S1-SN...")
         snames <- paste0("S", 1:length(ref))
     } else {
+        snames <- config$samples
         if (length(snames) != nref) {
             stop("Need exactly one sample name for each barcode.")
         }
-        snames <- config$samples
     }
 
     if (config$reverse_complement) {
