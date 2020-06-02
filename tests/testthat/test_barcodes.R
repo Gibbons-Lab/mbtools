@@ -16,11 +16,14 @@ test_that("barcode splitting/checking work", {
         out_dir = file.path(dir, "demultiplexed")
     )
     bc <- demultiplex(files, conf)
-    expect_true(55979 == bc$matches[1])
-    expect_true(0 == bc$matches[2])
-    expect_true(0 == bc$matches[3])
+    expect_true(55979 == sum(bc$read_counts))
+    for (i in 1:4) {
+        expect_gt(bc$read_counts[paste0("S", i)], 5000)
+    }
+    expect_true(0 == bc$read_counts["unmatched"])
+    expect_true(0 == bc$read_counts["multiple"])
     conf$barcodes <- "ACGAT"
-    expect_error(split_barcodes(files, conf))
+    expect_error(demultiplex(files, conf))
 })
 
 flog.threshold(INFO)

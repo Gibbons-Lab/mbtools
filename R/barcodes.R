@@ -56,7 +56,12 @@ demultiplex <- function(object, ...) {
     if (is.null(config$samples)) {
         flog.warn("No sample names specified using S1-SN...")
         snames <- paste0("S", 1:length(ref))
-    } else snames <- config$samples
+    } else {
+        if (length(snames) != nref) {
+            stop("Need exactly one sample name for each barcode.")
+        }
+        snames <- config$samples
+    }
 
     if (config$reverse_complement) {
         ref <- c(ref, reverseComplement(ref))
@@ -65,7 +70,10 @@ demultiplex <- function(object, ...) {
     if (dir.exists(config$out_dir)) {
         unlink(file.path(config$out_dir, "*.fastq.gz"))
     } else dir.create(config$out_dir, recursive = TRUE)
-    res <- c(unique = 0, multiple = 0, nomatch = 0)
+    unmatched <- 0
+    multiple <- 0
+    read_counts <- rep(0, length(snames))
+    names(read_counts) <- snames
     nseq <- 0
 
     for (i in 1:nrow(files)) {
@@ -83,7 +91,9 @@ demultiplex <- function(object, ...) {
             hits <- do.call(cbind, hits)
             inds <- apply(hits, 1, function(x) {
                 scores <- x[x < config$max_edit]
-                i <- (which(x < config$max_edit) %% nref) + 1
+                i <- which(x < config$max_edit)
+                # reverse complements
+                i[i > nref] <- i - nref
                 if (length(i) == 0) return(-1)
                 if (length(i) > 1) {
                     i <- i[scores == min(scores)]
@@ -102,7 +112,7 @@ demultiplex <- function(object, ...) {
                     stop("Index file and reads do not match!")
                 }
 
-                apfun(1:nref, function(sid) {
+                cn <- apfun(1:nref, function(sid) {
                     filename <- sprintf("%s_S%d_L%d_R%d_001.fastq.gz",
                                         snames[sid], sid, i, di)
                     matched <- rfq[inds == sid]
@@ -111,17 +121,24 @@ demultiplex <- function(object, ...) {
                                    file.path(config$out_dir, filename),
                                    mode = "a", compress = TRUE)
                     }
-                })
+                    return(length(matched))
+                }) %>% as.numeric()
+                if (di == 1) {
+                    read_counts <- read_counts + cn
+                    unmatched <- unmatched + sum(inds == 0)
+                    multiple <- multiple + sum(inds == -1)
+                }
             }
             nseq <- nseq + length(fq)
-            res <- res + c(sum(inds > 0), sum(inds == 0), sum(inds < 0))
         }
         close(istream)
         sapply(rstream, close)
     }
+    read_counts["unmatched"] <- unmatched
+    read_counts["multiple"] <- multiple
     artifact <- list(
         files = find_read_files(config$out_dir),
-        matches = res,
+        read_counts = read_counts,
         steps = c(object[["steps"]], "demultiplex")
     )
     return(artifact)
