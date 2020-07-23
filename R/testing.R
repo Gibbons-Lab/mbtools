@@ -94,6 +94,7 @@ iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
     } else {
         model <- t(counts[good, ])
     }
+
     fit <- lmFit(model, design)
 
     if (shrink) {
