@@ -142,6 +142,7 @@ config_association <- config_builder(list(
     confounders = NULL,
     min_count = 10,
     in_samples = 0.1,
+    presence_threshold = 1,
     independent_weighting = TRUE,
     standardize = TRUE,
     shrink = TRUE,
@@ -280,7 +281,9 @@ combinatorial_association <- function(ps, variable, tax = "genus",
     }
     counts <- as.matrix(taxa_count(ps, lev = tax))
     meta <- meta[rownames(counts), ]
-    too_rare <- (colSums(counts >= 1) / nrow(counts)) < in_samples
+    too_rare <- (
+        colSums(counts >= config$presence_threshold) /
+        nrow(counts)) < in_samples
     too_few <- colMeans(counts) < min_count
     counts <- counts[, !(too_rare | too_few)]
 
