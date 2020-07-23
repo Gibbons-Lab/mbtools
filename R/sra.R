@@ -56,7 +56,14 @@ gut_envo <- c(
     env_medium = "fecal material [ENVO:00002003]"
 )
 
-presets = list(
+water_biofilm_envo <- c(
+    env_broad_scale = "freshwater environment [ENVO:01000306]",
+    env_local_scale = paste0("environment determined by a biofilm ",
+                             "on a non-saline surface [ENVO:01001051]"),
+    env_medium = "biofilm material [ENVO:01000156]"
+)
+
+presets <- list(
     `human gut 16S` = c(
         gut_envo,
         organism = "human gut metagenome",
@@ -188,6 +195,28 @@ presets = list(
                        "can directly upload the `*.tar.gz` submission ",
                        "package. Just click on `continue` another time to ",
                        "have the archive unpacked as indicated.")
+    ),
+     `aquatic biofilm 16S` = c(
+        water_biofilm_envo,
+        organism = "environmental metagenome",
+        depth = "0 m",
+        elevation = "840 m",  # global average as placeholder
+        library_strategy = "AMPLICON",
+        library_source = "GENOMIC",
+        library_selection = "PCR",
+        filetype = "fastq",
+        usage = paste0("You are now ready for submission. ",
+                       "Go to https://submit.ncbi.nlm.nih.gov/subs/sra/, ",
+                       "log in and click on `New submission`. ",
+                       "Fill in the general data for your project in steps ",
+                       "1 through 3. In step 4 ",
+                       "choose `Genome, metagenome or marker sequences ",
+                       "(MIxS compliant)` and `Survey-related Marker ",
+                       "Sequences MIMARKS`. In step 5 and 6 ",
+                       "upload the respective files in %s. In step 7 you ",
+                       "can directly upload the `*.tar.gz` submission ",
+                       "package. Just click on `continue` another time to ",
+                       "have the archive unpacked as indicated.")
     )
 )
 
@@ -290,6 +319,13 @@ sra_submission <- function(object, ...) {
                         ifelse(config$longitude >= 0, "E", "W")),
         source_material_id = files$id
     )
+
+    if ("host" %in% names(preset)) {
+        sample_data$host <- preset["host"]
+    } else if ("depth" %in% names(preset)) {
+        sample_data$depth <- preset["depth"]
+        sample_data$elevation <- preset["elevation"]
+    }
     additional <- names(meta)[!names(meta) %in%
                               c(config$id_col, config$date_col)]
     additional <- meta[, additional, with = FALSE]

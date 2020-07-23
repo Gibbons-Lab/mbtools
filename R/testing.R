@@ -47,9 +47,10 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     } else {
         fit_type <- "local"
     }
+    formula <- reformulate(c(confounders, variable))
     dds <- suppressMessages(
         DESeqDataSetFromMatrix(t(counts[good, ]), meta[good, ],
-        design = reformulate(c(confounders, variable))))
+        design = formula))
     dds <- suppressMessages(
         DESeq(dds, test = "LRT", parallel = FALSE, quiet = TRUE,
               fitType = fit_type, reduced = ref_model,
@@ -75,7 +76,8 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     return(res)
 }
 
-iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
+iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
+                       use_voom = TRUE) {
     is_reg <- !is.factor(meta[[variable]])
     check <- check_variables(variable, counts, meta, confounders)
     if (is.null(check)) {
@@ -84,9 +86,14 @@ iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
         good <- check$good
         ref_model <- check$ref_model
     }
-    norm_counts <- t(suppressMessages(normalize(counts[good, ])))
-    design <- model.matrix(reformulate(c(confounders, variable)), data=meta)
-    model <- voom(norm_counts, design, plot=FALSE)
+    formula <- reformulate(c(confounders, variable))
+    if (use_voom) {
+        norm_counts <- t(suppressMessages(normalize(counts[good, ])))
+        design <- model.matrix(formula, data = meta)
+        model <- voom(norm_counts, design, plot=FALSE)
+    } else {
+        model <- counts[good, ]
+    }
     fit <- lmFit(model, design)
 
     if (shrink) {
@@ -108,6 +115,14 @@ iter_voom <- function(variable, counts, meta, confounders, shrink, tax) {
     }
     set(res, j = "n_eff", value = n)
     return(res)
+}
+
+iter_voom <- function(...) {
+    iter_limma(..., use_voom = TRUE)
+}
+
+iter_lm <- function(...) {
+    iter_limma(..., use_voom = FALSE)
 }
 
 #' Build a configuration for the alignment workflows.
@@ -178,6 +193,8 @@ association <- function(ps, ...) {
         iter <- iter_deseq2
     } else if (config$method == "voom") {
         iter <- iter_voom
+    } else if (config$method == "lm") {
+        iter <- iter_lm
     } else {
         stop("`%s` is not a recognized method :/", config$method)
     }
@@ -213,7 +230,7 @@ association <- function(ps, ...) {
 
 
 #' Run differential association tests between between all combinations of a
-#' factor variable. Can be used as post-hoc test for regression.
+#' factor variable with DESeq2. Can be used as post-hoc test for regression.
 #'
 #' @param ps A phyloseq object containing the taxa counts.
 #' @param variable The factor variable to permute.

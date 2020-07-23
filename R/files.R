@@ -7,6 +7,9 @@ illumina_annotations <- c("id", "injection_order", "lane", "direction")
 sra_pattern <- "([A-Za-z0-9\\-]+)_(\\d).fastq"
 sra_annotations <- c("id", "direction")
 
+simple_pattern <- "([A-Za-z0-9_\\-\\.]+)\\.f"
+simple_annotations <- c("id")
+
 annotate_files <- function(dir, pattern, annotations) {
     if (!"id" %in% annotations) {
         stop("need at least the id for each sample")
