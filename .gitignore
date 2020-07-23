@@ -47,3 +47,11 @@ split
 gg*.fa.gz
 .Rproj.user
 .vscode
+
+# test and docs
+src/
+vignettes/.drake/
+vignettes/alignment_dir/
+vignettes/alignments/
+vignettes/preprocessed/
+vignettes/*.png
