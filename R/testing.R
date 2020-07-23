@@ -92,7 +92,7 @@ iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
         norm_counts <- t(suppressMessages(normalize(counts[good, ])))
         model <- voom(norm_counts, design, plot=FALSE)
     } else {
-        model <- counts[good, ]
+        model <- t(counts[good, ])
     }
     fit <- lmFit(model, design)
 
