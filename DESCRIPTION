@@ -1,6 +1,6 @@
 Package: mbtools
 Title: Provides helper functions for microbiome preprocessing and analysis
-Version: 0.41.4
+Version: 0.42.0
 Authors@R: c(person("Christian", "Diener", email = "mail@cdiener.com", role = c("aut", "cre")),
              person("Osbaldo", "Resendis-Antonio", email = "resendis@inmegen.gob.mx", role = "ctb"),
              person("Sean", "Gibbons", email = "sgibbons@systemsbiology.org", role = c("ldr", "cph")))
