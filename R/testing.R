@@ -86,10 +86,10 @@ iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
         good <- check$good
         ref_model <- check$ref_model
     }
-    formula <- reformulate(c(confounders, variable))
+    dformula <- reformulate(c(confounders, variable))
     if (use_voom) {
         norm_counts <- t(suppressMessages(normalize(counts[good, ])))
-        design <- model.matrix(formula, data = meta)
+        design <- model.matrix(dformula, data = meta)
         model <- voom(norm_counts, design, plot=FALSE)
     } else {
         model <- counts[good, ]
