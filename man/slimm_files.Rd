@@ -4,7 +4,9 @@
 \name{slimm_files}
 \alias{slimm_files}
 \title{The SLIMM taxonomy databases}
-\format{An object of class \code{data.table} (inherits from \code{data.frame}) with 1 rows and 3 columns.}
+\format{
+An object of class \code{data.table} (inherits from \code{data.frame}) with 1 rows and 3 columns.
+}
 \usage{
 slimm_files
 }

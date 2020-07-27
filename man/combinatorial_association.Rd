@@ -3,7 +3,7 @@
 \name{combinatorial_association}
 \alias{combinatorial_association}
 \title{Run differential association tests between between all combinations of a
-factor variable. Can be used as post-hoc test for regression.}
+factor variable with DESeq2. Can be used as post-hoc test for regression.}
 \usage{
 combinatorial_association(
   ps,
@@ -48,7 +48,7 @@ A data.table containing the results.
 }
 \description{
 Run differential association tests between between all combinations of a
-factor variable. Can be used as post-hoc test for regression.
+factor variable with DESeq2. Can be used as post-hoc test for regression.
 }
 \examples{
  NULL

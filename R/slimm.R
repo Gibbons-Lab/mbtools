@@ -1,4 +1,4 @@
-# Copyright 2018 Christian Diener <mail[at]cdiener.com>
+# Christian Diener <mail[at]cdiener.com>
 #
 # Apache license 2.0. See LICENSE for more information.
 #
@@ -43,7 +43,7 @@ clean_taxa_names <- function(dt) {
 #'  config <- config_slimm(bin_width = 2000)
 config_slimm <- config_builder(list(
     reports = NULL,
-    bin_width = 1000,
+    bin_width = 100,
     relative_cutoff = 0,
     database = "refs/ABVF_SP_CMP_genomes.sldb",
     threads = getOption("mc.cores", 1),
@@ -126,6 +126,9 @@ slimm <- function(object, ...) {
         read_slimm_coverage, conf$bin_width) %>%
         rbindlist() %>% clean_taxa_names()
     coverage[, "read_length" := rlens[id]]
+    coverage[, "coverage" := list(list(
+        coverage = reads[[1]] / bin_width * read_length))]
+    coverage[, "reads" := NULL]
 
     artifact <- list(
         alignments = alignments,
@@ -176,10 +179,10 @@ read_slimm_coverage <- function(cofile, bin_width) {
         dt <- data.table()
         dt[, "bin_width" := bin_width]
         dt[, "reads" := list(list(reads = cv))]
-        dt[, c("genbank", "strain", "species", "genus", "family",
+        dt[, c("contig", "strain", "species", "genus", "family",
                "order", "class", "phylum", "kingdom") := as.list(anns)]
     }) %>% rbindlist()
     co[, "id" := strsplit(basename(cofile), "_")[[1]][1]]
-    co[, "length" := length(reads[[1]]) * bin_width, by = "genbank"]
+    co[, "length" := length(reads[[1]]) * bin_width, by = "contig"]
     return(co)
 }

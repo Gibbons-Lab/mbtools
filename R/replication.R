@@ -16,23 +16,23 @@ config_rep <- config_builder(list(
     max_median_fold = 8,
     min_coverage = 2,
     min_covered = 0.6,
+    min_points_fit = 60,
     threads = getOption("mc.cores", 1)
 ))
 
 #' @importFrom stats lm anova coef cor median
+#' @importFrom data.table frollmean
 irep <- function(profile, conf) {
     profile <- copy(profile)
     w <- profile$bin_width
-    reads <- profile$reads[[1]]
-    profile[, "reads" := NULL]
-    co <- reads * profile$read_length / w
+    co <- profile$coverage[[1]]
     slided <- frollmean(co, 50, align = "center")
     slided[slided <= conf$min_coverage] <- NA
     m <- median(slided, na.rm = TRUE)
     slided[slided <= m / conf$max_median_fold |
            slided > m * conf$max_median_fold] <- NA
     sufficient <- ((sum(!is.na(slided)) / length(slided)) > conf$min_covered &
-                   sum(!is.na(slided)) > 60)
+                   sum(!is.na(slided)) > conf$min_points_fit)
     if (!sufficient) {
         return(list(
             rate = NULL,
@@ -79,8 +79,7 @@ replication_rates <- function(object, ...) {
     config <- config_parser(list(...), config_rep)
     apfun <- parse_threads(config$threads)
 
-    mc <- co[, mean(reads[[1]] * read_length / bin_width),
-             by = c("id", "genbank")][, V1]
+    mc <- co[, mean(coverage[[1]]), by = c("id", "contig")][, V1]
     flog.info(paste("Estimating replication rates for %d sample-genome",
                     "combinations. Median coverage is %.3g [%.3g, %.3g]."),
                     nrow(co), median(mc), min(mc), max(mc))
@@ -88,14 +87,12 @@ replication_rates <- function(object, ...) {
         row <- co[i]
         res <- irep(row, config)
         if (!is.null(res$rate)) {
-            res$profile[, "genbank" := row$genbank]
+            res$profile[, "contig" := row$contig]
             res$profile[, "id" := row$id]
-            res$rate[, "genbank" := row$genbank]
+            res$rate[, "contig" := row$contig]
             res$rate[, "id" := row$id]
-            taxmap <- unique(res$profile[, .(strain, species, genus, family,
-                                             order, class, phylum, kingdom,
-                                             id, genbank)])
-            res$rate <- taxmap[res$rate, on = c("genbank", "id")]
+            taxmap <- unique(res$profile[, !"coverage", with = FALSE])
+            res$rate <- taxmap[res$rate, on = c("contig", "id")]
         }
         return(res)
     })
@@ -107,7 +104,7 @@ replication_rates <- function(object, ...) {
 
     artifact <- list(
         rate = rates,
-        coverage = profiles[genbank %in% rates$genbank],
+        coverage = profiles[contig %in% rates$contig],
         steps = c(object[["steps"]], "replication_rates")
     )
 }

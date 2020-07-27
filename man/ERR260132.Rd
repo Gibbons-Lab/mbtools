@@ -4,7 +4,9 @@
 \name{ERR260132}
 \alias{ERR260132}
 \title{Precomputed lineage calling and coverage example.}
-\format{A SLIMM artifact.}
+\format{
+A SLIMM artifact.
+}
 \source{
 \url{https://www.ncbi.nlm.nih.gov/sra/?term=ERR260132}
 }
