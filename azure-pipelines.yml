@@ -9,8 +9,8 @@ jobs:
       vmImage: 'ubuntu-latest'
     strategy:
       matrix:
-        R-3.6:
-          containerImage: rstudio/r-base:3.6-bionic
+        R-4.0:
+          containerImage: rstudio/r-base:4.0-bionic
     container: $[ variables['containerImage'] ]
     steps:
       - bash: |
