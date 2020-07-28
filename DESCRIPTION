@@ -29,7 +29,8 @@ Imports:
     futile.logger,
     digest,
     Rcpp,
-    xml2
+    xml2,
+    zoo
 Remotes: github::bryandmartin/corncob
 License: Apache License (== 2.0)
 URL: https://github.com/Gibbons-Lab/mbtools
