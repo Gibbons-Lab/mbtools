@@ -21,7 +21,7 @@ test_that("replication rates work", {
     expect_s3_class(r$rate, "data.table")
     expect_true(r$rate[, all(rate > 0)])
     expect_s3_class(r$coverage, "data.table")
-    expect_equal(r$coverage[, uniqueN(genbank)], nrow(r$rate))
+    expect_equal(r$coverage[, uniqueN(contig)], nrow(r$rate))
 })
 
 flog.threshold(INFO)

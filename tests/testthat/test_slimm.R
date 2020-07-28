@@ -25,8 +25,8 @@ test_that("SLIMM works", {
     expect_named(sl, c("alignments", "abundance", "coverage", "steps"))
     expect_s3_class(sl$abundance, "data.table")
     expect_s3_class(sl$coverage, "data.table")
-    expect_true(sl$coverage[, sum(reads[[1]]), by = "genbank"][, all(V1 > 0)])
-    expect_equal(sl$coverage[, uniqueN(genbank)], 10)
+    expect_true(sl$coverage[, sum(coverage[[1]]), by = "contig"][, all(V1 > 0)])
+    expect_equal(sl$coverage[, uniqueN(contig)], 10)
 })
 
 flog.threshold(INFO)

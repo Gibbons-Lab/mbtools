@@ -127,7 +127,8 @@ slimm <- function(object, ...) {
         rbindlist() %>% clean_taxa_names()
     coverage[, "read_length" := rlens[id]]
     coverage[, "coverage" := list(list(
-        coverage = reads[[1]] / bin_width * read_length))]
+        coverage = reads[[1]] / bin_width * read_length)),
+        by = c("contig", "id")]
     coverage[, "reads" := NULL]
 
     artifact <- list(

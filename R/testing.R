@@ -141,7 +141,7 @@ config_association <- config_builder(list(
     variables = NULL,
     taxa_rank = "genus",
     confounders = NULL,
-    min_count = 10,
+    min_abundance = 10,
     in_samples = 0.1,
     presence_threshold = 1,
     independent_weighting = TRUE,
@@ -188,8 +188,10 @@ association <- function(ps, ...) {
     variables <- variables[!(variables %in% config$confounders)]
     counts <- as.matrix(taxa_count(ps, lev = config$taxa_rank))
     meta <- meta[rownames(counts), , drop = FALSE]
-    too_rare <- (colSums(counts >= 1) / nrow(counts)) < config$in_samples
-    too_few <- colMeans(counts) < config$min_count
+    too_rare <- (
+        colSums(counts >= config$presence_threshold) /
+        nrow(counts)) < config$in_samples
+    too_few <- colMeans(counts) < config$min_abundance
     counts <- counts[, !(too_rare | too_few)]
     if (config$method == "deseq2") {
         iter <- iter_deseq2
@@ -240,7 +242,7 @@ association <- function(ps, ...) {
 #'  genus.
 #' @param confounders A character vector containing the confounders that should
 #'  be used.
-#' @param min_count Minimum required number of average counts for a taxa.
+#' @param min_abundance Minimum required number of average counts for a taxa.
 #' @param in_samples Taxa must be present in at least this fraction of samples.
 #' @param independent_weighting Whether to adjust p values by independent
 #'  weighting or normal Benjamini-Hochberg.
@@ -260,7 +262,7 @@ association <- function(ps, ...) {
 #' @importFrom utils combn
 #' @importFrom phyloseq sample_data
 combinatorial_association <- function(ps, variable, tax = "genus",
-                        confounders = NULL, min_count = 10, in_samples = 0.1,
+                        confounders = NULL, min_abundance = 10, in_samples = 0.1,
                         independent_weighting = TRUE, standardize = TRUE,
                         shrink = TRUE) {
     if (!is.null(confounders)) {
@@ -283,9 +285,9 @@ combinatorial_association <- function(ps, variable, tax = "genus",
     counts <- as.matrix(taxa_count(ps, lev = tax))
     meta <- meta[rownames(counts), ]
     too_rare <- (
-        colSums(counts >= config$presence_threshold) /
+        colSums(counts >= min_abundance) /
         nrow(counts)) < in_samples
-    too_few <- colMeans(counts) < min_count
+    too_few <- colMeans(counts) < min_abundance
     counts <- counts[, !(too_rare | too_few)]
 
     good <- !is.na(meta[[variable]])
