@@ -32,7 +32,7 @@ config_coverage <- config_builder(list(
 #' @return A list with the
 #' @export
 #' @examples
-#'  co <- bin_coverage(object, bin_width = 1000)
+#'  NULL
 #' @importFrom GenomicAlignments coverage
 #' @importFrom zoo rollapply
 bin_coverage <- function(object, ...) {

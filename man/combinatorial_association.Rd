@@ -10,7 +10,7 @@ combinatorial_association(
   variable,
   tax = "genus",
   confounders = NULL,
-  min_count = 10,
+  min_abundance = 10,
   in_samples = 0.1,
   independent_weighting = TRUE,
   standardize = TRUE,
@@ -28,7 +28,7 @@ genus.}
 \item{confounders}{A character vector containing the confounders that should
 be used.}
 
-\item{min_count}{Minimum required number of average counts for a taxa.}
+\item{min_abundance}{Minimum required number of average counts for a taxa.}
 
 \item{in_samples}{Taxa must be present in at least this fraction of samples.}
 

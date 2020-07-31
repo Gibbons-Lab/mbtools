@@ -21,5 +21,5 @@ Reads the coverage from a set of alignments and calculates binned
 averages.
 }
 \examples{
- co <- bin_coverage(object, bin_width = 1000)
+ NULL
 }

@@ -262,7 +262,8 @@ association <- function(ps, ...) {
 #' @importFrom utils combn
 #' @importFrom phyloseq sample_data
 combinatorial_association <- function(ps, variable, tax = "genus",
-                        confounders = NULL, min_abundance = 10, in_samples = 0.1,
+                        confounders = NULL, min_abundance = 10,
+                        in_samples = 0.1,
                         independent_weighting = TRUE, standardize = TRUE,
                         shrink = TRUE) {
     if (!is.null(confounders)) {
