@@ -34,7 +34,8 @@ config_denoise <- config_builder(list(
                          "silva_nr_v132_train_set.fa.gz?download=1"),
         species_db = paste0("https://zenodo.org/record/1172783/files/",
                             "silva_species_assignment_v132.fa.gz?download=1"),
-        hash = TRUE
+        hash = TRUE,
+        merge = TRUE
 ))
 
 
@@ -131,9 +132,11 @@ denoise <- function(object, ...) {
                                  multithread = config$threads, verbose = 0,
                                  pool = config$pool)
             dada_stats[[r]][, "denoised_reverse" := getN(dada_reverse)]
+
             merged <- mergePairs(dada_forward, derep_forward,
-                                 dada_reverse, derep_reverse,
-                                 verbose = 0)
+                                dada_reverse, derep_reverse,
+                                verbose = 0,
+                                justConcatenate = !config$merge)
             dada_stats[[r]][, "merged" := getN(merged)]
             feature_table[[r]] <- makeSequenceTable(merged)
         } else {
@@ -192,7 +195,11 @@ denoise <- function(object, ...) {
         } else {
             species_db <- config$species_db
         }
-        taxa <- addSpecies(taxa, species_db)
+        if (config$merge) {
+            taxa <- addSpecies(taxa, species_db)
+        } else {
+            flog.warning("No merging performed. Will not predict species.")
+        }
     }
     seqs <- rownames(taxa)
     taxa <- cbind(taxa, sequence = seqs)

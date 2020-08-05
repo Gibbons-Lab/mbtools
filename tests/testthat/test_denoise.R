@@ -28,4 +28,17 @@ test_that("denoise works", {
     expect_true(den$classified[rank == "Genus", reads > 0.5])
 })
 
+test_that("combining works", {
+    den <- denoise(files[1], truncLength = c(240, 180), species_db = NULL, merge = FALSE)
+
+    expect_named(den, c('feature_table', 'taxonomy', 'errors', 'error_plots',
+                        'passed_reads', 'classified', 'steps'))
+    expect_s3_class(den$passed_reads, "data.table")
+    expect_true(den$passed_reads[,
+        all(merged <= pmin(derep_forward, derep_reverse))])
+    expect_true(den$passed_reads[, all(non_chimera <= merged)])
+    expect_true(den$classified[, all(reads > 0)])
+    expect_true(den$classified[rank == "Genus", reads > 0.5])
+})
+
 flog.threshold(INFO)
