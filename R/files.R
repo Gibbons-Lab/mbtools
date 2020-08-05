@@ -14,9 +14,9 @@ annotate_files <- function(dir, pattern, annotations) {
     if (!"id" %in% annotations) {
         stop("need at least the id for each sample")
     }
-    files <- list.files(dir, pattern = pattern, recursive = TRUE,
-                        include.dirs = TRUE)
-    anns <- as.data.table(str_match(files, pattern))
+    files <- list.files(dir, recursive = TRUE, include.dirs = TRUE)
+    match <- str_match(files, pattern)
+    anns <- as.data.table(match[!is.na(match[, 1]), ])
     names(anns) <- c("file", annotations)
     if ("direction" %in% annotations) {
         anns[, direction := as.numeric(direction)]
