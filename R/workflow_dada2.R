@@ -154,8 +154,8 @@ denoise <- function(object, ...) {
                    "from run %s (%.2f%% of reads)"),
             ncol(feature_table[[r]]) - ncol(feature_table_nochim),
             ncol(feature_table[[r]]),
-            100 - 100 * sum(feature_table_nochim) / sum(feature_table[[r]]),
-            r
+            r,
+            100 - 100 * sum(feature_table_nochim) / sum(feature_table[[r]])
         )
         dada_stats[[r]][, "non_chimera" := rowSums(feature_table_nochim)[id]]
         feature_table[[r]] <- feature_table_nochim
