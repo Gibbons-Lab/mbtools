@@ -152,9 +152,9 @@ denoise <- function(object, ...) {
         flog.info(
             paste0("Removed %d/%d sequence variants as chimeric ",
                    "from run %s (%.2f%% of reads)"),
-            ncol(feature_table) - ncol(feature_table_nochim),
-            ncol(feature_table),
-            100 - 100 * sum(feature_table_nochim) / sum(feature_table),
+            ncol(feature_table[[r]]) - ncol(feature_table_nochim),
+            ncol(feature_table[[r]]),
+            100 - 100 * sum(feature_table_nochim) / sum(feature_table[[r]]),
             r
         )
         dada_stats[[r]][, "non_chimera" := rowSums(feature_table_nochim)[id]]
