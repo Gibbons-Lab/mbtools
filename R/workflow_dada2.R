@@ -172,10 +172,9 @@ denoise <- function(object, ...) {
         dada_stats <- object$passed[dada_stats, on = "id"]
     }
 
-    flog.info("Merged sequence tables. Found a total of %d ASVs.",
+    flog.info(paste0("Merged sequence tables. Found a total of %d ASVs. ",
+                     "Assigning taxonomy..."),
               ncol(feature_table))
-    flog.info("Assigning taxonomy to %d sequences...",
-              ncol(feature_table_nochim))
     tmp <- tempdir()
     if (grepl("tp(s*)://", config$taxa_db)) {
         taxa_db <- file.path(tmp, "taxa.fna.gz")
@@ -189,7 +188,7 @@ denoise <- function(object, ...) {
     } else {
         taxa_db <- config$taxa_db
     }
-    taxa <- assignTaxonomy(feature_table_nochim, taxa_db,
+    taxa <- assignTaxonomy(feature_table, taxa_db,
                            minBoot = config$bootstrap_confidence * 100,
                            multithread = config$threads)
     if (!config$merge) {
@@ -223,12 +222,11 @@ denoise <- function(object, ...) {
         hashes <- sapply(seqs, digest)
         names(seqs) <- hashes
         rownames(taxa) <- hashes
-        colnames(feature_table_nochim) <- hashes[
-            colnames(feature_table_nochim)]
+        colnames(feature_table) <- hashes[colnames(feature_table)]
     }
 
     artifact <- list(
-        feature_table = feature_table_nochim,
+        feature_table = feature_table,
         taxonomy = taxa,
         errors = errors,
         error_plots = lapply(errors, function(x)
