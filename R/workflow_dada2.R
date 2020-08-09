@@ -30,6 +30,7 @@ config_denoise <- config_builder(list(
         nbases = 2.5e8,
         pool = FALSE,
         bootstrap_confidence = 0.5,
+        min_overlap = 12,
         taxa_db = paste0("https://zenodo.org/record/1172783/files/",
                          "silva_nr_v132_train_set.fa.gz?download=1"),
         species_db = paste0("https://zenodo.org/record/1172783/files/",
@@ -135,7 +136,7 @@ denoise <- function(object, ...) {
 
             merged <- mergePairs(dada_forward, derep_forward,
                                 dada_reverse, derep_reverse,
-                                verbose = 0,
+                                verbose = 0, minOverlap = config$min_overlap,
                                 justConcatenate = !config$merge)
             dada_stats[[r]][, "merged" := getN(merged)]
             feature_table[[r]] <- makeSequenceTable(merged)
