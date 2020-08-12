@@ -39,7 +39,7 @@ jobs:
           path: $(R_LIBS_USER)
         displayName: 'R library cache'
       - bash: |
-          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown'))"
+          Rscript -e "install.packages(c('remotes', 'rcmdcheck', 'BiocManager', 'rmarkdown', 'stringi'))"
           Rscript -e "remotes::install_deps(dependencies = TRUE)"
         displayName: "Install dependencies"
       - bash: |
