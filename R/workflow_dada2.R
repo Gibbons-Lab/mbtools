@@ -30,11 +30,13 @@ config_denoise <- config_builder(list(
         nbases = 2.5e8,
         pool = FALSE,
         bootstrap_confidence = 0.5,
+        min_overlap = 12,
         taxa_db = paste0("https://zenodo.org/record/1172783/files/",
                          "silva_nr_v132_train_set.fa.gz?download=1"),
         species_db = paste0("https://zenodo.org/record/1172783/files/",
                             "silva_species_assignment_v132.fa.gz?download=1"),
-        hash = TRUE
+        hash = TRUE,
+        merge = TRUE
 ))
 
 
@@ -131,15 +133,33 @@ denoise <- function(object, ...) {
                                  multithread = config$threads, verbose = 0,
                                  pool = config$pool)
             dada_stats[[r]][, "denoised_reverse" := getN(dada_reverse)]
+
             merged <- mergePairs(dada_forward, derep_forward,
-                                 dada_reverse, derep_reverse,
-                                 verbose = 0)
+                                dada_reverse, derep_reverse,
+                                verbose = 0, minOverlap = config$min_overlap,
+                                justConcatenate = !config$merge)
             dada_stats[[r]][, "merged" := getN(merged)]
             feature_table[[r]] <- makeSequenceTable(merged)
         } else {
             feature_table[[r]] <- makeSequenceTable(dada_forward)
         }
         rownames(feature_table[[r]]) <- fi$id
+        flog.info("Found %d sequence variants in run `%s`...",
+                  ncol(feature_table[[r]]), r)
+        feature_table_nochim <- removeBimeraDenovo(
+            feature_table[[r]],
+            multithread = config$threads
+        )
+        flog.info(
+            paste0("Removed %d/%d sequence variants as chimeric ",
+                   "from run %s (%.2f%% of reads)"),
+            ncol(feature_table[[r]]) - ncol(feature_table_nochim),
+            ncol(feature_table[[r]]),
+            r,
+            100 - 100 * sum(feature_table_nochim) / sum(feature_table[[r]])
+        )
+        dada_stats[[r]][, "non_chimera" := rowSums(feature_table_nochim)[id]]
+        feature_table[[r]] <- feature_table_nochim
         flog.info("Finished run `%s`.", r)
     }
     if (length(feature_table) > 1) {
@@ -152,17 +172,9 @@ denoise <- function(object, ...) {
         dada_stats <- object$passed[dada_stats, on = "id"]
     }
 
-    flog.info("Merged sequence tables, now removing chimeras...")
-    feature_table_nochim <- removeBimeraDenovo(feature_table,
-                                               multithread = config$threads)
-    flog.info("Removed %d/%d sequence variants as chimeric (%.2f%% of reads)",
-              ncol(feature_table) - ncol(feature_table_nochim),
-              ncol(feature_table),
-              100 - 100 * sum(feature_table_nochim) / sum(feature_table))
-    dada_stats[, "non_chimera" := rowSums(feature_table_nochim)[id]]
-
-    flog.info("Assigning taxonomy to %d sequences...",
-              ncol(feature_table_nochim))
+    flog.info(paste0("Merged sequence tables. Found a total of %d ASVs. ",
+                     "Assigning taxonomy..."),
+              ncol(feature_table))
     tmp <- tempdir()
     if (grepl("tp(s*)://", config$taxa_db)) {
         taxa_db <- file.path(tmp, "taxa.fna.gz")
@@ -176,9 +188,13 @@ denoise <- function(object, ...) {
     } else {
         taxa_db <- config$taxa_db
     }
-    taxa <- assignTaxonomy(feature_table_nochim, taxa_db,
+    taxa <- assignTaxonomy(feature_table, taxa_db,
                            minBoot = config$bootstrap_confidence * 100,
                            multithread = config$threads)
+    if (!config$merge) {
+        config$species_db <- NA
+        flog.warn("No merging performed. Will not predict species.")
+    }
     if (!is.null(config$species_db) && !is.na(config$species_db)) {
         if (grepl("tp(s*)://", config$species_db)) {
             species_db <- file.path(tmp, "species.fna.gz")
@@ -187,7 +203,7 @@ denoise <- function(object, ...) {
                 download.file(config$species_db, species_db, quiet = TRUE)
             } else {
                 flog.info("Found existing species db `%s`. Using that one.",
-                        species_db)
+                          species_db)
             }
         } else {
             species_db <- config$species_db
@@ -198,20 +214,19 @@ denoise <- function(object, ...) {
     taxa <- cbind(taxa, sequence = seqs)
     classified <- classified_taxa(feature_table, taxa)
     flog.info("Reads with taxonomic classification: %s",
-              classified[, paste(rank, "=", 100 * round(reads, 3),
-                                 "%", collapse = ",")])
+              classified[, paste0(rank, "=", 100 * round(reads, 3),
+                                  "%", collapse = ", ")])
     if (config$hash) {
         flog.info("Hashing %d sequence variants.", nrow(taxa))
         seqs <- rownames(taxa)
         hashes <- sapply(seqs, digest)
         names(seqs) <- hashes
         rownames(taxa) <- hashes
-        colnames(feature_table_nochim) <- hashes[
-            colnames(feature_table_nochim)]
+        colnames(feature_table) <- hashes[colnames(feature_table)]
     }
 
     artifact <- list(
-        feature_table = feature_table_nochim,
+        feature_table = feature_table,
         taxonomy = taxa,
         errors = errors,
         error_plots = lapply(errors, function(x)
