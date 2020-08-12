@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         R-4.0:
-          containerImage: rstudio/r-base:4.0-bionic
+          containerImage: rstudio/r-base:4.0-focal
     container: $[ variables['containerImage'] ]
     steps:
       - bash: |
