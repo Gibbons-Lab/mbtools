@@ -1,5 +1,6 @@
 jobs:
   - job: 'Linux'
+    timeoutInMinutes: 120
     variables:
       CRAN: 'https://demo.rstudiopm.com/all/__linux__/bionic/latest'
       R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
