@@ -117,8 +117,11 @@ corncob_test <- function(counts, v) {
         sample_data(sdata)
     )
     res <- lapply(rownames(taxa), function(ta) {
-        fit <- corncob::bbdml(reformulate("v", ta), ~ 1, ps)
-        p <- corncob::waldt(fit)[2, 4]
+        p <- tryCatch(
+            corncob::waldt(corncob::bbdml(reformulate("v", ta), ~ 1, ps))[2, 4],
+            error = function(e) 1,
+            warning = function(w) 1
+        )
         data.table(taxa = ta, pval = p)
     }) %>% rbindlist()
     res[is.na(pval), "pval" := 1]
