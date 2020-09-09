@@ -40,7 +40,7 @@ get_corncob_pars <- function(ps, threads) {
     names(tnames) <- taxa_names(clean)
 
     apfun <- parse_threads(threads)
-    pars <- apfun(taxa_names(clean), function(taxon){
+    pars <- apfun(taxa_names(clean), function(taxon) {
         r <- tryCatch(corncob::bbdml(
             formula = reformulate("1", taxon),
             phi.formula = ~ 1,
@@ -179,7 +179,7 @@ power_analysis <- function(ps, ...) {
 
             }
             sampled <- sample_corncob(pars, fraction, config$type, scale,
-                                      config$depth, config$n_power * config$n_groups)
+                config$depth, config$n_power * config$n_groups)
             counts <- sampled$p
             sig_taxa <- sampled$sig_taxa
             p <- lapply(counts, function(co) {
@@ -210,14 +210,14 @@ power_analysis <- function(ps, ...) {
 
             }
             sampled <- sample_corncob(pars, fraction, config$type, scale,
-                                      config$depth, config$n_power * config$n_groups)
+                config$depth, config$n_power * config$n_groups)
             counts <- sampled$p
             sig_taxa <- sampled$sig_taxa
             if (config$type == "categorical") {
                 v <- factor(v)
             }
             p <- lapply(counts, function(cn) {
-                corncob_test(cn, v)
+                corncob_test(cn, v, sig_taxa)
             }) %>% rbindlist()
             p[, "replicate" := rep(1:config$n_groups, config$n_power),
               by = "taxa"]
@@ -244,7 +244,7 @@ power_analysis <- function(ps, ...) {
             co <- as.numeric(comb[i, ])
             scale <- c(rep(1, co[1] / 2), rep(1 - co[2], co[1] / 2))
             sampled <- sample_corncob(pars, fraction, config$type, scale,
-                                      config$depth, config$n_power * config$n_groups)
+                config$depth, config$n_power * config$n_groups)
             counts <- sampled$p
             sig_taxa <- sampled$sig_taxa
             p <- lapply(counts, function(co) {
