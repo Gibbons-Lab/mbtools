@@ -61,7 +61,7 @@ get_corncob_pars <- function(ps, threads) {
 sample_corncob <- function(pars, sig_taxa, type, scale,
                            size = 10000, reps = 1000) {
     n <- length(scale)
-    last <- pars[, unique(taxon)[uniqueN(taxon)]]
+    last <- pars[, sort(unique(taxon))[uniqueN(taxon)]]
     p <- sapply(pars$taxon, function(taxon) {
         if (taxon %in% sig_taxa) {
             p <- rep(pars[taxon, mu] * scale, reps)
@@ -126,6 +126,7 @@ corncob_test <- function(counts, v) {
     }) %>% rbindlist()
     res[is.na(pval), "pval" := 1]
     res[, pval := p.adjust(pval, method = "fdr")]
+    print(res)
     return(res)
 }
 
@@ -155,7 +156,7 @@ power_analysis <- function(ps, ...) {
     pars <- pars[!is.na(mu)]
     sig_taxa <- sample(taxa_names(ps)[1:(ntaxa(ps) - 1)],
                        config$fraction_differential * ntaxa(ps) - 1)
-    sig_taxa <- c(sig_taxa, taxa_names(ps)[ntaxa(ps)])
+    sig_taxa <- c(sig_taxa, sort(taxa_names(ps))[ntaxa(ps)])
     comb <- expand.grid(list(n = config$n,
                              effect_size = config$effect_size))
     flog.info(paste("Estimating power for %d n/effect combinations.",
@@ -214,6 +215,7 @@ power_analysis <- function(ps, ...) {
                 v <- factor(v)
             }
             p <- lapply(counts, function(cn) {
+                print(sig_taxa)
                 corncob_test(cn, v)
             }) %>% rbindlist()
             p[, "replicate" := rep(1:config$n_groups, config$n_power),
