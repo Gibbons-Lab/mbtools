@@ -19,7 +19,7 @@ config_power <- config_builder(list(
     effect_size = seq(0, 0.9, by = 0.1),
     threads = getOption("mc.cores", 1),
     pval = 0.05,
-    n_power = 10,
+    n_power = 8,
     n_groups = 8
 ))
 
@@ -58,10 +58,13 @@ get_corncob_pars <- function(ps, threads) {
 }
 
 
-sample_corncob <- function(pars, sig_taxa, type, scale,
+sample_corncob <- function(pars, fraction, type, scale,
                            size = 10000, reps = 1000) {
     n <- length(scale)
     last <- pars[, sort(unique(taxon))[uniqueN(taxon)]]
+    taxa <- pars[taxon != last, taxon]
+    sig_taxa <- sample(taxa, fraction * nrow(pars) - 1)
+    sig_taxa <- c(sig_taxa, last)
     p <- sapply(pars$taxon, function(taxon) {
         if (taxon %in% sig_taxa) {
             p <- rep(pars[taxon, mu] * scale, reps)
@@ -86,7 +89,7 @@ sample_corncob <- function(pars, sig_taxa, type, scale,
         return(x)
     })
 
-    return(p)
+    return(list(p = p, sig_taxa = sig_taxa))
 }
 
 mwtest <- function(counts, taxa) {
@@ -126,7 +129,6 @@ corncob_test <- function(counts, v) {
     }) %>% rbindlist()
     res[is.na(pval), "pval" := 1]
     res[, pval := p.adjust(pval, method = "fdr")]
-    print(res)
     return(res)
 }
 
@@ -147,21 +149,18 @@ power_analysis <- function(ps, ...) {
         flog.info("Using median depth from reference data (%d).",
                   config$depth)
     }
-
     flog.info("Estimating corncob model parameters for %d taxa...", ntaxa(ps))
     pars <- get_corncob_pars(ps, config$threads)
-    ps <- prune_taxa(pars[!is.na(mu), taxon], ps)
     flog.info("Succesfully estimated parameters for %d/%d taxa.",
-              ntaxa(ps), nrow(pars))
+              nrow(pars), ntaxa(ps))
+    ps <- prune_taxa(pars[!is.na(mu), taxon], ps)
     pars <- pars[!is.na(mu)]
-    sig_taxa <- sample(taxa_names(ps)[1:(ntaxa(ps) - 1)],
-                       config$fraction_differential * ntaxa(ps) - 1)
-    sig_taxa <- c(sig_taxa, sort(taxa_names(ps))[ntaxa(ps)])
     comb <- expand.grid(list(n = config$n,
                              effect_size = config$effect_size))
+    fraction <- config$fraction_differential
     flog.info(paste("Estimating power for %d n/effect combinations.",
                     "%d/%d taxa are truly differential."), nrow(comb),
-                    length(sig_taxa), ntaxa(ps))
+                    floor(fraction * ntaxa(ps)), ntaxa(ps))
     flog.info("Will need at least %s of memory.",
               memory_use(config, ntaxa(ps)) %>% format(unit = "auto"))
     if (config$method == "permanova") {
@@ -178,9 +177,10 @@ power_analysis <- function(ps, ...) {
                 scale <- 1 - v * co[2]
 
             }
-            counts <- sample_corncob(pars, sig_taxa, config$type, scale,
-                                     config$depth,
-                                     config$n_power * config$n_groups)
+            sampled <- sample_corncob(pars, fraction, config$type, scale,
+                                      config$depth, config$n_power * config$n_groups)
+            counts <- sampled$p
+            sig_taxa <- sampled$sig_taxa
             p <- lapply(counts, function(co) {
                 res <- suppressMessages(
                     vegan::adonis2(co ~ v, data = data.frame(v = v)))
@@ -208,14 +208,14 @@ power_analysis <- function(ps, ...) {
                 scale <- 1 - v * co[2]
 
             }
-            counts <- sample_corncob(pars, sig_taxa, config$type, scale,
-                                     config$depth,
-                                     config$n_power * config$n_groups)
+            sampled <- sample_corncob(pars, fraction, config$type, scale,
+                                      config$depth, config$n_power * config$n_groups)
+            counts <- sampled$p
+            sig_taxa <- sampled$sig_taxa
             if (config$type == "categorical") {
                 v <- factor(v)
             }
             p <- lapply(counts, function(cn) {
-                print(sig_taxa)
                 corncob_test(cn, v)
             }) %>% rbindlist()
             p[, "replicate" := rep(1:config$n_groups, config$n_power),
@@ -242,9 +242,10 @@ power_analysis <- function(ps, ...) {
         power <- apfun(1:nrow(comb), function(i) {
             co <- as.numeric(comb[i, ])
             scale <- c(rep(1, co[1] / 2), rep(1 - co[2], co[1] / 2))
-            counts <- sample_corncob(pars, sig_taxa, config$type, scale,
-                                     config$depth,
-                                     config$n_groups * config$n_power)
+            sampled <- sample_corncob(pars, fraction, config$type, scale,
+                                      config$depth, config$n_power * config$n_groups)
+            counts <- sampled$p
+            sig_taxa <- sampled$sig_taxa
             p <- lapply(counts, function(co) {
                 mwtest(co, colnames(co))
             }) %>% rbindlist()
