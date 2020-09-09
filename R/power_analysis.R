@@ -272,12 +272,8 @@ power_analysis <- function(ps, ...) {
     if (config$method == "permanova") {
         power[, "asym_r2" := r2[n == max(n)], by = "effect"]
         power[, "asym_r2_sd" := r2_sd[n == max(n)], by = "effect"]
-        power[, "fdr" := (
-            power[effect == 0] /
-            mean(power[effect != 0])), by = "n"]
-        power[, "fdr_sd" := (
-            power_sd[effect == 0] /
-            mean(power[effect != 0])), by = "n"]
+        power[, "fdr" := power[effect == 0] / mean(power), by = "n"]
+        power[, "fdr_sd" := power_sd[effect == 0] / mean(power), by = "n"]
     }
     power[effect == 0, "fdr" := NA]
     power[effect == 0, "fdr_sd" := NA]
