@@ -19,7 +19,7 @@ config_power <- config_builder(list(
     effect_size = seq(0, 0.9, by = 0.1),
     threads = getOption("mc.cores", 1),
     pval = 0.05,
-    n_power = 100,
+    n_power = 10,
     n_groups = 8
 ))
 
@@ -71,7 +71,7 @@ sample_corncob <- function(pars, sig_taxa, type, scale,
     })
     colnames(p) <- pars$taxon
     p[, last] <- pars[, sum(mu)] - rowSums(p[, 1:(ncol(p) - 1)])
-    p <- sapply(1:ncol(p), function(i){
+    p <- sapply(1:ncol(p), function(i) {
         taxon <- colnames(p)[i]
         VGAM::rbetabinom(n = n * reps, size = size, prob = p[, i],
                          rho = pars[taxon, phi])
@@ -89,18 +89,40 @@ sample_corncob <- function(pars, sig_taxa, type, scale,
     return(p)
 }
 
-mwtest <- function(counts, sig_taxa) {
+mwtest <- function(counts, taxa) {
     first <- 1:(nrow(counts) / 2)
     second <- (nrow(counts) / 2) : nrow(counts)
     p <- counts / rowSums(counts)
-    res <- lapply(sig_taxa, function(ta){
+    res <- lapply(taxa, function(ta) {
         ctrl <- p[first, ta] + 0.5
         case <- p[second, ta] + 0.5
         te <- suppressWarnings(
             wilcox.test(ctrl, case))
         data.table(taxa = ta, pval = te$p.value)
     }) %>% rbindlist()
+    res[, "pval" := p.adjust(pval, method = "fdr")]
     res[is.na(pval), "pval" := 1]
+    return(res)
+}
+
+corncob_test <- function(counts, v) {
+    sdata <- data.frame(v = v)
+    rownames(sdata) <- rownames(counts)
+    taxa <- matrix(colnames(counts), ncol = 1)
+    colnames(taxa) <- "taxon"
+    rownames(taxa) <- colnames(counts)
+    ps <- phyloseq(
+        otu_table(counts, taxa_are_rows = FALSE),
+        tax_table(taxa),
+        sample_data(sdata)
+    )
+    res <- lapply(rownames(taxa), function(ta) {
+        fit <- corncob::bbdml(reformulate("v", ta), ~ 1, ps)
+        p <- corncob::waldt(fit)[2, 4]
+        data.table(taxa = ta, pval = p)
+    }) %>% rbindlist()
+    res[is.na(pval), "pval" := 1]
+    res[, pval := p.adjust(pval, method = "fdr")]
     return(res)
 }
 
@@ -130,6 +152,7 @@ power_analysis <- function(ps, ...) {
     pars <- pars[!is.na(mu)]
     sig_taxa <- sample(taxa_names(ps)[1:(ntaxa(ps) - 1)],
                        config$fraction_differential * ntaxa(ps) - 1)
+    sig_taxa <- c(sig_taxa, taxa_names(ps)[ntaxa(ps)])
     comb <- expand.grid(list(n = config$n,
                              effect_size = config$effect_size))
     flog.info(paste("Estimating power for %d n/effect combinations.",
@@ -139,8 +162,8 @@ power_analysis <- function(ps, ...) {
               memory_use(config, ntaxa(ps)) %>% format(unit = "auto"))
     if (config$method == "permanova") {
         if (!requireNamespace("vegan", quietly = TRUE)) {
-        stop("PERMANOVA requires `vegan` to be installed.")
-    }
+            stop("PERMANOVA requires `vegan` to be installed.")
+        }
         power <- apfun(1:nrow(comb), function(i) {
             co <- as.numeric(comb[i, ])
             if (config$type == "categorical") {
@@ -170,6 +193,46 @@ power_analysis <- function(ps, ...) {
                       as.integer(co[1]), co[2], p$power, p$r2)
             return(p)
         })
+    } else if (config$method == "corncob") {
+        power <- apfun(1:nrow(comb), function(i) {
+            co <- as.numeric(comb[i, ])
+            if (config$type == "categorical") {
+                scale <- c(rep(1, co[1] / 2), rep(1 - co[2], co[1] / 2))
+                v <- c(rep("control", co[1] / 2), rep("changed", co[1] / 2))
+            } else {
+                v <- seq(0, 1, length.out = co[1])
+                scale <- 1 - v * co[2]
+
+            }
+            counts <- sample_corncob(pars, sig_taxa, config$type, scale,
+                                     config$depth,
+                                     config$n_power * config$n_groups)
+            if (config$type == "categorical") {
+                v <- factor(v)
+            }
+            p <- lapply(counts, function(cn) {
+                corncob_test(cn, v)
+            }) %>% rbindlist()
+            p[, "replicate" := rep(1:config$n_groups, config$n_power),
+              by = "taxa"]
+            p <- p[, .(power = mean(pval[taxa %in% sig_taxa] < config$pval),
+                       fdr = (
+                           sum(pval[!taxa %in% sig_taxa] < config$pval) /
+                           sum(pval < config$pval))
+                      ),
+                      by = "replicate"]
+            p[is.finite(fdr) == FALSE, "fdr" := 0]
+            p <- p[, .(n = co[1], effect = co[2],
+                       mu = pars[, mean(mu)], phi = pars[, mean(phi)],
+                       mean_reads = pars[, mean(mean_reads)],
+                       prevalence = pars[, mean(prevalence)],
+                       power = mean(power), power_sd = sd(power),
+                       fdr = mean(fdr), fdr_sd = sd(fdr)),
+                  ]
+            flog.info("Power for n=%d and effect=%.3g is %.3g. FDR is %.3g.",
+                      as.integer(co[1]), co[2], p$power, p$fdr)
+            return(p)
+        })
     } else if (config$type == "categorical") {
         power <- apfun(1:nrow(comb), function(i) {
             co <- as.numeric(comb[i, ])
@@ -178,21 +241,26 @@ power_analysis <- function(ps, ...) {
                                      config$depth,
                                      config$n_groups * config$n_power)
             p <- lapply(counts, function(co) {
-                mwtest(co, sig_taxa)
+                mwtest(co, colnames(co))
             }) %>% rbindlist()
             p[, "replicate" := rep(1:config$n_groups, config$n_power),
               by = "taxa"]
-            p <- p[, .(taxa, power = mean(pval < config$pval)),
-                       by = c("replicate", "taxa")]
+            p <- p[, .(power = mean(pval[taxa %in% sig_taxa] < config$pval),
+                       fdr = (
+                           sum(pval[!taxa %in% sig_taxa] < config$pval) /
+                           sum(pval < config$pval))
+                      ),
+                      by = "replicate"]
+            p[is.finite(fdr) == FALSE, "fdr" := 0]
             p <- p[, .(n = co[1], effect = co[2],
-                       mu = pars[taxa[1], mu], phi = pars[taxa[1], phi],
-                       mean_reads = pars[taxa[1], mean_reads],
-                       prevalence = pars[taxa[1], prevalence],
-                       power = mean(power), power_sd = sd(power)),
-                       by = "taxa"]
-            flog.info("Power for n=%d and effect=%.3g is %.3g [%.3g, %.3g].",
-                      as.integer(co[1]), co[2], mean(p$power),
-                      quantile(p$power, 0.025), quantile(p$power, 0.975))
+                       mu = pars[, mean(mu)], phi = pars[, mean(phi)],
+                       mean_reads = pars[, mean(mean_reads)],
+                       prevalence = pars[, mean(prevalence)],
+                       power = mean(power), power_sd = sd(power),
+                       fdr = mean(fdr), fdr_sd = sd(fdr)),
+                  ]
+            flog.info("Power for n=%d and effect=%.3g is %.3g. FDR is %.3g.",
+                      as.integer(co[1]), co[2], p$power, p$fdr)
             return(p)
         })
     }
@@ -201,7 +269,15 @@ power_analysis <- function(ps, ...) {
     if (config$method == "permanova") {
         power[, "asym_r2" := r2[n == max(n)], by = "effect"]
         power[, "asym_r2_sd" := r2_sd[n == max(n)], by = "effect"]
+        power[, "fdr" := (
+            power[effect == 0] /
+            mean(power[effect != 0])), by = "n"]
+        power[, "fdr_sd" := (
+            power_sd[effect == 0] /
+            mean(power[effect != 0])), by = "n"]
     }
+    power[effect == 0, "fdr" := NA]
+    power[effect == 0, "fdr_sd" := NA]
 
     artifact <- list(
         power = power,
