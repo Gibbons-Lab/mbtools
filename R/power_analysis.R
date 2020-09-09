@@ -108,7 +108,7 @@ mwtest <- function(counts, taxa) {
     return(res)
 }
 
-corncob_test <- function(counts, v) {
+corncob_test <- function(counts, v, sig_taxa) {
     sdata <- data.frame(v = v)
     rownames(sdata) <- rownames(counts)
     taxa <- matrix(colnames(counts), ncol = 1)
@@ -127,6 +127,7 @@ corncob_test <- function(counts, v) {
         )
         data.table(taxa = ta, pval = p)
     }) %>% rbindlist()
+    res[, "tp" := !is.na(pval) & taxa %in% sig_taxa]
     res[is.na(pval), "pval" := 1]
     res[, pval := p.adjust(pval, method = "fdr")]
     return(res)
@@ -220,7 +221,7 @@ power_analysis <- function(ps, ...) {
             }) %>% rbindlist()
             p[, "replicate" := rep(1:config$n_groups, config$n_power),
               by = "taxa"]
-            p <- p[, .(power = mean(pval[taxa %in% sig_taxa] < config$pval),
+            p <- p[, .(power = mean(pval[tp] < config$pval),
                        fdr = (
                            sum(pval[!taxa %in% sig_taxa] < config$pval) /
                            sum(pval < config$pval))
