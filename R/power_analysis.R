@@ -121,7 +121,7 @@ corncob_test <- function(counts, v, sig_taxa) {
     )
     res <- lapply(rownames(taxa), function(ta) {
         p <- tryCatch(
-            corncob::waldt(corncob::bbdml(reformulate("v", ta), ~ 1, ps))[2, 4],
+            corncob::waldt(corncob::bbdml(reformulate("v", ta), ~ v, ps))[2, 4],
             error = function(e) 1,
             warning = function(w) 1
         )
