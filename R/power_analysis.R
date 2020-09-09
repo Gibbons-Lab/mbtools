@@ -157,10 +157,10 @@ power_analysis <- function(ps, ...) {
     flog.info("Estimating corncob model parameters for %d taxa...", ntaxa(ps))
     pars <- get_corncob_pars(ps, config$threads)
     pars <- pars[!is.na(mu) & mu > config$min_mu]
-    flog.info("Succesfully estimated parameters for %d/%d taxa.",
-              nrow(pars), ntaxa(ps))
+    flog.info(
+        "Succesfully estimated parameters for %d/%d taxa. <mu> = %.3g, <phi> = %.3g. ",
+        nrow(pars), ntaxa(ps), pars[, mean(mu)], pars[, mean(phi)])
     ps <- prune_taxa(pars[!is.na(mu), taxon], ps)
-    print(pars)
     comb <- expand.grid(list(n = config$n,
                              effect_size = config$effect_size))
     fraction <- config$fraction_differential
@@ -281,8 +281,8 @@ power_analysis <- function(ps, ...) {
     if (config$method == "permanova") {
         power[, "asym_r2" := r2[n == max(n)], by = "effect"]
         power[, "asym_r2_sd" := r2_sd[n == max(n)], by = "effect"]
-        power[, "fdr" := power[effect == 0] / mean(power), by = "n"]
-        power[, "fdr_sd" := power_sd[effect == 0] / mean(power), by = "n"]
+        power[, "fdr" := mean(power[effect == 0]) / mean(power), by = "n"]
+        power[, "fdr_sd" := mean(power_sd[effect == 0]) / mean(power), by = "n"]
     }
     power[effect == 0, "fdr" := NA]
     power[effect == 0, "fdr_sd" := NA]
