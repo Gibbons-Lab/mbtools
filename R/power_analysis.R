@@ -20,7 +20,8 @@ config_power <- config_builder(list(
     threads = getOption("mc.cores", 1),
     pval = 0.05,
     n_power = 8,
-    n_groups = 8
+    n_groups = 8,
+    min_mu = 1e-3
 ))
 
 memory_use <- function(config, n_taxa) {
@@ -121,7 +122,10 @@ corncob_test <- function(counts, v, sig_taxa) {
     )
     res <- lapply(rownames(taxa), function(ta) {
         p <- tryCatch(
-            corncob::waldt(corncob::bbdml(reformulate("v", ta), ~ v, ps))[2, 4],
+            corncob::lrtest(
+                corncob::bbdml(reformulate("v", ta), ~ 1, ps),
+                corncob::bbdml(reformulate("1", ta), ~ 1, ps)
+            ),
             error = function(e) 1,
             warning = function(w) 1
         )
@@ -152,10 +156,11 @@ power_analysis <- function(ps, ...) {
     }
     flog.info("Estimating corncob model parameters for %d taxa...", ntaxa(ps))
     pars <- get_corncob_pars(ps, config$threads)
+    pars <- pars[!is.na(mu) & mu > config$min_mu]
     flog.info("Succesfully estimated parameters for %d/%d taxa.",
               nrow(pars), ntaxa(ps))
     ps <- prune_taxa(pars[!is.na(mu), taxon], ps)
-    pars <- pars[!is.na(mu)]
+    print(pars)
     comb <- expand.grid(list(n = config$n,
                              effect_size = config$effect_size))
     fraction <- config$fraction_differential
