@@ -15,7 +15,7 @@ config_power <- config_builder(list(
     method = "permanova",
     type = "categorical",
     depth = "auto",
-    n = ceiling(2 ^ seq(2, 7, length.out = 16) / 2) * 2,
+    n = ceiling(2 ^ seq(2, 7, length.out = 12) / 2) * 2,
     effect_size = seq(0, 0.9, by = 0.1),
     threads = getOption("mc.cores", 1),
     pval = 0.05,
