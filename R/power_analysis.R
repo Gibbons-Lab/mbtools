@@ -21,7 +21,8 @@ config_power <- config_builder(list(
     pval = 0.05,
     n_power = 8,
     n_groups = 8,
-    min_mu = 1e-3
+    min_mu = 1e-3,
+    min_mu_over_phi = 1
 ))
 
 memory_use <- function(config, n_taxa) {
@@ -59,13 +60,10 @@ get_corncob_pars <- function(ps, threads) {
 }
 
 
-sample_corncob <- function(pars, fraction, type, scale,
+sample_corncob <- function(pars, sig_taxa, type, scale,
                            size = 10000, reps = 1000) {
     n <- length(scale)
     last <- pars[, sort(unique(taxon))[uniqueN(taxon)]]
-    taxa <- pars[taxon != last, taxon]
-    sig_taxa <- sample(taxa, fraction * nrow(pars) - 1)
-    sig_taxa <- c(sig_taxa, last)
     p <- sapply(pars$taxon, function(taxon) {
         if (taxon %in% sig_taxa) {
             p <- rep(pars[taxon, mu] * scale, reps)
@@ -90,7 +88,7 @@ sample_corncob <- function(pars, fraction, type, scale,
         return(x)
     })
 
-    return(list(p = p, sig_taxa = sig_taxa))
+    return(p)
 }
 
 mwtest <- function(counts, taxa) {
@@ -150,25 +148,48 @@ power_analysis <- function(ps, ...) {
     config <- config_parser(list(...), config_power)
     apfun <- parse_threads(config$threads)
     if (config$depth == "auto") {
+        if ("data.table" %in% class(ps)) {
+            stop("If passing parameters you need to specify depth.")
+        }
         config$depth <- sample_sums(ps) %>% median() %>% ceiling()
         flog.info("Using median depth from reference data (%d).",
                   config$depth)
     }
-    flog.info("Estimating corncob model parameters for %d taxa...", ntaxa(ps))
-    pars <- get_corncob_pars(ps, config$threads)
-    pars <- pars[!is.na(mu) & mu > config$min_mu]
-    flog.info(
-        "Succesfully estimated parameters for %d/%d taxa. <mu> = %.3g, <phi> = %.3g. ",
-        nrow(pars), ntaxa(ps), pars[, mean(mu)], pars[, mean(phi)])
-    ps <- prune_taxa(pars[!is.na(mu), taxon], ps)
+    if ("data.table" %in% class(ps)) {
+        pars <- ps
+        n_taxa <- nrow(pars)
+        setkey(pars, "taxon")
+    } else {
+        flog.info("Estimating corncob model parameters for %d taxa...",
+                  ntaxa(ps))
+        pars <- get_corncob_pars(ps, config$threads)
+        pars <- pars[
+            !is.na(mu) &
+            mu > config$min_mu &
+            mu / phi > config$min_mu_over_phi
+        ]
+        n_taxa <- ntaxa(ps)
+    }
+
+    flog.info(paste0(
+        "Succesfully estimated parameters for %d/%d taxa. ",
+        "<mu> = %.3g, <phi> = %.3g."),
+        nrow(pars), n_taxa, pars[, mean(mu)], pars[, mean(phi)])
+
     comb <- expand.grid(list(n = config$n,
                              effect_size = config$effect_size))
     fraction <- config$fraction_differential
+
+    last <- pars[, sort(unique(taxon))[uniqueN(taxon)]]
+    taxa <- pars[taxon != last, taxon]
+    sig_taxa <- sample(taxa, fraction * nrow(pars) - 1)
+    sig_taxa <- c(sig_taxa, last)
+
     flog.info(paste("Estimating power for %d n/effect combinations.",
                     "%d/%d taxa are truly differential."), nrow(comb),
-                    floor(fraction * ntaxa(ps)), ntaxa(ps))
+                    floor(fraction * nrow(pars)), nrow(pars))
     flog.info("Will need at least %s of memory.",
-              memory_use(config, ntaxa(ps)) %>% format(unit = "auto"))
+              memory_use(config, nrow(pars)) %>% format(unit = "auto"))
     if (config$method == "permanova") {
         if (!requireNamespace("vegan", quietly = TRUE)) {
             stop("PERMANOVA requires `vegan` to be installed.")
@@ -183,10 +204,8 @@ power_analysis <- function(ps, ...) {
                 scale <- 1 - v * co[2]
 
             }
-            sampled <- sample_corncob(pars, fraction, config$type, scale,
+            counts <- sample_corncob(pars, sig_taxa, config$type, scale,
                 config$depth, config$n_power * config$n_groups)
-            counts <- sampled$p
-            sig_taxa <- sampled$sig_taxa
             p <- lapply(counts, function(co) {
                 res <- suppressMessages(
                     vegan::adonis2(co ~ v, data = data.frame(v = v)))
@@ -214,10 +233,8 @@ power_analysis <- function(ps, ...) {
                 scale <- 1 - v * co[2]
 
             }
-            sampled <- sample_corncob(pars, fraction, config$type, scale,
+            counts <- sample_corncob(pars, sig_taxa, config$type, scale,
                 config$depth, config$n_power * config$n_groups)
-            counts <- sampled$p
-            sig_taxa <- sampled$sig_taxa
             if (config$type == "categorical") {
                 v <- factor(v)
             }
@@ -248,10 +265,8 @@ power_analysis <- function(ps, ...) {
         power <- apfun(1:nrow(comb), function(i) {
             co <- as.numeric(comb[i, ])
             scale <- c(rep(1, co[1] / 2), rep(1 - co[2], co[1] / 2))
-            sampled <- sample_corncob(pars, fraction, config$type, scale,
+            counts <- sample_corncob(pars, sig_taxa, config$type, scale,
                 config$depth, config$n_power * config$n_groups)
-            counts <- sampled$p
-            sig_taxa <- sampled$sig_taxa
             p <- lapply(counts, function(co) {
                 mwtest(co, colnames(co))
             }) %>% rbindlist()

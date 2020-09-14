@@ -17,7 +17,7 @@ ps <- phyloseq(otu_table(counts, taxa_are_rows = FALSE),
 test_that("PERMANOVA power analysis works", {
     pa <- power_analysis(ps, n = c(4, 20), effect_size = c(0, 0.9))
     power <- pa$power
-    expect_lt(power[effect == 0, max(power)], 0.1)
+    expect_lt(power[effect != 0, max(fdr)], 0.1)
     expect_gt(power[effect == max(effect), max(power)], 0.9)
     expect_gt(power[effect == max(effect) & n == 20, mean(power)], 0.5)
 })
@@ -26,7 +26,7 @@ test_that("Mann-Whitney power analysis works", {
     pa <- power_analysis(ps, method = "mw", n = c(4, 20),
                          effect_size = c(0, 0.9))
     power <- pa$power
-    expect_lt(power[effect == 0, max(power)], 0.1)
+    expect_lt(power[effect != 0, max(fdr)], 0.1)
     expect_gt(power[effect == max(effect), max(power)], 0.9)
     expect_gt(power[effect == max(effect) & n == 20, mean(power)], 0.5)
 })
@@ -35,7 +35,7 @@ test_that("Corncob power analysis works", {
     pa <- power_analysis(ps, method = "corncob", n = c(4, 20),
                          effect_size = c(0, 0.9), n_groups = 3, n_power = 4)
     power <- pa$power
-    expect_lt(power[effect == 0, max(power)], 0.1)
+    expect_lt(power[effect != 0, max(fdr)], 0.1)
     expect_gt(power[effect == max(effect), max(power)], 0.9)
     expect_gt(power[effect == max(effect) & n == 20, mean(power)], 0.5)
 })
