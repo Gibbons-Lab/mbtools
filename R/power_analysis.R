@@ -32,7 +32,7 @@ memory_use <- function(config, n_taxa) {
     return(size)
 }
 
-get_corncob_pars <- function(ps, threads) {
+get_corncob_pars <- function(ps, threads = getOption("mc.cores", 1)) {
     if (!requireNamespace("corncob", quietly = TRUE)) {
         stop("Power Analysis requires `corncob` to be installed.")
     }
@@ -50,7 +50,8 @@ get_corncob_pars <- function(ps, threads) {
             error = function(e) list(mu.resp = NA, phi.resp = NA))
         cn <- otu_table(clean)[, taxon]
         data.table(mu = r$mu.resp[1], phi = r$phi.resp[1],
-                   mean_reads = mean(cn), prevalence = mean(cn > 0),
+                   mean_reads = mean(cn), min_reads = min(cn),
+                   max_reads = max(cn), prevalence = mean(cn > 0),
                    taxon = taxon)
     }) %>% rbindlist()
     pars[, taxon := tnames[taxon]]
@@ -59,6 +60,40 @@ get_corncob_pars <- function(ps, threads) {
     return(pars)
 }
 
+#' Plot the Betabinomial fits for all taxa in a phyloseq object
+#'
+#' @param ps A phyloseq object containing data for a reference experiment.
+#'  This should assume absence of any differential effect (all variation is
+#'  random).
+#' @param bins number of bins to use for histograms. Defaults to Sturges rule.
+#' @return A ggplot2 plot object shwoing the fits for each taxon.
+#' @export
+plot_bb_fits <- function(ps, bins = NULL) {
+    ps <- rarefy_even_depth(ps, min(sample_sums(ps), 10000))
+    pars <- get_corncob_pars(ps)
+    cns <- as(otu_table(ps), "matrix") %>%
+           as.data.table() %>%
+           melt(value.name = "count", variable.name = "taxon",
+                measure.vars = taxa_names(ps)) %>%
+           suppressWarnings()
+    if (is.null(bins)) {
+        bins <- (log2(nsamples(ps)) + 1) %>% ceiling()
+    }
+
+    dens <- pars[, .(
+        mu, phi,
+        count = seq(min_reads, max_reads, by = 1),
+        d = VGAM::dbetabinom(seq(min_reads, max_reads, by = 1),
+                             sample_sums(ps)[1], mu, phi)
+        ), by = "taxon"]
+    pl <- ggplot(cns, aes(x = count)) +
+        geom_histogram(aes(y = stat(density)), bins = bins) +
+        geom_line(data = dens, aes(x = count, y = d), size = 1,
+                  color = "royalblue") +
+        facet_wrap(~ taxon, scales = "free") +
+        labs(x = "#reads", y = "density")
+    return(pl)
+}
 
 sample_corncob <- function(pars, sig_taxa, type, scale,
                            size = 10000, reps = 1000) {
@@ -169,6 +204,7 @@ power_analysis <- function(ps, ...) {
             mu / phi > config$min_mu_over_phi
         ]
         n_taxa <- ntaxa(ps)
+        ps <- prune_taxa(pars$taxon, ps)
     }
 
     flog.info(paste0(
@@ -304,7 +340,9 @@ power_analysis <- function(ps, ...) {
 
     artifact <- list(
         power = power,
-        steps <- c("power_analysis")
+        steps = c("power_analysis"),
+        parameters = pars,
+        phyloseq = ps
     )
     return(artifact)
 }
