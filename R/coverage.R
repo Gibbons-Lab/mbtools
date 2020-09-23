@@ -60,7 +60,7 @@ bin_coverage <- function(object, ...) {
         means <- sapply(cv, mean)
         lengths <- sapply(cv, length)
         cv <- cv[means > config$min_coverage & lengths > config$min_length]
-        binned <- apfun(cv, function(x) {
+        binned <- lapply(cv, function(x) {
             b <- rollapply(
                 as.numeric(x), mean, width = config$bin_width,
                 by = config$bin_width, partial = TRUE, align = "left")
