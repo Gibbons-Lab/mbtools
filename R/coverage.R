@@ -64,7 +64,7 @@ bin_coverage <- function(object, ...) {
             b <- rollapply(
                 as.numeric(x), mean, width = config$bin_width,
                 by = config$bin_width, partial = TRUE, align = "left")
-            return(coverage = b)
+            return(b)
         })
         flog.info(paste0(
             "Finished coverage profile for sample %s. ",
@@ -80,6 +80,7 @@ bin_coverage <- function(object, ...) {
         ))
     }) %>% rbindlist()
     coverage[, "read_length" := rlens[id]]
+    coverage <- coverage[!sapply(coverage, function(x) is.null(x[[1]]))]
 
     artifact <- list(
         alignments = alignments,
