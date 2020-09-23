@@ -53,7 +53,7 @@ bin_coverage <- function(object, ...) {
         "Calculating coverage profiles with bin width of %dbp. ",
         "Minimum average coverage is %g and minimum contig length is %d."),
         config$bin_width, config$min_coverage, config$min_length)
-    coverage <- lapply(rows, function(r) {
+    coverage <- apfun(rows, function(r) {
         id <- r[1]
         aln <- r[2]
         cv <- coverage(aln)
