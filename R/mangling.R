@@ -25,7 +25,11 @@ as.matrix.mbquant <- function(x, ...) {
 #' @importFrom stringr str_replace str_trim
 species_names <- function(taxonomy) {
     ilev <- which(tolower(colnames(taxonomy)) == "species")
-    species <- taxonomy[, ilev]
+    if (length(ilev) == 1) {
+        species <- taxonomy[, ilev]
+    } else {
+        species <- taxonomy[, ncol(taxonomy)]
+    }
     glev <- which(tolower(colnames(taxonomy)) == "genus")
     if (length(glev) == 1) {
         genus <- taxonomy[, glev]
