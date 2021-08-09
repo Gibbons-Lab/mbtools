@@ -94,10 +94,10 @@ find_read_files <- function(directory,
                             pattern = illumina_pattern,
                             annotations = illumina_annotations,
                             dirs_are_runs = FALSE) {
-    if (dirs_are_runs) {
+    subdirs <- list.dirs(directory, recursive = FALSE, full.names = FALSE)
+    if (dirs_are_runs && (length(subdirs) > 0)) {
         files <- list()
-        for (dir in list.dirs(directory, recursive = FALSE,
-                              full.names = FALSE)) {
+        for (dir in subdirs) {
             fi <- annotate_files(file.path(directory, dir), pattern,
                                  annotations)
             fi[, "run" := dir]
