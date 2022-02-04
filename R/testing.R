@@ -77,7 +77,7 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
 }
 
 iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
-                       use_voom = TRUE) {
+                       strategy="clr") {
     is_reg <- !is.factor(meta[[variable]])
     check <- check_variables(variable, counts, meta, confounders)
     if (is.null(check)) {
@@ -88,9 +88,14 @@ iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
     }
     dformula <- reformulate(c(confounders, variable))
     design <- model.matrix(dformula, data = meta)
-    if (use_voom) {
+    if (strategy == "voom") {
         norm_counts <- t(suppressMessages(normalize(counts[good, ])))
         model <- voom(norm_counts, design, plot=FALSE)
+    } else if (strategy == "clr") {
+        model <- apply(
+            counts[good, ], 2,
+            function(x) log(x + 0.5) - mean(log(x + 0.5))
+        ) %>% t()
     } else {
         model <- t(counts[good, ])
     }
@@ -119,11 +124,15 @@ iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
 }
 
 iter_voom <- function(...) {
-    iter_limma(..., use_voom = TRUE)
+    iter_limma(..., strategy = "voom")
+}
+
+iter_clr <- function(...) {
+    iter_limma(..., strategy = "clr")
 }
 
 iter_lm <- function(...) {
-    iter_limma(..., use_voom = FALSE)
+    iter_limma(..., strategy = "lm")
 }
 
 #' Build a configuration for the alignment workflows.
@@ -197,6 +206,8 @@ association <- function(ps, ...) {
         iter <- iter_deseq2
     } else if (config$method == "voom") {
         iter <- iter_voom
+    } else if (config$method == "clr") {
+        iter <- iter_clr
     } else if (config$method == "lm") {
         iter <- iter_lm
     } else {
