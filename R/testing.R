@@ -76,6 +76,15 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     return(res)
 }
 
+unshrink <- function(fit, df) {
+    dm <- dimnames(fit$t)
+    fit$t <- fit$coefficients / fit$stdev.unscaled / fit$sigma
+    dimnames(fit$t) <- dm
+    fit$p.value <- 2 * pt(-abs(fit$t), df = df)
+    dimnames(fit$p.value) <- dm
+    return(fit)
+}
+
 iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
                        strategy="clr") {
     is_reg <- !is.factor(meta[[variable]])
@@ -96,14 +105,16 @@ iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
             counts[good, ], 2,
             function(x) log(x + 0.5) - mean(log(x + 0.5))
         ) %>% t()
+        shrink <- FALSE
     } else {
         model <- t(counts[good, ])
     }
 
     fit <- lmFit(model, design)
+    fit <- eBayes(fit)
 
-    if (shrink) {
-        fit <- eBayes(fit)
+    if (!shrink) {
+        fit <- unshrink(fit, ncol(model) - ncol(design))
     }
     res <- topTable(fit, coef=ncol(design), sort.by="none", number=Inf)
     res <- as.data.table(res)
