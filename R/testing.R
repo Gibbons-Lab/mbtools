@@ -226,8 +226,8 @@ association <- function(ps, ...) {
     }
 
     apfun <- parse_threads(config$threads)
-    report_at <- max(ceiling(length(variables) / 100),
-                     ceiling(1e4 / nrow(counts)))
+    report_at <- max(ceiling(length(variables) / 20),
+                     ceiling(5e4 / nrow(counts)))
     tests <- apfun(1:length(variables), function(i) {
         v <- variables[i]
         test <- iter(v, counts = counts, meta = meta,
