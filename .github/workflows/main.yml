@@ -40,10 +40,8 @@ jobs:
       - name: "Install libraries"
         run: |
           sudo apt-get update
-          sudo apt-get install -y libxml2-dev libssl-dev git bzip2 \
-            cmake autoconf automake make gcc perl zlib1g-dev libbz2-dev \
-            liblzma-dev libcurl4-gnutls-dev libssl-dev libncurses5-dev \
-            libglpk-dev samtools
+          sudo apt-get install -y git bzip2 \
+            cmake autoconf automake make gcc perl zlib1g-dev libbz2-dev samtools
 
       - name: "Install aligners and SLIMM"
         run: |
@@ -56,11 +54,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck any::covr
+          extra-packages: any::rcmdcheck
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
-
-      - name: Test coverage
-        run: covr::codecov()
-        shell: Rscript {0}
