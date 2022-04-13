@@ -352,42 +352,100 @@ sra_submission <- function(object, ...) {
         sample_data[, "bioproject_accession" := config$bioproject]
         sra_metadata[, "bioproject_accession" := config$bioproject]
     }
-    upload <- files$forward
     if ("reverse" %in% names(files)) {
         sra_metadata[, "filename2" := basename(files$reverse)]
-        upload <- c(upload, files$reverse)
     }
 
-    if (config$make_package) {
-        if (Sys.getenv("tar") == "") {
-            tar <- Sys.getenv("TAR")
-        } else {
-            tar <- Sys.getenv("tar")
+    packages <- list()
+    upload <- list()
+    if (nrow(sample_data) < 1000) {
+        upload[[1]] <- files$forward
+        if ("reverse" %in% names(files)) {
+            upload[[1]] <- c(upload[[1]], files$reverse)
         }
-        flog.info("Packing submission files to %s.",
-                file.path(config$out_dir, "sra_files.tar.gz"))
-        ret <- tar(file.path(config$out_dir, "sra_files.tar.gz"),
-            files = upload,
-            compression = "gzip", tar = tar)
-        if (ret != 0) {
-            stop("tar command failed")
+        if (config$make_package) {
+            if (Sys.getenv("tar") == "") {
+                tar <- Sys.getenv("TAR")
+            } else {
+                tar <- Sys.getenv("tar")
+            }
+            packages[[1]] <- file.path(config$out_dir, "sra_files.tar.gz")
+            flog.info("Packing submission files to %s.",
+                    file.path(config$out_dir, "sra_files.tar.gz"))
+            ret <- tar(file.path(config$out_dir, "sra_files.tar.gz"),
+                files = upload[[1]],
+                compression = "gzip", tar = tar)
+            if (ret != 0) {
+                stop("tar command failed")
+            }
+        }
+        flog.info("Writing biosample attributes to %s.",
+                file.path(config$out_dir, "05_biosample_attributes.tsv"))
+        fwrite(sample_data, sep = "\t", file.path(config$out_dir,
+                                                "05_biosample_attributes.tsv"))
+        flog.info("Writing file metadata to %s.",
+                file.path(config$out_dir, "06_sra_metadata.tsv"))
+        fwrite(sra_metadata, sep = "\t",
+            file.path(config$out_dir, "06_sra_metadata.tsv"))
+    } else {
+        start <- 1
+        # distribute samples evenly over submission
+        nsub <- ceiling(nrow(sample_data) / 999)
+        step <- ceiling(nrow(sample_data) / nsub)
+        flog.info(paste0(
+            "SRA does not allow submissions with more than 1,000 samples. ",
+            "I will split your submission into ", nsub, " chunks, which ",
+            "you will have to submit separately. Using the instructions below."
+        ))
+        chunk <- 1
+        while (start < nrow(sample_data)) {
+            idx <- start : min((start + step - 1), nrow(sample_data))
+            upload[[chunk]] <- files$forward[idx]
+            if ("reverse" %in% names(files)) {
+                upload[[chunk]] <- c(upload[[chunk]], files$reverse[idx])
+            }
+            if (config$make_package) {
+                if (Sys.getenv("tar") == "") {
+                    tar <- Sys.getenv("TAR")
+                } else {
+                    tar <- Sys.getenv("tar")
+                }
+                out <- sprintf("sra_files_%d.tar.gz", chunk)
+                packages[[chunk]] <- file.path(config$out_dir, out)
+                flog.info("Packing submission files for chunk %d to %s.",
+                        chunk, file.path(config$out_dir, out))
+                ret <- tar(file.path(config$out_dir, out),
+                    files = upload[[chunk]],
+                    compression = "gzip", tar = tar)
+                if (ret != 0) {
+                    stop("tar command failed")
+                }
+            }
+            satts <- sprintf("05_biosample_attributes_%d.tsv", chunk)
+            flog.info("Writing biosample attributes for chunk %d to %s.",
+                chunk, file.path(config$out_dir, satts))
+            fwrite(sample_data[idx], sep = "\t",
+                file.path(config$out_dir, satts))
+            smeta <- sprintf("06_sra_metadata_%d.tsv", chunk)
+            flog.info("Writing file metadata for chunk %d to %s.",
+                    chunk, file.path(config$out_dir, smeta))
+            fwrite(sra_metadata[idx], sep = "\t",
+                file.path(config$out_dir, smeta))
+
+            chunk <- chunk + 1
+            start <- start + step
         }
     }
-    flog.info("Writing biosample attributes to %s.",
-              file.path(config$out_dir, "05_biosample_attributes.tsv"))
-    fwrite(sample_data, sep = "\t", file.path(config$out_dir,
-                                            "05_biosample_attributes.tsv"))
-    flog.info("Writing file metadata to %s.",
-              file.path(config$out_dir, "06_sra_metadata.tsv"))
-    fwrite(sra_metadata, sep = "\t",
-           file.path(config$out_dir, "06_sra_metadata.tsv"))
     flog.info(sprintf(preset["usage"], config$out_dir))
     artifact <- list(
         files = files,
         biosample_attributes = sample_data,
-        sra_metadata = sra_metadata,
-        upload = ifelse(config$make_package,
-                        file.path(config$out_dir, "sra_files.tar.gz"),
-                        upload)
+        sra_metadata = sra_metadata
     )
+    if (config$make_package) {
+        artifact$upload <- packages
+    } else {
+        artifact$upload <- upload
+    }
+    return(artifact)
 }
