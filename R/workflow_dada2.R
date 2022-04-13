@@ -31,10 +31,10 @@ config_denoise <- config_builder(list(
         pool = FALSE,
         bootstrap_confidence = 0.5,
         min_overlap = 12,
-        taxa_db = paste0("https://zenodo.org/record/1172783/files/",
-                         "silva_nr_v132_train_set.fa.gz?download=1"),
-        species_db = paste0("https://zenodo.org/record/1172783/files/",
-                            "silva_species_assignment_v132.fa.gz?download=1"),
+        taxa_db = paste0("https://zenodo.org/record/4587955/files/",
+            "silva_nr99_v138.1_wSpecies_train_set.fa.gz?download=1"),
+        species_db = paste0("https://zenodo.org/record/4587955/files/",
+            "silva_species_assignment_v138.1.fa.gz?download=1"),
         hash = TRUE,
         merge = TRUE
 ))
@@ -177,6 +177,7 @@ denoise <- function(object, ...) {
               ncol(feature_table))
     tmp <- tempdir()
     if (grepl("tp(s*)://", config$taxa_db)) {
+        options(timeout = max(600, getOption("timeout")))
         taxa_db <- file.path(tmp, "taxa.fna.gz")
         if (!file.exists(taxa_db)) {
             flog.info("Downloading taxa db to %s...", taxa_db)

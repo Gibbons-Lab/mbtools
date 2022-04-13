@@ -1,4 +1,4 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Workflow derived from https://github.com/r-lib/actions/tree/master/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
@@ -6,41 +6,27 @@ on:
   pull_request:
     branches: [main, master]
 
-name: R-CMD-check
+name: test-coverage
 
 jobs:
-  R-CMD-check:
-    runs-on: ${{ matrix.config.os }}
-
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
-
+  test-coverage:
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes
 
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-pandoc@v2
-
       - uses: r-lib/actions/setup-r@v2
         with:
-          r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
       - name: "Install libraries"
         run: |
           sudo apt-get update
           sudo apt-get install -y git bzip2 \
-            cmake autoconf automake make gcc perl zlib1g-dev libbz2-dev samtools
+            cmake autoconf automake make gcc perl zlib1g-dev libbz2-dev \
+            liblzma-dev samtools
 
       - name: "Install aligners and SLIMM"
         run: |
@@ -53,7 +39,9 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
-          needs: check
+          extra-packages: any::covr
+          needs: coverage
 
-      - uses: r-lib/actions/check-r-package@v2
+      - name: Test coverage
+        run: covr::codecov()
+        shell: Rscript {0}

@@ -76,8 +76,17 @@ iter_deseq2 <- function(variable, counts, meta, confounders, shrink, tax) {
     return(res)
 }
 
+unshrink <- function(fit, df) {
+    dm <- dimnames(fit$t)
+    fit$t <- fit$coefficients / fit$stdev.unscaled / fit$sigma
+    dimnames(fit$t) <- dm
+    fit$p.value <- 2 * pt(-abs(fit$t), df = df)
+    dimnames(fit$p.value) <- dm
+    return(fit)
+}
+
 iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
-                       use_voom = TRUE) {
+                       strategy="clr") {
     is_reg <- !is.factor(meta[[variable]])
     check <- check_variables(variable, counts, meta, confounders)
     if (is.null(check)) {
@@ -88,17 +97,24 @@ iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
     }
     dformula <- reformulate(c(confounders, variable))
     design <- model.matrix(dformula, data = meta)
-    if (use_voom) {
+    if (strategy == "voom") {
         norm_counts <- t(suppressMessages(normalize(counts[good, ])))
         model <- voom(norm_counts, design, plot=FALSE)
+    } else if (strategy == "clr") {
+        model <- apply(
+            counts[good, ], 2,
+            function(x) log(x + 0.5) - mean(log(x + 0.5))
+        ) %>% t()
+        shrink <- FALSE
     } else {
         model <- t(counts[good, ])
     }
 
     fit <- lmFit(model, design)
+    fit <- eBayes(fit)
 
-    if (shrink) {
-        fit <- eBayes(fit)
+    if (!shrink) {
+        fit <- unshrink(fit, ncol(model) - ncol(design))
     }
     res <- topTable(fit, coef=ncol(design), sort.by="none", number=Inf)
     res <- as.data.table(res)
@@ -119,11 +135,15 @@ iter_limma <- function(variable, counts, meta, confounders, shrink, tax,
 }
 
 iter_voom <- function(...) {
-    iter_limma(..., use_voom = TRUE)
+    iter_limma(..., strategy = "voom")
+}
+
+iter_clr <- function(...) {
+    iter_limma(..., strategy = "clr")
 }
 
 iter_lm <- function(...) {
-    iter_limma(..., use_voom = FALSE)
+    iter_limma(..., strategy = "lm")
 }
 
 #' Build a configuration for the alignment workflows.
@@ -197,6 +217,8 @@ association <- function(ps, ...) {
         iter <- iter_deseq2
     } else if (config$method == "voom") {
         iter <- iter_voom
+    } else if (config$method == "clr") {
+        iter <- iter_clr
     } else if (config$method == "lm") {
         iter <- iter_lm
     } else {
@@ -204,8 +226,8 @@ association <- function(ps, ...) {
     }
 
     apfun <- parse_threads(config$threads)
-    report_at <- max(ceiling(length(variables) / 100),
-                     ceiling(1e4 / nrow(counts)))
+    report_at <- max(ceiling(length(variables) / 20),
+                     ceiling(5e4 / nrow(counts)))
     tests <- apfun(1:length(variables), function(i) {
         v <- variables[i]
         test <- iter(v, counts = counts, meta = meta,
