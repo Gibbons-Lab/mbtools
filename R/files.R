@@ -40,13 +40,14 @@ annotate_files <- function(dir, pattern, annotations) {
         fwd <- anns[direction == 1]
         bwd <- anns[direction == 2]
         names(bwd)[1] <- "reverse"
-        anns <- fwd[bwd, on = matchcols]
+        anns <- merge(fwd, bwd, by = matchcols, all = TRUE)
         other_cols <- names(anns)[
             !names(anns) %in% c("forward", "reverse") &
             !grepl("i\\.", names(anns))]
         anns <- anns[, c("forward", "reverse", other_cols), with = FALSE]
     }
-    anns[, direction := NULL]
+    anns[, direction.x := NULL]
+    anns[, direction.y := NULL]
     if ("injection_order" %in% names(anns)) {
         anns[, injection_order := as.numeric(injection_order)]
     }
@@ -90,6 +91,7 @@ get_alignments <- function(obj) {
 #' @export
 #' @importFrom stringr str_match_all
 #' @importFrom data.table setDT uniqueN
+#' @importFrom utils capture.output
 find_read_files <- function(directory,
                             pattern = illumina_pattern,
                             annotations = illumina_annotations,
@@ -111,15 +113,24 @@ find_read_files <- function(directory,
     } else {
         files <- annotate_files(directory, pattern, annotations)
     }
-    files[, forward := file.path(directory, forward)]
+    files[, forward :=
+        ifelse(is.na(forward), NA, file.path(directory, forward))]
     if ("reverse" %in% names(files)) {
-        files[, reverse := file.path(directory, reverse)]
+        files[, reverse :=
+            ifelse(is.na(reverse), NA, file.path(directory, reverse))]
     }
     tab <- table(files$id)
     if (any(tab > 1)) {
         flog.warn(paste0("There are duplicated ids, please fix them before ",
                          "advancing to other workflow steps. Duplicated: %s"),
                   paste(names(tab)[tab > 1], collapse = ", "))
+    }
+    missing <- files[is.na(forward) | is.na(reverse)]
+    if (nrow(missing) > 0) {
+        flog.warn(
+            "The following samples have missing read files: %s",
+            capture.output(missing)
+        )
     }
     return(files)
 }
