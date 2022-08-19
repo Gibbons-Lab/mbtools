@@ -105,7 +105,7 @@ sra_filelist <- function(runtable, path) {
     } else {
         files <- data.table(
             url = urls,
-            target = file.path(path, paste0(sra$Run, "_1.fastq.gz")),
+            target = file.path(path, paste0(sra$Run, ".fastq.gz")),
             description = c(paste("forward reads for", sra$Run))
             )
     }

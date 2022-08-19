@@ -12,9 +12,8 @@ opinionated towards our own experiences.
 ## General philosophy
 
 `mbtools` sees analyses as a workflow consisting of several analysis steps
-and final outputs based on those. This is pretty similar to Qiime 2 and most
-of the functionality in `mbtools` is supposed to be orthogonal and not in
-competition to those other excellent tools.
+and final outputs based on those. This is pretty similar to Qiime 2 which pioneered
+that abstraction.
 
 ## Data types
 

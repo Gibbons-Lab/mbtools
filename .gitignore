@@ -49,6 +49,7 @@ gg*.fa.gz
 .vscode
 
 # test and docs
+alignments/
 src/
 vignettes/.drake/
 vignettes/alignment_dir/
