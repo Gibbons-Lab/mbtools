@@ -14,7 +14,7 @@ config_builder <- function(default_parms) {
 }
 
 config_parser <- function(args, config_fun) {
-    if (length(args) == 1 && class(args[[1]]) == "config") {
+    if (length(args) == 1 && inherits(args[[1]], "config")) {
         config <- args[[1]]
     } else {
         config <- do.call(config_fun, args)

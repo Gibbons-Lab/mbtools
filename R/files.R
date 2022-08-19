@@ -45,9 +45,10 @@ annotate_files <- function(dir, pattern, annotations) {
             !names(anns) %in% c("forward", "reverse") &
             !grepl("i\\.", names(anns))]
         anns <- anns[, c("forward", "reverse", other_cols), with = FALSE]
+        anns[, "direction.x" := NULL]
+        anns[, "direction.y" := NULL]
     }
-    anns[, direction.x := NULL]
-    anns[, direction.y := NULL]
+
     if ("injection_order" %in% names(anns)) {
         anns[, injection_order := as.numeric(injection_order)]
     }
