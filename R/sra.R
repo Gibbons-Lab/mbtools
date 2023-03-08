@@ -63,6 +63,12 @@ water_biofilm_envo <- c(
     env_medium = "biofilm material [ENVO:01000156]"
 )
 
+in_vitro_envo <- c(
+    env_broad_scale = "organic material [ENVO:01000155]",
+    env_local_scale = "mock community culture [ENVO:01001059]",
+    env_medium = "cell culturing unit [ENVO:01001819]"
+)
+
 presets <- list(
     `human gut 16S` = c(
         gut_envo,
@@ -213,6 +219,26 @@ presets <- list(
                        "choose `Genome, metagenome or marker sequences ",
                        "(MIxS compliant)` and `Survey-related Marker ",
                        "Sequences MIMARKS`. In step 5 and 6 ",
+                       "upload the respective files in %s. In step 7 you ",
+                       "can directly upload the `*.tar.gz` submission ",
+                       "package. Just click on `continue` another time to ",
+                       "have the archive unpacked as indicated.")
+    ),
+    `in vitro metagenome` = c(
+        in_vitro_envo,
+        organism = "in vitro community metagenome",
+        library_strategy = "WGS",
+        library_source = "METAGENOMIC",
+        library_selection = "RANDOM",
+        filetype = "fastq",
+        usage = paste0("You are now ready for submission. ",
+                       "Go to https://submit.ncbi.nlm.nih.gov/subs/sra/, ",
+                       "log in and click on `New submission`. ",
+                       "Fill in the general data for your project in steps ",
+                       "1 through 3. In step 4 ",
+                       "choose `Genome, metagenome or marker sequences ",
+                       "(MIxS compliant)` and `Environmental/Metagenome ",
+                       "Genomic Sequences MIMS`. In step 5 and 6 ",
                        "upload the respective files in %s. In step 7 you ",
                        "can directly upload the `*.tar.gz` submission ",
                        "package. Just click on `continue` another time to ",
