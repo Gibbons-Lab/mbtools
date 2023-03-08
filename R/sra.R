@@ -226,7 +226,7 @@ presets <- list(
     ),
     `in vitro metagenome` = c(
         in_vitro_envo,
-        organism = "in vitro community metagenome",
+        organism = "mixed culture metagenome",
         library_strategy = "WGS",
         library_source = "METAGENOMIC",
         library_selection = "RANDOM",
