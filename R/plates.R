@@ -15,7 +15,8 @@ config_layout <- config_builder(list(
     idcol = "id",
     blank_step = 18,
     ncol = 1,
-    by = "row"
+    by = "col",
+    fill = FALSE
 ))
 
 grid <- list(
@@ -40,6 +41,11 @@ layout <- function(manifest, ...) {
     blank <- data.table(layout_type = "blank")
     manifest <- as.data.table(copy(manifest))[, "layout_type" := "sample"]
     setnames(manifest, old = config$idcol, new = "id")
+
+    if (("well" %in% names(manifest)) || ("plate" %in% names(manifest))) {
+        config$blank_step <- Inf
+    }
+
     blank[[config$idcol]] <- ""
     dt <- list()
     if (is.finite(config$blank_step)) {
@@ -53,8 +59,23 @@ layout <- function(manifest, ...) {
         }
         manifest <- rbindlist(dt, fill = TRUE)
     }
-    manifest[, "plate" := ceiling(1:nrow(manifest) / 96)]
-    manifest[, "well" := grid[[config$by]][1:.N], by = "plate"]
+    if (!"plate" %in% names(manifest) ) {
+        manifest[, "plate" := ceiling(1:nrow(manifest) / 96)]
+    }
+    if (!"well" %in% names(manifest)) {
+        manifest[, "well" := grid[[config$by]][1:.N], by = "plate"]
+    }
+    if (config$fill) {
+        blanks <- data.table(layout_type = "blank", well = grid[[config$by]])
+        all_blanks = list()
+        for (i in manifest[, unique(plate)]) {
+            bi <- copy(blanks[!well %in% manifest$well])
+            bi[, "plate" := i]
+            all_blanks[[i]] <- bi
+        }
+        all_blanks <- rbindlist(all_blanks)
+        manifest <- rbind(manifest, all_blanks, fill = TRUE)[order(plate, well)]
+    }
 
     layout <- ggplot(
         manifest,
@@ -68,7 +89,7 @@ layout <- function(manifest, ...) {
         facet_wrap(~ plate, scales = "free",
                    labeller = function(x) label_both(x, sep = " "),
                    ncol = config$ncol) +
-        scale_fill_manual(values = c("gray", "white")) +
+        scale_fill_manual(values = c(blank="gray", sample="white")) +
         guides(fill = guide_legend(nrow = 1)) +
         scale_y_discrete(limits = rev(LETTERS[1:8])) +
         labs(x = "", y = "", fill = "") +
