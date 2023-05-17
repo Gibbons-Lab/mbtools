@@ -62,7 +62,7 @@ bracken_to_phyloseq <- function(
     metadata = NULL,
     id_col = "sample_id") {
 
-    n_ranks <- ncol(bracken) - 2
+    n_ranks <- which(names(bracken) == "reads") - 1
     lowest_rank <- names(bracken)[n_ranks]
     table <- dcast(
         bracken,
@@ -119,11 +119,11 @@ reads_to_phyloseq <- function(
 
     table <- dcast(
         counts,
-        reformulate(feature_col, response="sample_id"),
+        reformulate(feature_col, response = "sample_id"),
         value.var = "reads",
         fill = 0
     )
-    samps <- table[, sample_id]
+    samps <- table$sample_id
     table <- as.matrix(table[, !"sample_id"])
     rownames(table) <- samps
     features <- matrix(colnames(table), ncol = 1)
