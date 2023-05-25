@@ -37,7 +37,7 @@ plot_counts <- function(ps, variable, tax_level = "genus", taxa = NULL,
     dts <- dts[taxa %in% valid_taxa]
     dts <- sdata[dts, on="sample", nomatch=0]
     dts$variable <- variable
-    dts$value <- sdata[[variable]]
+    dts[, "value" := dts[, variable, with=F]]
     if (only_data) return(dts)
 
     if (is.integer(dts$value) || is.factor(dts$value)) {
