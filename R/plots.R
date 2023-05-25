@@ -31,9 +31,13 @@ plot_counts <- function(ps, variable, tax_level = "genus", taxa = NULL,
         valid_taxa <- unique(dts[["taxa"]])
     }
 
+    sids <- sample_data(ps) %>% rownames()
+    sdata <- sample_data(ps) %>% as("data.frame") %>% as.data.table()
+    sdata[, "sample" := sids]
     dts <- dts[taxa %in% valid_taxa]
+    dts <- sdata[dts, on="sample", nomatch=0]
     dts$variable <- variable
-    dts$value <- sample_data(ps)[dts$sample, variable]
+    dts$value <- sdata[[variable]]
     if (only_data) return(dts)
 
     if (is.integer(dts$value) || is.factor(dts$value)) {
@@ -74,7 +78,7 @@ plot_taxa <- function(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
     counts <- taxa_count(ps, lev=level)[, reads := as.double(reads)]
     counts[, reads := reads / sum(reads), by = "sample"]
     if (is.na(level)) {
-        counts[, taxa := paste0(species, ": ", taxa)]
+        counts[, taxa := paste0(species, " ", taxa)]
     }
     total_ord <- counts[, sum(reads, na.rm=TRUE), by = "taxa"][order(-V1), taxa]
     if (length(total_ord) > max_taxa) {
@@ -85,12 +89,16 @@ plot_taxa <- function(ps, level = "Phylum", show_samples = TRUE, sort = TRUE,
     counts[, taxa := factor(taxa, levels=rev(total_ord))]
     counts[, sample := factor(sample, levels=sample_ord)]
     counts[, id := as.numeric(sample)]
+    sid <- sample_data(ps) %>% rownames
+    sdata <- as(sample_data(ps), "data.frame") %>% as.data.table()
+    sdata[, "sample" := sid]
+    merged <- sdata[counts, on="sample", nomatch=0]
 
-    if (only_data) return(counts)
+    if (only_data) return(merged)
     x <- "id"
     if (show_samples) x <- "sample"
 
-    pl <- ggplot(counts, aes_string(x=x, y="reads", fill="taxa")) +
+    pl <- ggplot(merged, aes_string(x=x, y="reads", fill="taxa")) +
         geom_bar(stat="identity", ...) +
         scale_y_continuous(expand = c(0, 0.01), labels = percent) +
         scale_fill_brewer(palette = "Paired", direction = -1,
