@@ -11,9 +11,11 @@ hitdb_cleaner <- function(i, df, match, cutoff = 101) {
 
     x <- sub("\\|.+;", ";", x)
     if (all(!is.na(match[i, ]))) {
-        if (as.numeric(match[i, 4]) > cutoff)
+        if (as.numeric(match[i, 4]) > cutoff) {
             x <- sub(match[i, 2], match[i, 3], x)
-        else x <- sub(match[i, 2], "unclassified", x)
+        } else {
+            x <- sub(match[i, 2], "unclassified", x)
+        }
     }
 
     # dada2 nows about empty fields so we do not need placeholders
@@ -28,15 +30,17 @@ hitdb_cleaner <- function(i, df, match, cutoff = 101) {
 #' @param out Filename for the compressed output file.
 #' @return Nothing.
 #' @examples
-#'  NULL
+#' NULL
 #'
 #' @export
 mothur_to_dada <- function(seq_file, taxa_file, out = "taxonomy.fa.gz") {
     taxa_df <- read.table(taxa_file, header = FALSE)
     matches <- str_match(taxa_df[, 2], ANN_RE)
 
-    tax <- vapply(1:nrow(taxa_df), hitdb_cleaner, "", df = taxa_df,
-                   match = matches)
+    tax <- vapply(1:nrow(taxa_df), hitdb_cleaner, "",
+        df = taxa_df,
+        match = matches
+    )
     names(tax) <- taxa_df[, 1]
 
     seqs <- readFasta(seq_file)
@@ -53,22 +57,22 @@ mothur_to_dada <- function(seq_file, taxa_file, out = "taxonomy.fa.gz") {
 #' in the BRACKEN counts.
 #' @return A phyloseq object for the data.
 #' @examples
-#'  NULL
+#' NULL
 #'
 #' @export
 #' @importFrom data.table setkeyv
 bracken_to_phyloseq <- function(
-    bracken,
-    metadata = NULL,
-    id_col = "sample_id") {
-
+        bracken,
+        metadata = NULL,
+        id_col = "sample_id") {
     n_ranks <- which(names(bracken) == "reads") - 1
     lowest_rank <- names(bracken)[n_ranks]
     table <- dcast(
         bracken,
         reformulate(lowest_rank, response = "sample"),
         value.var = "reads",
-        fill = 0
+        fill = 0,
+        fun.aggregate = sum
     )
     samps <- table[, sample]
     table <- as.matrix(table[, !"sample"])
@@ -108,7 +112,7 @@ bracken_to_phyloseq <- function(
 #' in the read counts.
 #' @return A phyloseq object for the data.
 #' @examples
-#'  NULL
+#' NULL
 #'
 #' @export
 reads_to_phyloseq <- function(
@@ -116,7 +120,6 @@ reads_to_phyloseq <- function(
     feature_col,
     metadata = NULL,
     id_col = "sample_id") {
-
     table <- dcast(
         counts,
         reformulate(feature_col, response = "sample_id"),
@@ -146,5 +149,4 @@ reads_to_phyloseq <- function(
         sample_data(metadata)
     )
     return(ps)
-
-    }
+}
