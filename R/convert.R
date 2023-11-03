@@ -124,7 +124,8 @@ reads_to_phyloseq <- function(
         counts,
         reformulate(feature_col, response = "sample_id"),
         value.var = "reads",
-        fill = 0
+        fill = 0,
+        fun.aggregate = sum
     )
     samps <- table$sample_id
     table <- as.matrix(table[, !"sample_id"])
