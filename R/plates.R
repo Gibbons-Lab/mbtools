@@ -16,15 +16,19 @@ config_layout <- config_builder(list(
     blank_step = 18,
     ncol = 1,
     by = "col",
-    fill = FALSE
+    fill = FALSE,
+    ncols = 12,
+    nrows = 8
 ))
 
-grid <- list(
-    row = expand.grid(as.character(1:12), LETTERS[1:8])[, 2:1] %>%
-        apply(1, paste, collapse = "", sep = ""),
-    col = expand.grid(LETTERS[1:8], as.character(1:12)) %>%
-        apply(1, paste, collapse = "", sep = "")
-)
+grid <- function(ncols, nrows) {
+    list(
+        row = expand.grid(as.character(1:nrows), LETTERS[1:ncols])[, 2:1] %>%
+            apply(1, paste, collapse = "", sep = ""),
+        col = expand.grid(LETTERS[1:ncols], as.character(1:nrows)) %>%
+            apply(1, paste, collapse = "", sep = "")
+    )
+}
 
 #' Generate a plate layout from a sample manifest.
 #'
@@ -41,6 +45,9 @@ layout <- function(manifest, ...) {
     blank <- data.table(layout_type = "blank")
     manifest <- as.data.table(copy(manifest))[, "layout_type" := "sample"]
     setnames(manifest, old = config$idcol, new = "id")
+
+    g <- grid(config$ncols, config$nrows)
+    n <- config$ncols * config$nrows
 
     if (("well" %in% names(manifest)) || ("plate" %in% names(manifest))) {
         config$blank_step <- Inf
@@ -60,13 +67,13 @@ layout <- function(manifest, ...) {
         manifest <- rbindlist(dt, fill = TRUE)
     }
     if (!"plate" %in% names(manifest) ) {
-        manifest[, "plate" := ceiling(1:nrow(manifest) / 96)]
+        manifest[, "plate" := ceiling(1:nrow(manifest) / n)]
     }
     if (!"well" %in% names(manifest)) {
-        manifest[, "well" := grid[[config$by]][1:.N], by = "plate"]
+        manifest[, "well" := g[[config$by]][1:.N], by = "plate"]
     }
     if (config$fill) {
-        blanks <- data.table(layout_type = "blank", well = grid[[config$by]])
+        blanks <- data.table(layout_type = "blank", well = g[[config$by]])
         all_blanks = list()
         for (i in manifest[, unique(plate)]) {
             bi <- copy(blanks[!well %in% manifest$well])
@@ -79,7 +86,7 @@ layout <- function(manifest, ...) {
 
     layout <- ggplot(
         manifest,
-        aes(x = factor(substr(well, 2, 3), levels = 1:12),
+        aes(x = factor(substr(well, 2, 3), levels = 1:config$ncols),
             y = substr(well, 1, 1),
             fill = layout_type,
             label = id)) +
@@ -91,7 +98,7 @@ layout <- function(manifest, ...) {
                    ncol = config$ncol) +
         scale_fill_manual(values = c(blank="gray", sample="white")) +
         guides(fill = guide_legend(nrow = 1)) +
-        scale_y_discrete(limits = rev(LETTERS[1:8])) +
+        scale_y_discrete(limits = rev(LETTERS[1:config$nrows])) +
         labs(x = "", y = "", fill = "") +
         theme_minimal(base_size = 16) + theme(legend.position = "bottom")
 
