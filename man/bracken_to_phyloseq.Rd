@@ -21,6 +21,6 @@ A phyloseq object for the data.
 Converts BRACKEN results to a phyloseq object.
 }
 \examples{
- NULL
+NULL
 
 }

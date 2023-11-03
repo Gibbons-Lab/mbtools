@@ -24,6 +24,6 @@ A phyloseq object for the data.
 Converts read count data to a phyloseq object.
 }
 \examples{
- NULL
+NULL
 
 }
