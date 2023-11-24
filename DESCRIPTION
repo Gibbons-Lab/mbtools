@@ -56,4 +56,4 @@ VignetteBuilder: knitr
 LinkingTo:
     Rcpp
 Remotes:
-    Remotes: github::statdivlab/corncob
+    github::statdivlab/corncob
