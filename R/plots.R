@@ -20,8 +20,9 @@
 #' @export
 #' @importFrom ggplot2 ggplot geom_boxplot facet_wrap scale_y_log10 xlab
 plot_counts <- function(ps, variable, tax_level = "genus", taxa = NULL,
-                        normalized = TRUE, pc = 0.5, only_data = FALSE) {
-    dts <- taxa_count(ps, lev = tax_level)
+                        normalized = TRUE, pc = 0.5, only_data = FALSE,
+                        zeros = TRUE) {
+    dts <- taxa_count(ps, lev = tax_level, zeros = zeros)
     valid_taxa <- taxa
     if (normalized) {
         dts <- normalize(dts)
@@ -42,15 +43,15 @@ plot_counts <- function(ps, variable, tax_level = "genus", taxa = NULL,
 
     if (is.integer(dts$value) || is.factor(dts$value)) {
         pl <- ggplot(dts, aes(x = value, y = reads + pc, group = value)) +
-              geom_boxplot(outlier.color = NA) +
-              geom_jitter(width = 0.2, alpha = 0.5, size = 1, stroke = 0) +
+              geom_boxplot(outlier.color = NA, width = 0.1) +
+              geom_jitter(width = 0.3, alpha = 0.5, size = 1, stroke = 0) +
               facet_wrap(~ taxa) + scale_y_log10() +
-              xlab(variable)
+              labs(x = variable, y = "normalized reads")
     } else {
         pl <- ggplot(dts, aes(x = value, y = reads + pc)) +
-              geom_point(alpha = 0.5, stroke = 0) +
+              geom_point(alpha = 1, stroke = 0) +
               facet_wrap(~ taxa) + scale_y_log10() +
-              xlab(variable)
+              labs(x = variable, y = "normalized reads")
     }
 
     return(pl)
